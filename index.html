@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>运动训练对机体机能的影响实验管理系统</title>
+
+<link rel="stylesheet" href="styles.css">
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- simple-statistics CDN -->
+<script src="https://cdn.jsdelivr.net/npm/simple-statistics@7.8.3/dist/simple-statistics.min.js"></script>
+
+<!-- SheetJS CDN -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+</head>
+<body>
+
+<header>
+  <div class="title">运动训练对机体机能的影响实验管理系统</div>
+  <div class="subtitle">指导教师/程序设计：杜朝晖  重庆工商大学</div>
+</header>
+
+<main id="mainMenu" class="menu-grid">
+  <div class="menu-card" data-module="learning">A 学习区</div>
+  <div class="menu-card" data-module="proposal">B 实验方案设计器</div>
+  <div class="menu-card" data-module="experiment">C 数据录入与进度</div>
+  <div class="menu-card" data-module="analysis">D 数据可视化与统计分析</div>
+  <div class="menu-card" data-module="report">E 实验报告生成</div>
+  <div class="menu-card" data-module="data">F 数据管理</div>
+</main>
+
+<div id="moduleContainer"></div>
+
+<div id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
