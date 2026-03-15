@@ -1,42 +1,3394 @@
-<!DOCTYPE html>
-<html lang="zh">
+<!doctype html>
+<html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>运动训练对机体机能的影响实验管理系统</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>运动训练对机体机能的影响实验管理系统</title>
 
-<link rel="stylesheet" href="styles.css">
+  <!-- SheetJS (Excel) -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <!-- Mammoth.js (Word preview) -->
+  <script src="https://cdn.jsdelivr.net/npm/mammoth@1.8.0/mammoth.browser.min.js"></script>
 
-<!-- Chart.js CDN -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root{
+      --bg0:#070a12;
+      --bg1:#0b1020;
+      --panel:#0f1930cc;
+      --panel2:#0e162ad9;
+      --stroke:#23385f;
+      --stroke2:#2e4a7a;
+      --text:#eaf3ff;
+      --muted:#9bb6d6;
+      --accent:#00f0ff;
+      --accent2:#7c4dff;
+      --good:#00ff9d;
+      --warn:#ffcc00;
+      --bad:#ff4d4f;
 
-<!-- simple-statistics CDN -->
-<script src="https://cdn.jsdelivr.net/npm/simple-statistics@7.8.3/dist/simple-statistics.min.js"></script>
+      --shadow: 0 18px 55px rgba(0,0,0,.45);
+      --glow: 0 0 28px rgba(0,240,255,.18), 0 0 70px rgba(124,77,255,.10);
+      --radius: 16px;
+      --radius2: 12px;
+    }
 
-<!-- SheetJS CDN -->
-<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      color:var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Microsoft YaHei", sans-serif;
+      background:
+        radial-gradient(1200px 600px at 15% 20%, rgba(0,240,255,.13), transparent 60%),
+        radial-gradient(900px 500px at 80% 15%, rgba(124,77,255,.12), transparent 60%),
+        radial-gradient(1000px 650px at 55% 85%, rgba(0,255,157,.08), transparent 60%),
+        linear-gradient(145deg, var(--bg0), var(--bg1));
+      overflow:hidden;
+    }
 
+    /* subtle grid */
+    body:before{
+      content:"";
+      position:fixed; inset:0;
+      background:
+        linear-gradient(to right, rgba(255,255,255,.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,.05) 1px, transparent 1px);
+      background-size: 70px 70px;
+      opacity:.08;
+      pointer-events:none;
+      mask-image: radial-gradient(circle at 40% 30%, black 40%, transparent 75%);
+    }
+
+    header{
+      height:62px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:0 18px;
+      background: linear-gradient(180deg, rgba(14,22,40,.88), rgba(10,16,30,.66));
+      border-bottom:1px solid rgba(46,74,122,.55);
+      backdrop-filter: blur(14px);
+      position:relative;
+      z-index:50;
+    }
+    header .left{
+      display:flex; align-items:center; gap:10px;
+      font-weight:800;
+      letter-spacing:.5px;
+      text-shadow: 0 0 18px rgba(0,240,255,.18);
+      white-space:nowrap;
+    }
+    .logoDot{
+      width:10px;height:10px;border-radius:50%;
+      background: radial-gradient(circle, var(--accent), rgba(0,240,255,.1));
+      box-shadow: 0 0 18px rgba(0,240,255,.55);
+    }
+    header .center{
+      position:absolute;
+      left:50%;
+      transform:translateX(-50%);
+      font-size:14px;
+      color:var(--muted);
+      white-space:nowrap;
+      text-align:center;
+      pointer-events:none;
+    }
+    header .right{ min-width:160px; }
+
+    #app{
+      height:calc(100% - 62px);
+      display:flex;
+      flex-direction:column;
+    }
+
+    .main{
+      flex:1;
+      overflow:auto;
+      padding:28px 26px 42px;
+    }
+
+    .topHint{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:10px;
+      margin-bottom:18px;
+      opacity:.97;
+    }
+    .noticeBar{
+      width:60%;
+      min-width:520px;
+      max-width:1100px;
+      height:52px;
+      display:flex;
+      align-items:center;
+      overflow:hidden;
+      border:1px solid rgba(46,74,122,.55);
+      border-radius:999px;
+      background:rgba(12,18,35,.62);
+      box-shadow:0 0 18px rgba(0,240,255,.06);
+      padding:0 22px;
+    }
+    .noticeTrack{
+      display:inline-block;
+      white-space:nowrap;
+      font-size:28px;
+      font-weight:700;
+      color:#ff1e1e;
+      font-family: KaiTi, STKaiti, "Kaiti SC", serif;
+      animation: noticeMove 18s linear infinite;
+      will-change: transform;
+      min-width:max-content;
+    }
+    @keyframes noticeMove{
+      from{ transform:translateX(100%); }
+      to{ transform:translateX(-100%); }
+    }
+
+    .menuGrid{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap:16px;
+      margin-top:14px;
+    }
+
+    /* glass card with tilt */
+    .menuCard{
+      position:relative;
+      padding:18px 16px;
+      border-radius:var(--radius);
+      background: linear-gradient(145deg, rgba(18,28,52,.62), rgba(10,16,30,.42));
+      border:1px solid rgba(46,74,122,.62);
+      box-shadow: var(--shadow), var(--glow);
+      overflow:hidden;
+      cursor:pointer;
+      transform-style:preserve-3d;
+      transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+      min-height:132px;
+    }
+    .menuCard:hover{
+      border-color: rgba(0,240,255,.55);
+      box-shadow: 0 22px 70px rgba(0,0,0,.55), 0 0 42px rgba(0,240,255,.16), 0 0 95px rgba(124,77,255,.12);
+    }
+    .menuCard:before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: radial-gradient(600px 240px at var(--mx,50%) var(--my,30%), rgba(0,240,255,.25), transparent 60%),
+                  radial-gradient(500px 220px at calc(var(--mx,50%) + 10%) calc(var(--my,30%) + 10%), rgba(124,77,255,.18), transparent 60%);
+      opacity:.75;
+      pointer-events:none;
+      transition: opacity .18s ease;
+    }
+    .menuCard:hover:before{ opacity:1; }
+    .menuCard .title{
+      font-weight:900;
+      letter-spacing:.2px;
+      font-size:16px;
+      margin-bottom:7px;
+      transform: translateZ(26px);
+    }
+    .menuCard .desc{
+      font-size:12.5px;
+      color:var(--muted);
+      line-height:1.45;
+      transform: translateZ(18px);
+    }
+    .menuCard .tag{
+      position:absolute;
+      right:12px; top:12px;
+      font-size:11px;
+      color:#bfefff;
+      padding:6px 9px;
+      border-radius:999px;
+      border:1px solid rgba(0,240,255,.45);
+      background:rgba(0,240,255,.09);
+      transform: translateZ(28px);
+    }
+
+    /* 3D button */
+    .btn{
+      position:relative;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      border-radius:12px;
+      padding:9px 12px;
+      border:1px solid rgba(46,74,122,.75);
+      background: linear-gradient(180deg, rgba(20,35,62,.9), rgba(14,22,40,.82));
+      color:var(--text);
+      cursor:pointer;
+      user-select:none;
+      transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+      box-shadow: 0 10px 22px rgba(0,0,0,.35);
+      overflow:hidden;
+    }
+    .btn:before{
+      content:"";
+      position:absolute; inset:0;
+      background: radial-gradient(200px 120px at var(--bx,50%) var(--by,50%), rgba(0,240,255,.28), transparent 60%);
+      opacity:.65;
+      pointer-events:none;
+      transition: opacity .12s ease;
+    }
+    .btn:hover{
+      transform: translateY(-2px);
+      border-color: rgba(0,240,255,.55);
+      box-shadow: 0 14px 30px rgba(0,0,0,.45), 0 0 20px rgba(0,240,255,.12);
+    }
+    .btn:active{
+      transform: translateY(0px) scale(.99);
+    }
+    .btn.secondary{
+      border-color: rgba(124,77,255,.55);
+    }
+    .btn.ghost{
+      background:rgba(9,14,26,.35);
+      box-shadow:none;
+    }
+    .btn.danger{ border-color: rgba(255,77,79,.6); }
+    .btn.good{ border-color: rgba(0,255,157,.6); }
+
+    .btnRow{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+
+    /* toast */
+    #toasts{
+      position:fixed;
+      right:16px;
+      top:74px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      z-index:2000;
+      pointer-events:none;
+    }
+    .toast{
+      pointer-events:auto;
+      width:min(360px, calc(100vw - 28px));
+      border-radius:14px;
+      padding:10px 12px;
+      background: linear-gradient(180deg, rgba(18,28,52,.86), rgba(10,16,30,.76));
+      border:1px solid rgba(46,74,122,.62);
+      box-shadow: 0 18px 50px rgba(0,0,0,.55);
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      animation: toastIn .18s ease;
+      position:relative;
+      overflow:hidden;
+    }
+    .toast:before{
+      content:"";
+      position:absolute; left:0; top:0; bottom:0; width:4px;
+      background: var(--accent);
+      opacity:.95;
+    }
+    .toast .tTitle{ font-weight:900; font-size:13px; }
+    .toast .tMsg{ color:var(--muted); font-size:12.5px; margin-top:2px; line-height:1.35; }
+    .toast .tClose{ margin-left:auto; }
+    .toast .tClose button{
+      all:unset;
+      cursor:pointer;
+      color:var(--muted);
+      padding:6px 8px;
+      border-radius:10px;
+      border:1px solid rgba(46,74,122,.5);
+      background:rgba(9,14,26,.35);
+    }
+    .toast .tClose button:hover{ color:var(--text); border-color: rgba(0,240,255,.4); }
+    @keyframes toastIn{ from{opacity:0; transform:translateY(-6px);} to{opacity:1; transform:translateY(0);} }
+
+    /* Panel / Modal */
+    #panelLayer{
+      position:fixed; inset:0;
+      z-index:1000;
+      pointer-events:none;
+    }
+    .panel{
+      pointer-events:auto;
+      position:absolute;
+      width: 760px;
+      height: 520px;
+      min-width: 340px;
+      min-height: 220px;
+      border-radius: var(--radius);
+      background: linear-gradient(145deg, rgba(18,28,52,.70), rgba(10,16,30,.56));
+      border:1px solid rgba(46,74,122,.66);
+      box-shadow: var(--shadow), var(--glow);
+      backdrop-filter: blur(14px);
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+    }
+    .panel.max{
+      left:12px !important;
+      top:74px !important;
+      width: calc(100vw - 24px) !important;
+      height: calc(100vh - 86px) !important;
+    }
+    .panelHeader{
+      height:44px;
+      padding:0 10px 0 12px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      border-bottom:1px solid rgba(46,74,122,.55);
+      background: linear-gradient(180deg, rgba(14,22,40,.86), rgba(10,16,30,.65));
+      cursor:grab;
+      user-select:none;
+    }
+    .panelHeader:active{ cursor:grabbing; }
+    .panelTitle{
+      font-weight:900;
+      letter-spacing:.2px;
+      font-size:13.5px;
+      display:flex; align-items:center; gap:8px;
+      white-space:nowrap;
+    }
+    .miniDot{
+      width:8px; height:8px; border-radius:50%;
+      background: radial-gradient(circle, var(--accent), rgba(0,240,255,.12));
+      box-shadow: 0 0 14px rgba(0,240,255,.45);
+    }
+    .panelTools{ display:flex; gap:8px; }
+    .iconBtn{
+      width:34px; height:30px;
+      border-radius:10px;
+      border:1px solid rgba(46,74,122,.62);
+      background: rgba(9,14,26,.35);
+      color:var(--text);
+      cursor:pointer;
+    }
+    .iconBtn:hover{
+      border-color: rgba(0,240,255,.5);
+      box-shadow: 0 0 12px rgba(0,240,255,.12);
+    }
+
+    .panelBody{
+      position:relative;
+      flex:1;
+      padding:12px;
+      overflow:auto;
+    }
+    /* resize handle */
+    .resizeHandle{
+      position:absolute;
+      right:6px; bottom:6px;
+      width:18px; height:18px;
+      border-right:2px solid rgba(0,240,255,.45);
+      border-bottom:2px solid rgba(0,240,255,.45);
+      border-radius:2px;
+      cursor:nwse-resize;
+      opacity:.8;
+    }
+
+    .section{
+      border:1px solid rgba(46,74,122,.55);
+      background: rgba(9,14,26,.35);
+      border-radius:var(--radius2);
+      padding:12px;
+      margin-bottom:12px;
+    }
+    .section h3{
+      margin:0 0 10px;
+      font-size:13px;
+      letter-spacing:.2px;
+    }
+    label{ font-size:12.5px; color:var(--muted); }
+    input[type="text"], input[type="url"], input[type="number"], select, textarea{
+      width:100%;
+      margin-top:6px;
+      padding:9px 10px;
+      border-radius:12px;
+      border:1px solid rgba(46,74,122,.62);
+      background: rgba(12,18,35,.65);
+      color:var(--text);
+      outline:none;
+    }
+    textarea{ min-height:120px; resize:vertical; }
+    .grid2{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
+    .grid3{ display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; }
+    .mono{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size:12px;
+      white-space:pre-wrap;
+      word-break:break-word;
+      color:#d9e8ff;
+    }
+
+    .tableWrap{
+      overflow:auto;
+      border-radius:12px;
+      border:1px solid rgba(46,74,122,.55);
+      background: rgba(12,18,35,.55);
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:12px;
+      min-width: 640px;
+    }
+    th,td{
+      padding:8px 10px;
+      border-bottom:1px solid rgba(46,74,122,.35);
+      color:#eaf3ff;
+    }
+    th{
+      position:sticky; top:0;
+      background: rgba(14,22,40,.92);
+      color:#bfefff;
+      text-align:left;
+      z-index:2;
+    }
+
+    .footerNote{
+      margin-top:10px;
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.5;
+    }
+
+    .kpiRow{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap:10px;
+      margin-top:10px;
+    }
+    .kpi{
+      border:1px solid rgba(46,74,122,.55);
+      background: rgba(12,18,35,.55);
+      border-radius:14px;
+      padding:10px;
+    }
+    .kpi .k{ color:var(--muted); font-size:12px; }
+    .kpi .v{ font-weight:900; font-size:16px; margin-top:6px; }
+
+    /* mobile */
+    @media (max-width: 768px){
+      .main{ padding:18px 14px 30px; }
+      .grid2,.grid3{ grid-template-columns:1fr; }
+      .panel{ width: calc(100vw - 24px); height: 70vh; }
+      .panelHeader{ cursor:default; }
+      header .center{ position:static; transform:none; margin:0 auto; font-size:12px; }
+      .noticeBar{ width:100%; min-width:0; }
+      .noticeTrack{ font-size:22px; }
+    }
+  </style>
 </head>
-<body>
 
+<body>
 <header>
-  <div class="title">运动训练对机体机能的影响实验管理系统</div>
-  <div class="subtitle">指导教师/程序设计：杜朝晖  重庆工商大学</div>
+  <div class="left">
+    <div class="logoDot"></div>
+    <div>运动训练对机体机能的影响实验管理系统</div>
+  </div>
+  <div class="center">指导教师 / 程序开发：杜朝晖　重庆工商大学</div><div class="right"></div>
 </header>
 
-<main id="mainMenu" class="menu-grid">
-  <div class="menu-card" data-module="learning">A 学习区</div>
-  <div class="menu-card" data-module="proposal">B 实验方案设计器</div>
-  <div class="menu-card" data-module="experiment">C 数据录入与进度</div>
-  <div class="menu-card" data-module="analysis">D 数据可视化与统计分析</div>
-  <div class="menu-card" data-module="report">E 实验报告生成</div>
-  <div class="menu-card" data-module="data">F 数据管理</div>
-</main>
+<div id="app">
+  <div class="main">
+    <div class="topHint">
+      <div class="noticeBar">
+        <div class="noticeTrack" id="courseNoticeTrack">课程通告：请同学们在3月25前在本系统提交实验设计报告，每个组一份。</div>
+      </div>
+    </div>
 
-<div id="moduleContainer"></div>
+    <div class="menuGrid" id="menuGrid">
+      <div class="menuCard" data-module="A">
+        <div class="tag">A</div>
+        <div class="title">学习区</div>
+        <div class="desc">PDF / 视频 / 小测：window.open 快速跳转</div>
+      </div>
+      <div class="menuCard" data-module="B">
+        <div class="tag">B</div>
+        <div class="title">实验方案设计</div>
+        <div class="desc">经典样例PDF + 分步向导 + 预览确认 + 版本管理 + 提交链接</div>
+      </div>
+      <div class="menuCard" data-module="C">
+        <div class="tag">C</div>
+        <div class="title">数据导入与 AI 分析</div>
+        <div class="desc">DeepSeek API 接入 + Excel 导入确认 + 问题分析 + 指标统计与可视化</div>
+      </div>
+      <div class="menuCard" data-module="D">
+        <div class="tag">D</div>
+        <div class="title">报告提交</div>
+        <div class="desc">初稿修改 AI 辅助 + Word 浏览建议 + 问卷星嵌入式提交</div>
+      </div>
+    </div>
+  </div>
+</div>
 
-<div id="toast"></div>
+<div id="panelLayer"></div>
+<div id="toasts"></div>
 
-<script src="app.js"></script>
+<input id="filePick" type="file" class="hidden" />
+<input id="filePickJSON" type="file" class="hidden" accept="application/json"/>
+
+<script>
+/* ===========================
+   Storage
+=========================== */
+const LS_KEYS = {
+  planVersions: "exp.plan.versions.v2",
+  planDraft: "exp.plan.draft.v2",
+  dataset: "exp.dataset.v2",
+  apiConfig: "exp.api.config.v1",
+  savedRuns: "exp.analysis.savedRuns.v2",
+  experimentImproveReport: "exp.experiment.improve.report.v1",
+  reportDraftDoc: "exp.report.draft.doc.v1",
+  reportSubmitDoc: "exp.report.submit.doc.v1",
+  uiPanels: "exp.ui.panels.v2", // remembered panel position/size
+  links: "exp.links.v2"
+};
+
+function lsGet(key, fallback){
+  try{
+    const v = localStorage.getItem(key);
+    return v ? JSON.parse(v) : fallback;
+  }catch{
+    return fallback;
+  }
+}
+function lsSet(key, val){
+  localStorage.setItem(key, JSON.stringify(val));
+}
+function uid(prefix="id"){
+  return prefix+"_"+Math.random().toString(16).slice(2)+Date.now().toString(16);
+}
+
+/* ===========================
+   Toast
+=========================== */
+function toast(type, title, msg, timeout=3200){
+  const colors = { success:"var(--good)", warn:"var(--warn)", error:"var(--bad)", info:"var(--accent)" };
+  const el = document.createElement("div");
+  el.className = "toast";
+  el.style.setProperty("--accent", colors[type] || "var(--accent)");
+  el.innerHTML = `
+    <div>
+      <div class="tTitle">${escapeHtml(title || "提示")}</div>
+      <div class="tMsg">${escapeHtml(msg || "")}</div>
+    </div>
+    <div class="tClose"><button title="关闭">✕</button></div>
+  `;
+  el.querySelector("button").onclick = () => el.remove();
+  document.getElementById("toasts").appendChild(el);
+  if(timeout){
+    setTimeout(()=>{ if(el.isConnected) el.remove(); }, timeout);
+  }
+}
+function escapeHtml(s){
+  return String(s ?? "").replace(/[&<>"']/g, (c)=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+
+/* ===========================
+   Button hover highlight
+=========================== */
+document.addEventListener("mousemove",(e)=>{
+  document.querySelectorAll(".btn").forEach(b=>{
+    const r=b.getBoundingClientRect();
+    const x=(e.clientX-r.left)/r.width*100;
+    const y=(e.clientY-r.top)/r.height*100;
+    b.style.setProperty("--bx", x+"%");
+    b.style.setProperty("--by", y+"%");
+  });
+});
+
+/* ===========================
+   Tilt cards (desktop)
+=========================== */
+const isMobile = matchMedia("(max-width: 768px)").matches || "ontouchstart" in window;
+document.querySelectorAll(".menuCard").forEach(card=>{
+  card.addEventListener("mousemove",(e)=>{
+    const rect = card.getBoundingClientRect();
+    const mx = ((e.clientX-rect.left)/rect.width)*100;
+    const my = ((e.clientY-rect.top)/rect.height)*100;
+    card.style.setProperty("--mx", mx+"%");
+    card.style.setProperty("--my", my+"%");
+    if(!isMobile){
+      const cx = (e.clientX - (rect.left+rect.width/2)) / rect.width;
+      const cy = (e.clientY - (rect.top+rect.height/2)) / rect.height;
+      const rx = (-cy*6).toFixed(2);
+      const ry = (cx*8).toFixed(2);
+      card.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) translateY(-2px)`;
+    }
+  });
+  card.addEventListener("mouseleave",()=>{
+    card.style.transform = "";
+    card.style.setProperty("--mx","50%");
+    card.style.setProperty("--my","30%");
+  });
+});
+
+/* ===========================
+   Unified Panel System
+   - draggable (desktop)
+   - resizable (custom handle)
+   - fullscreen / restore / close
+   - remembers last position/size (optional -> enabled)
+=========================== */
+const panelLayer = document.getElementById("panelLayer");
+let topZ = 1100;
+
+function loadPanelMem(){
+  return lsGet(LS_KEYS.uiPanels, {});
+}
+function savePanelMem(mem){
+  lsSet(LS_KEYS.uiPanels, mem);
+}
+
+function openPanel({ id, title, html, width=760, height=520, left=80, top=92, rememberKey=null }){
+  const panelId = id || uid("panel");
+  const mem = loadPanelMem();
+  if(rememberKey && mem[rememberKey]){
+    const m = mem[rememberKey];
+    width = m.width ?? width;
+    height = m.height ?? height;
+    left = m.left ?? left;
+    top = m.top ?? top;
+  }
+
+  const el = document.createElement("div");
+  el.className = "panel";
+  el.dataset.pid = panelId;
+  el.style.left = left+"px";
+  el.style.top = top+"px";
+  el.style.width = width+"px";
+  el.style.height = height+"px";
+  el.style.zIndex = (++topZ);
+
+  el.innerHTML = `
+    <div class="panelHeader">
+      <div class="panelTitle"><span class="miniDot"></span><span>${escapeHtml(title)}</span></div>
+      <div class="panelTools">
+        <button class="iconBtn" data-act="restore" title="还原">⤢</button>
+        <button class="iconBtn" data-act="max" title="全屏">▢</button>
+        <button class="iconBtn" data-act="close" title="关闭">✕</button>
+      </div>
+    </div>
+    <div class="panelBody">
+      ${html}
+      <div class="resizeHandle" title="拖拽缩放"></div>
+    </div>
+  `;
+
+  panelLayer.appendChild(el);
+  focusPanel(el);
+
+  const header = el.querySelector(".panelHeader");
+  const body = el.querySelector(".panelBody");
+  const handle = el.querySelector(".resizeHandle");
+
+  // actions
+  const act = (name)=>{
+    if(name==="close"){
+      persist();
+      el.remove();
+      return;
+    }
+    if(name==="max"){
+      if(!el.classList.contains("max")){
+        // store before max
+        el.dataset.prev = JSON.stringify({
+          left: el.style.left, top: el.style.top,
+          width: el.style.width, height: el.style.height
+        });
+        el.classList.add("max");
+      }
+      persist(); // save state (optional)
+      return;
+    }
+    if(name==="restore"){
+      if(el.classList.contains("max")){
+        const prev = safeJson(el.dataset.prev, null);
+        el.classList.remove("max");
+        if(prev){
+          el.style.left = prev.left;
+          el.style.top = prev.top;
+          el.style.width = prev.width;
+          el.style.height = prev.height;
+        }
+      }
+      persist();
+      return;
+    }
+  };
+  el.querySelectorAll(".iconBtn").forEach(btn=>{
+    btn.onclick = (ev)=>{
+      ev.stopPropagation();
+      act(btn.dataset.act);
+    };
+  });
+
+  // focus
+  el.addEventListener("mousedown",()=>focusPanel(el));
+
+  // drag (desktop only)
+  if(!isMobile){
+    let dragging=false, sx=0, sy=0, sl=0, st=0;
+    header.addEventListener("mousedown",(e)=>{
+      if(el.classList.contains("max")) return;
+      // ignore clicks on buttons
+      if(e.target.closest(".panelTools")) return;
+      dragging=true;
+      sx=e.clientX; sy=e.clientY;
+      sl=parseFloat(el.style.left); st=parseFloat(el.style.top);
+      document.addEventListener("mousemove", onMove);
+      document.addEventListener("mouseup", onUp);
+    });
+    function onMove(e){
+      if(!dragging) return;
+      const dx=e.clientX-sx, dy=e.clientY-sy;
+      el.style.left = Math.max(6, sl+dx) + "px";
+      el.style.top = Math.max(74, st+dy) + "px";
+    }
+    function onUp(){
+      dragging=false;
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onUp);
+      persist();
+    }
+  }
+
+  // resize with handle (works desktop/mobile)
+  let resizing=false, rsx=0, rsy=0, rw=0, rh=0;
+  handle.addEventListener("mousedown",(e)=>{
+    if(el.classList.contains("max")) return;
+    resizing=true;
+    rsx=e.clientX; rsy=e.clientY;
+    const r = el.getBoundingClientRect();
+    rw=r.width; rh=r.height;
+    document.addEventListener("mousemove", rMove);
+    document.addEventListener("mouseup", rUp);
+    e.preventDefault();
+    e.stopPropagation();
+  });
+  function rMove(e){
+    if(!resizing) return;
+    const dx=e.clientX-rsx, dy=e.clientY-rsy;
+    el.style.width = Math.max(340, rw+dx)+"px";
+    el.style.height = Math.max(220, rh+dy)+"px";
+  }
+  function rUp(){
+    resizing=false;
+    document.removeEventListener("mousemove", rMove);
+    document.removeEventListener("mouseup", rUp);
+    persist();
+  }
+
+  // persist on scroll/blur events optional
+  const persist = ()=>{
+    if(!rememberKey) return;
+    const m = loadPanelMem();
+    // do not persist when max? we persist actual style; ok.
+    m[rememberKey] = {
+      left: parseFloat(el.style.left) || left,
+      top: parseFloat(el.style.top) || top,
+      width: parseFloat(el.style.width) || width,
+      height: parseFloat(el.style.height) || height,
+      max: el.classList.contains("max")
+    };
+    savePanelMem(m);
+  };
+
+  // apply saved "max" state
+  if(rememberKey && mem[rememberKey] && mem[rememberKey].max){
+    el.dataset.prev = JSON.stringify({
+      left: el.style.left, top: el.style.top,
+      width: el.style.width, height: el.style.height
+    });
+    el.classList.add("max");
+  }
+
+  // allow inner elements to request panel actions
+  el.panelApi = { act, persist, el, body };
+  return el;
+}
+
+function focusPanel(el){
+  el.style.zIndex = (++topZ);
+}
+
+/* ===========================
+   Links defaults (user can edit)
+=========================== */
+const SAMPLE_REF_DEFAULTS = {
+  sampleRef1: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A1%EF%BC%9A%E6%8E%A2%E7%A9%B6%E9%95%BF%E8%B7%91%E5%AF%B9%E4%BA%BA%E4%BD%93%E5%BF%83%E8%82%BA%E5%8A%9F%E8%83%BD%E7%9A%84%E5%BD%B1%E5%93%8D.pdf",
+  sampleRef2: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A2%EF%BC%9A%E5%8A%9F%E7%8E%87%E8%87%AA%E8%A1%8C%E8%BD%A6%E8%80%90%E5%8A%9B%E8%AE%AD%E7%BB%83%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A.pdf"
+};
+
+function normalizeSampleRefLink(url, key){
+  const raw = String(url || '').trim();
+  if(!raw) return SAMPLE_REF_DEFAULTS[key] || raw;
+  const lower = raw.toLowerCase();
+  if(lower.includes('docs.google.com') || lower.includes('drive.google.com') || lower.includes('googleusercontent.com')){
+    return SAMPLE_REF_DEFAULTS[key] || raw;
+  }
+  return raw;
+}
+
+function getLinks(){
+  const defaults = {
+  // A 学习区（固定）
+  learnPpt: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/%E7%AC%AC07%E7%AB%A0%20%E5%AE%9E%E9%AA%8C%E7%A0%94%E7%A9%B6%E6%B3%95%28%E8%87%AA%E5%AD%A6%E8%BE%85%E5%8A%A9%E6%9D%90%E6%96%99%29.ppt",
+  learnWord: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/%E5%93%88%E4%BD%9B%E5%8F%B0%E9%98%B6%E5%AE%9E%E9%AA%8C.doc",
+  video1: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/%E6%9C%80%E5%A4%A7%E6%91%84%E6%B0%A7%E9%87%8F%E6%B5%8B%E8%AF%95%EF%BC%88%E8%A7%86%E9%A2%91%EF%BC%89.mp4",
+  video2: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/PWC170%E6%9C%BA%E8%83%BD%E8%AF%95%E9%AA%8C%EF%BC%88%E8%A7%86%E9%A2%91%EF%BC%89.mp4",
+  video3: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/%E8%82%BA%E9%80%9A%E6%B0%94%E5%8A%9F%E8%83%BD%E7%9A%84%E6%B5%8B%E5%AE%9A%E4%B8%8E%E8%AF%84%E5%AE%9A%EF%BC%88%E8%A7%86%E9%A2%91%EF%BC%89.mp4",
+  video4: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/%E9%AA%A8%E5%AF%86%E5%BA%A6%E6%A3%80%E6%9F%A5%E4%BB%AA%E5%99%A8%E6%93%8D%E4%BD%9C.mp4",
+  video5: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/%E6%82%AC%E5%90%8A%E5%BA%B7%E5%A4%8D%E7%B3%BB%E7%BB%9F.mp4",
+  video6: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/%E8%8E%B7%E5%8F%96Deepseek%20%20%E5%AF%86%E9%92%A5%EF%BC%88API%20key%EF%BC%89.mp4",
+
+ // B 方案：样例PDF + 提交链接
+    samplePdf: "https://example.com/sample.pdf",
+    planSubmit: "https://v.wjx.cn/vm/e0hVQ0D.aspx",
+    designSubmit: "https://v.wjx.cn/vm/e0hVQ0D.aspx",
+    sampleRef1: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A1%EF%BC%9A%E6%8E%A2%E7%A9%B6%E9%95%BF%E8%B7%91%E5%AF%B9%E4%BA%BA%E4%BD%93%E5%BF%83%E8%82%BA%E5%8A%9F%E8%83%BD%E7%9A%84%E5%BD%B1%E5%93%8D.pdf",
+    sampleRef2: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A2%EF%BC%9A%E5%8A%9F%E7%8E%87%E8%87%AA%E8%A1%8C%E8%BD%A6%E8%80%90%E5%8A%9B%E8%AE%AD%E7%BB%83%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A.pdf",
+    sampleRef3: "",
+    sampleRef4: "",
+
+    // C 模板下载（腾讯云文件）
+    excelTemplate: "https://example.com/template.xlsx",
+
+    // E 报告模板下载（腾讯云） + 提交链接
+    reportTemplate: "https://example.com/report-template.docx",
+    reportSubmit: "https://tp.wjx.top/vm/Yr3euZW.aspx"
+  };
+  const v = lsGet(LS_KEYS.links, null);
+  if(!v){
+    lsSet(LS_KEYS.links, defaults);
+    return defaults;
+  }
+  const merged = { ...defaults, ...v };
+  merged.sampleRef1 = normalizeSampleRefLink(merged.sampleRef1, 'sampleRef1');
+  merged.sampleRef2 = normalizeSampleRefLink(merged.sampleRef2, 'sampleRef2');
+  if(merged.sampleRef1 !== v.sampleRef1 || merged.sampleRef2 !== v.sampleRef2){
+    lsSet(LS_KEYS.links, merged);
+  }
+  return merged;
+}
+function setLinks(next){
+  lsSet(LS_KEYS.links, next);
+}
+
+/* ===========================
+   Menu click
+=========================== */
+document.getElementById("menuGrid").addEventListener("click",(e)=>{
+  const card = e.target.closest(".menuCard");
+  if(!card) return;
+  const m = card.dataset.module;
+  if(m==="A") openLearning();
+  if(m==="B") openPlanDesigner();
+  if(m==="C") openDataAIAnalysis();
+  if(m==="D") openReport();
+});
+
+/* ===========================
+   A Learning
+=========================== */
+function openLearning(){
+  const links = getLinks();
+
+  const items = [
+    { code:"A", title:"实验研究方法自学材料PPT", type:"ppt", url: links.learnPpt },
+    { code:"B", title:"哈佛台阶实验介绍（Word）", type:"word", url: links.learnWord },
+    { code:"C", title:"视频1：最大摄氧量的测定", type:"video", url: links.video1 },
+    { code:"D", title:"视频2：PWC170技能评定", type:"video", url: links.video2 },
+    { code:"E", title:"视频3：肺通气机能的评定", type:"video", url: links.video3 },
+    { code:"F", title:"视频4：超声骨密度测定仪器的使用", type:"video", url: links.video4 },
+    { code:"G", title:"视频5：悬吊康复系统简介", type:"video", url: links.video5 },
+    { code:"H", title:"视频6：Deepseek密钥（key）的获取", type:"video", url: links.video6 },
+  ];
+
+  const rowHtml = items.map(it => `
+    <div class="section learnRow" data-code="${escapeHtml(it.code)}"
+         style="display:flex;align-items:center;gap:12px;cursor:pointer;transition:.15s;border-color:rgba(46,74,122,.55);">
+      <div style="min-width:40px;height:32px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+                  border:1px solid rgba(0,240,255,.45);background:rgba(0,240,255,.08);color:#bfefff;font-weight:900;">
+        ${escapeHtml(it.code)}
+      </div>
+      <div style="flex:1;">
+        <div style="font-weight:900;font-size:13.5px;">${escapeHtml(it.title)}</div>
+        <div class="footerNote" style="margin-top:4px;opacity:.9;">点击打开预览窗口（支持全屏/缩放/拖拽）</div>
+      </div>
+      <div style="color:var(--muted);font-size:12px;">预览 ▶</div>
+    </div>
+  `).join("");
+
+  const p = openPanel({
+    title:"A 学习区（材料与视频预览）",
+    rememberKey:"module.A",
+    width: 920, height: 640, left: 70, top: 90,
+    html: `
+      <div class="section">
+        <h3>学习资源（点击条目预览）</h3>
+        <div class="footerNote">
+          - PPT/Word：使用 Office 在线预览（无需服务器）。<br/>
+          - 视频：内嵌播放器预览。<br/>
+        </div>
+      </div>
+      ${rowHtml}
+      <div class="footerNote" style="margin-top:10px;">
+        若个别浏览器拦截 Office 预览，可在预览窗口中使用浏览器的“在新标签页打开”功能。
+      </div>
+    `
+  });
+
+  p.querySelectorAll(".learnRow").forEach(row=>{
+    row.addEventListener("mouseenter", ()=>{
+      row.style.borderColor = "rgba(0,240,255,.55)";
+      row.style.boxShadow = "0 0 16px rgba(0,240,255,.10)";
+      row.style.transform = "translateY(-1px)";
+    });
+    row.addEventListener("mouseleave", ()=>{
+      row.style.borderColor = "rgba(46,74,122,.55)";
+      row.style.boxShadow = "";
+      row.style.transform = "";
+    });
+
+    row.onclick = ()=>{
+      const code = row.dataset.code;
+      const it = items.find(x=>x.code===code);
+      if(!it) return;
+      openLearningPreview(it);
+    };
+  });
+}
+
+function openLearningPreview(item){
+  const url = (item.url || "").trim();
+  if(!url){
+    toast("error","链接缺失", "该资源没有配置链接");
+    return;
+  }
+
+  // Office 在线预览（PPT/Word）
+  const officeEmbed = (srcUrl)=> {
+    const u = encodeURIComponent(srcUrl);
+    return `https://view.officeapps.live.com/op/embed.aspx?src=${u}`;
+  };
+
+  let body = "";
+  if(item.type==="video"){
+    body = `
+      <div class="section">
+        <h3>${escapeHtml(item.code)} · ${escapeHtml(item.title)}</h3>
+        <video src="${escapeHtml(url)}" controls style="width:100%;max-height:520px;border-radius:12px;border:1px solid rgba(46,74,122,.55);background:rgba(0,0,0,.35)"></video>
+        <div class="footerNote">若无法播放，请确认链接可公网访问或尝试在新标签页打开视频链接。</div>
+      </div>
+    `;
+  }else if(item.type==="ppt" || item.type==="word"){
+    const embedUrl = officeEmbed(url);
+    body = `
+      <div class="section">
+        <h3>${escapeHtml(item.code)} · ${escapeHtml(item.title)}</h3>
+        <iframe src="${embedUrl}"
+          style="width:100%;height:560px;border-radius:12px;border:1px solid rgba(46,74,122,.55);background:rgba(0,0,0,.25)"></iframe>
+        <div class="footerNote">
+          说明：此处为 Office 在线预览。若预览失败，可在浏览器地址栏直接打开原始链接。
+        </div>
+      </div>
+    `;
+  }else{
+    body = `<div class="mono" style="color:var(--muted);">未知类型，无法预览。</div>`;
+  }
+
+  openPanel({
+    title:`预览 · ${item.code}`,
+    rememberKey:`learn.preview.${item.code}`,
+    width: 980, height: 720, left: 90, top: 82,
+    html: body
+  });
+}
+/* ===========================
+   B Plan Designer (reference topics + AI assisted design + versions)
+=========================== */
+const EXPERIMENT_TOPICS = [
+  {id:"t1", no:1, name:"4周慢跑训练对心肺功能的影响", duration:"4周", expType:"训练干预", training:"每周3次，20－30分钟慢跑", indicators:"心率、血压、肺活量、台阶试验", equipment:"心率设备、血压计、肺活量计、台阶试验", difficulty:"★★★★★"},
+  {id:"t2", no:2, name:"4周快走训练对心血管机能的影响", duration:"4周", expType:"训练干预", training:"每周4次，30分钟快走", indicators:"心率、血压、主观感受", equipment:"心率、血压、RPE", difficulty:"★★★★"},
+  {id:"t3", no:3, name:"HIIT训练对心肺适应的影响", duration:"4周", expType:"训练干预", training:"间歇骑车或跑步", indicators:"心率、血压、肺活量、RPE", equipment:"功率自行车、心率、血压、肺活量", difficulty:"★★★★★"},
+  {id:"t4", no:4, name:"功率自行车耐力训练对台阶试验成绩的影响", duration:"4周", expType:"训练干预", training:"每周3次骑车训练", indicators:"台阶试验、心率、血压", equipment:"功率自行车、台阶试验、心率、血压", difficulty:"★★★★★"},
+  {id:"t5", no:5, name:"8周有氧训练对静息心率的影响", duration:"8周", expType:"训练干预", training:"慢跑/骑车训练", indicators:"静息心率、血压、RPE", equipment:"心率、血压", difficulty:"★★★★★"},
+  {id:"t6", no:6, name:"不同训练强度对运动后恢复心率的影响", duration:"4周", expType:"对比实验", training:"低强度、中高强度训练", indicators:"即刻心率、恢复1/3/5分钟心率", equipment:"心率、秒表", difficulty:"★★★★★"},
+  {id:"t7", no:7, name:"4周训练对肺活量的影响", duration:"4周", expType:"训练干预", training:"跑步或骑车训练", indicators:"肺活量、心率", equipment:"肺活量计、心率", difficulty:"★★★★★"},
+  {id:"t8", no:8, name:"有氧训练对体重和皮脂的影响", duration:"6周", expType:"训练干预", training:"每周3－4次有氧训练", indicators:"体重、皮脂、心率", equipment:"身高体重仪、皮脂仪、心率", difficulty:"★★★★"},
+  {id:"t9", no:9, name:"有氧训练对BMI和体脂相关指标的影响", duration:"6周", expType:"训练干预", training:"快走或慢跑", indicators:"体重、BMI、皮脂", equipment:"身高体重仪、皮脂仪", difficulty:"★★★"},
+  {id:"t10", no:10, name:"不同恢复方式对运动后主观疲劳的影响", duration:"4周", expType:"对比实验", training:"静息恢复 vs 轻活动恢复", indicators:"心率、RPE、血压", equipment:"心率、血压、RPE", difficulty:"★★★★"},
+  {id:"t11", no:11, name:"运动疲劳对反应时的影响", duration:"4周", expType:"训练干预", training:"台阶试验或骑车至疲劳", indicators:"反应时、心率、RPE", equipment:"反应时仪、功率自行车/台阶试验、心率", difficulty:"★★★★★"},
+  {id:"t12", no:12, name:"不同强度运动后反应时变化比较", duration:"4周", expType:"对比实验", training:"低强度 vs 高强度运动", indicators:"反应时、心率", equipment:"反应时仪、功率自行车、心率", difficulty:"★★★★"},
+  {id:"t13", no:13, name:"短期耐力训练对闪光融合频率的影响", duration:"4周", expType:"训练干预", training:"有氧训练", indicators:"闪光融合频率、RPE、心率", equipment:"闪光融合频率仪、心率", difficulty:"★★★"},
+  {id:"t14", no:14, name:"运动疲劳对闪光融合频率的影响", duration:"4周", expType:"对比实验", training:"运动前后比较", indicators:"闪光融合频率、心率、RPE", equipment:"闪光融合频率仪、功率自行车、心率", difficulty:"★★★"},
+  {id:"t15", no:15, name:"功率自行车训练对下肢力量表现的影响", duration:"4周", expType:"训练干预", training:"骑车训练", indicators:"握力、台阶试验、RPE", equipment:"功率自行车、握力器、台阶试验", difficulty:"★★★"},
+  {id:"t16", no:16, name:"一般体能训练对握力水平的影响", duration:"4周", expType:"训练干预", training:"综合训练或循环训练", indicators:"握力、体重、RPE", equipment:"握力器、身高体重仪", difficulty:"★★★"},
+  {id:"t17", no:17, name:"训练前后握力与体重关系的变化", duration:"4周", expType:"对比实验", training:"训练前后测试", indicators:"握力、体重、BMI", equipment:"握力器、身高体重仪", difficulty:"★★★"},
+  {id:"t18", no:18, name:"不同运动方式对血压变化的影响", duration:"4周", expType:"对比实验", training:"跑步 vs 功率车", indicators:"运动前后血压、心率", equipment:"功率自行车、血压计、心率", difficulty:"★★★★"},
+  {id:"t19", no:19, name:"台阶训练对心肺耐力的影响", duration:"4周", expType:"训练干预", training:"每周3次台阶训练", indicators:"台阶试验、心率、肺活量", equipment:"台阶试验设备、心率、肺活量", difficulty:"★★★★"},
+  {id:"t20", no:20, name:"4周综合训练对身体机能的影响", duration:"4周", expType:"训练干预", training:"有氧+力量+柔韧结合", indicators:"心率、血压、肺活量、皮脂、握力、RPE", equipment:"多项设备", difficulty:"★★★★★"},
+  {id:"t21", no:21, name:"训练水平不同学生的机能指标比较", duration:"4周", expType:"相关研究", training:"对比不同训练水平学生", indicators:"心率、肺活量、握力、皮脂、台阶试验", equipment:"基础设备", difficulty:"★★★"},
+  {id:"t22", no:22, name:"骨密度与日常训练水平的关系", duration:"4周", expType:"相关研究", training:"问卷+测试", indicators:"骨密度、体重、BMI、训练水平", equipment:"骨密度仪、身高体重仪", difficulty:"★★★"}
+];
+
+function getPlanDraftDefault(){
+  return {
+    selectedTopicId:"",
+    designTopicId:"",
+    reportLink:"",
+    customNotes:"",
+    reportPlaceholder:""
+  };
+}
+
+function getPlanSampleItems(){
+  const links = getLinks();
+  return [
+    { key:"sampleRef1", label:"实验1：探究长跑对人体心肺功能的影响", url: links.sampleRef1 || "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A1%EF%BC%9A%E6%8E%A2%E7%A9%B6%E9%95%BF%E8%B7%91%E5%AF%B9%E4%BA%BA%E4%BD%93%E5%BF%83%E8%82%BA%E5%8A%9F%E8%83%BD%E7%9A%84%E5%BD%B1%E5%93%8D.pdf" },
+    { key:"sampleRef2", label:"实验报告2：功率自行车耐力训练实验报告", url: links.sampleRef2 || "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A2%EF%BC%9A%E5%8A%9F%E7%8E%87%E8%87%AA%E8%A1%8C%E8%BD%A6%E8%80%90%E5%8A%9B%E8%AE%AD%E7%BB%83%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A.pdf" },
+    { key:"sampleRef3", label:"其它报告", url: links.sampleRef3 || "" }
+  ];
+}
+
+function getTopicById(id){
+  return EXPERIMENT_TOPICS.find(x=>x.id===id) || null;
+}
+
+const DESIGN_REPORT_LINK_DEFAULTS = {
+  t1: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/1.%E6%85%A2%E8%B7%91%E8%AE%AD%E7%BB%83%E5%AF%B9%E5%BF%83%E8%82%BA%E5%8A%9F%E8%83%BD%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
+  t2: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/2.%E5%BF%AB%E8%B5%B0%E8%AE%AD%E7%BB%83%E5%AF%B9%E5%BF%83%E8%A1%80%E7%AE%A1%E6%9C%BA%E8%83%BD%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
+  t3: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/3.HIIT%E8%AE%AD%E7%BB%83%E5%AF%B9%E5%BF%83%E8%82%BA%E9%80%82%E5%BA%94%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
+  t4: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/4.%E5%8A%9F%E7%8E%87%E8%87%AA%E8%A1%8C%E8%BD%A6%E8%80%90%E5%8A%9B%E8%AE%AD%E7%BB%83%E5%AF%B9%E5%8F%B0%E9%98%B6%E8%AF%95%E9%AA%8C%E6%88%90%E7%BB%A9%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
+  t5: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/5.8%E5%91%A8%E6%9C%89%E6%B0%A7%E8%AE%AD%E7%BB%83%E5%AF%B9%E9%9D%99%E6%81%AF%E5%BF%83%E7%8E%87%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
+  t6: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/6.%E4%B8%8D%E5%90%8C%E8%AE%AD%E7%BB%83%E5%BC%BA%E5%BA%A6%E5%AF%B9%E8%BF%90%E5%8A%A8%E5%90%8E%E6%81%A2%E5%A4%8D%E5%BF%83%E7%8E%87%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
+  t7: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/7.4%E5%91%A8%E8%AE%AD%E7%BB%83%E5%AF%B9%E8%82%BA%E6%B4%BB%E9%87%8F%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
+  t8: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/8.%E6%9C%89%E6%B0%A7%E8%AE%AD%E7%BB%83%E5%AF%B9%E4%BD%93%E9%87%8D%E5%92%8C%E7%9A%AE%E8%84%82%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
+  t9: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/9.%E6%9C%89%E6%B0%A7%E8%AE%AD%E7%BB%83%E5%AF%B9BMI%E5%92%8C%E4%BD%93%E8%84%82%E7%9B%B8%E5%85%B3%E6%8C%87%E6%A0%87%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
+  t10: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/10.%E4%B8%8D%E5%90%8C%E6%81%A2%E5%A4%8D%E6%96%B9%E5%BC%8F%E5%AF%B9%E8%BF%90%E5%8A%A8%E5%90%8E%E4%B8%BB%E8%A7%82%E7%96%B2%E5%8A%B3%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
+  t11: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/11.%E8%BF%90%E5%8A%A8%E7%96%B2%E5%8A%B3%E5%AF%B9%E5%8F%8D%E5%BA%94%E6%97%B6%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
+  t12: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/12.%E4%B8%8D%E5%90%8C%E5%BC%BA%E5%BA%A6%E8%BF%90%E5%8A%A8%E5%90%8E%E5%8F%8D%E5%BA%94%E6%97%B6%E5%8F%98%E5%8C%96%E6%AF%94%E8%BE%83%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
+  t13: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/13.%E7%9F%AD%E6%9C%9F%E8%80%90%E5%8A%9B%E8%AE%AD%E7%BB%83%E5%AF%B9%E9%97%AA%E5%85%89%E8%9E%8D%E5%90%88%E9%A2%91%E7%8E%87%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
+  t14: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/14.%E8%BF%90%E5%8A%A8%E7%96%B2%E5%8A%B3%E5%AF%B9%E9%97%AA%E5%85%89%E8%9E%8D%E5%90%88%E9%A2%91%E7%8E%87%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
+  t15: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/15.%E5%8A%9F%E7%8E%87%E8%87%AA%E8%A1%8C%E8%BD%A6%E8%AE%AD%E7%BB%83%E5%AF%B9%E4%B8%8B%E8%82%A2%E5%8A%9B%E9%87%8F%E8%A1%A8%E7%8E%B0%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
+  t16: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/16.%E4%B8%80%E8%88%AC%E4%BD%93%E8%83%BD%E8%AE%AD%E7%BB%83%E5%AF%B9%E6%8F%A1%E5%8A%9B%E6%B0%B4%E5%B9%B3%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
+  t17: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/17.%E8%AE%AD%E7%BB%83%E5%89%8D%E5%90%8E%E6%8F%A1%E5%8A%9B%E4%B8%8E%E4%BD%93%E9%87%8D%E5%85%B3%E7%B3%BB%E7%9A%84%E5%8F%98%E5%8C%96%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
+  t18: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/18.%E4%B8%8D%E5%90%8C%E8%BF%90%E5%8A%A8%E6%96%B9%E5%BC%8F%E5%AF%B9%E8%A1%80%E5%8E%8B%E5%8F%98%E5%8C%96%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
+  t19: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/19.%E5%8F%B0%E9%98%B6%E8%AE%AD%E7%BB%83%E5%AF%B9%E5%BF%83%E8%82%BA%E8%80%90%E5%8A%9B%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
+  t20: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/20.4%E5%91%A8%E7%BB%BC%E5%90%88%E8%AE%AD%E7%BB%83%E5%AF%B9%E8%BA%AB%E4%BD%93%E6%9C%BA%E8%83%BD%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
+  t21: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/21.%E8%AE%AD%E7%BB%83%E6%B0%B4%E5%B9%B3%E4%B8%8D%E5%90%8C%E5%AD%A6%E7%94%9F%E7%9A%84%E6%9C%BA%E8%83%BD%E6%8C%87%E6%A0%87%E6%AF%94%E8%BE%83%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
+  t22: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/22.%E9%AA%A8%E5%AF%86%E5%BA%A6%E4%B8%8E%E6%97%A5%E5%B8%B8%E8%AE%AD%E7%BB%83%E6%B0%B4%E5%B9%B3%E7%9A%84%E5%85%B3%E7%B3%BB%E7%A0%94%E7%A9%B6%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx"
+};
+
+function getDesignReportMap(){
+  return { ...DESIGN_REPORT_LINK_DEFAULTS, ...lsGet("exp.design.report.links.v1", {}) };
+}
+function setDesignReportMap(v){
+  lsSet("exp.design.report.links.v1", { ...DESIGN_REPORT_LINK_DEFAULTS, ...(v || {}) });
+}
+
+function makePlanPlaceholderText(topic){
+  if(!topic) return "请先在左侧选择一个参考题目。";
+  return `实验项目名称：${topic.name}
+
+训练内容 / 干预方式：${topic.training}
+
+主要观察指标：${topic.indicators}
+
+所需设备：${topic.equipment}
+
+可基于以上内容继续修改和完善实验设计。`;
+}
+
+function renderTopicDetail(topic){
+  if(!topic){
+    return `<div class="mono" style="color:var(--muted);">请勾选一个参考题目了解一下。</div>`;
+  }
+  return `
+    <div class="tableWrap">
+      <table style="min-width:0;">
+        <tbody>
+          <tr><th style="width:160px;">实验项目名称</th><td>${escapeHtml(topic.name)}</td></tr>
+          <tr><th>建议实验时间</th><td>${escapeHtml(topic.duration || '—')}</td></tr>
+          <tr><th>实验类型</th><td>${escapeHtml(topic.expType || '—')}</td></tr>
+          <tr><th>训练内容 / 干预方式</th><td>${escapeHtml(topic.training)}</td></tr>
+          <tr><th>主要观察指标</th><td>${escapeHtml(topic.indicators)}</td></tr>
+          <tr><th>所需设备</th><td>${escapeHtml(topic.equipment)}</td></tr>
+          <tr><th>推荐程度</th><td style="letter-spacing:2px;">${escapeHtml(topic.difficulty || '—')}</td></tr>
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function getPreviewUrl(url){
+  const u = String(url || '').trim();
+  if(!u) return "";
+  const clean = u.split('#')[0].split('?')[0].toLowerCase();
+  const encoded = encodeURIComponent(u);
+  if(/\.(doc|docx|ppt|pptx|xls|xlsx)$/i.test(clean)){
+    return `https://view.officeapps.live.com/op/embed.aspx?src=${encoded}`;
+  }
+  if(/\.pdf$/i.test(clean)){
+    return u;
+  }
+  return u;
+}
+
+const PDF_BLOB_PREVIEW_CACHE = new Map();
+
+async function fetchPdfBlobPreviewUrl(url){
+  const src = String(url || '').trim();
+  if(!src) throw new Error('缺少 PDF 链接');
+  if(PDF_BLOB_PREVIEW_CACHE.has(src)) return PDF_BLOB_PREVIEW_CACHE.get(src);
+  const resp = await fetch(src, { mode:'cors', credentials:'omit' });
+  if(!resp.ok) throw new Error(`HTTP ${resp.status}`);
+  const blob = await resp.blob();
+  const blobUrl = URL.createObjectURL(blob);
+  PDF_BLOB_PREVIEW_CACHE.set(src, blobUrl);
+  return blobUrl;
+}
+
+function openPdfPreviewPanel(title, url){
+  const u = String(url || '').trim();
+  if(!u){
+    toast("warn","链接未设置","请先补充有效链接");
+    return;
+  }
+  const clean = u.split('#')[0].split('?')[0].toLowerCase();
+  const isPdf = /\.pdf$/i.test(clean);
+  const previewUrl = getPreviewUrl(u);
+  const p = openPanel({
+    title: escapeHtml(title || '文件预览'),
+    rememberKey: 'pdf.preview.panel',
+    width: 1040,
+    height: 760,
+    left: 68,
+    top: 72,
+    html: `
+      <div class="section" style="margin:0;display:flex;flex-direction:column;height:100%;">
+        <div class="btnRow" style="justify-content:flex-end;margin-bottom:10px;">
+          <div class="btn secondary" id="pdfPreviewDownload">下载</div>
+          <div class="btn ghost" id="pdfPreviewOpen">新标签页打开</div>
+          <div class="btn ghost" id="pdfPreviewClose">关闭</div>
+        </div>
+        <div id="pdfPreviewHost" style="flex:1;min-height:560px;"></div>
+      </div>
+    `
+  });
+
+  const host = p.querySelector('#pdfPreviewHost');
+  let activeOpenUrl = u;
+
+  const renderPdfFrame = (src, note)=>{
+    activeOpenUrl = src || u;
+    host.innerHTML = `
+      <div style="height:100%;display:flex;flex-direction:column;">
+        <iframe src="${escapeHtml(src)}" style="width:100%;height:100%;min-height:560px;border-radius:12px;border:1px solid rgba(46,74,122,.55);background:#fff"></iframe>
+        <div class="footerNote" style="margin-top:8px;">${note || '预览已加载。'}</div>
+      </div>
+    `;
+  };
+
+  if(isPdf){
+    host.innerHTML = `
+      <div class="section" style="margin:0;height:100%;display:flex;align-items:center;justify-content:center;min-height:560px;">
+        <div class="mono" style="color:var(--muted);text-align:center;line-height:1.8;">
+          正在加载 PDF 预览…<br/>
+          <span style="font-size:12px;opacity:.86;">已改为先获取 PDF Blob，再按学习区的 iframe 方式预览，避免源链接触发自动下载。</span>
+        </div>
+      </div>
+    `;
+
+    fetchPdfBlobPreviewUrl(u).then((blobUrl)=>{
+      if(!document.body.contains(p)) return;
+      renderPdfFrame(blobUrl, '已转为浏览器可预览的 PDF Blob 地址，避免点击“浏览”时自动下载。');
+    }).catch((err)=>{
+      if(!document.body.contains(p)) return;
+      activeOpenUrl = u;
+      host.innerHTML = `
+        <div class="section" style="margin:0;min-height:560px;display:flex;align-items:center;justify-content:center;">
+          <div class="mono" style="color:var(--muted);line-height:1.9;max-width:760px;">
+            当前浏览器未能把该 PDF 转为可内嵌预览的 Blob 地址，因此仍无法在面板内显示。<br/>
+            可能原因：源文件未开启跨域访问（CORS）或网络拦截。<br/>
+            错误信息：${escapeHtml(String(err && err.message ? err.message : err))}
+          </div>
+        </div>
+      `;
+      toast('warn','预览受限','该 PDF 源链接未允许浏览器直接读取，暂时无法内嵌预览。');
+    });
+  }else{
+    renderPdfFrame(previewUrl, '当前文件按学习区相同的 iframe 方式预览。');
+  }
+
+  p.querySelector('#pdfPreviewDownload').onclick = ()=> triggerDownload(u, title || '实验样本参考', title || '实验样本参考');
+  p.querySelector('#pdfPreviewOpen').onclick = ()=> safeOpen(activeOpenUrl || u);
+  p.querySelector('#pdfPreviewClose').onclick = ()=> p.remove();
+}
+
+function openDesignReportViewer(topicId, reportLink){
+  const topic = getTopicById(topicId);
+  const title = topic ? `实验设计报告 · ${topic.name}` : "实验设计报告";
+  const placeholderText = makePlanPlaceholderText(topic);
+  const hasLink = (reportLink || "").trim();
+  const previewUrl = getPreviewUrl(hasLink);
+  const body = hasLink ? `
+    <div class="section">
+      <h3>${escapeHtml(topic ? topic.name : "实验设计报告")}</h3>
+      <iframe src="${escapeHtml(previewUrl)}" style="width:100%;height:520px;border-radius:12px;border:1px solid rgba(46,74,122,.55);background:rgba(0,0,0,.2)"></iframe>
+      <div class="footerNote">点击“下载”可保存当前实验设计报告文件。</div>
+    </div>
+    <div class="btnRow">
+      <div class="btn" id="downloadDesignFile">下载文件</div>
+      <div class="btn secondary" id="openDesignFile">新标签页打开</div>
+      <div class="btn ghost" id="closeDesignViewer">关闭</div>
+    </div>
+  ` : `
+    <div class="section">
+      <h3>${escapeHtml(topic ? topic.name : "实验设计报告")}</h3>
+      <textarea class="mono" style="min-height:420px;resize:both;">${escapeHtml(placeholderText)}</textarea>
+      <div class="footerNote">当前可在此查看所选实验题目的设计文本内容。</div>
+    </div>
+    <div class="btnRow">
+      <div class="btn" id="downloadDesignTxt">下载占位说明</div>
+      <div class="btn ghost" id="closeDesignViewer">关闭</div>
+    </div>
+  `;
+  const p = openPanel({
+    title,
+    rememberKey:"plan.design.viewer",
+    width:980,
+    height:720,
+    left:70,
+    top:74,
+    html: body
+  });
+  const closeBtn = p.querySelector("#closeDesignViewer");
+  if(closeBtn) closeBtn.onclick = ()=> p.remove();
+  const dlTxt = p.querySelector("#downloadDesignTxt");
+  if(dlTxt){
+    dlTxt.onclick = ()=>{
+      const blob = new Blob([placeholderText], {type:"text/plain;charset=utf-8"});
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `${topic ? topic.name : "实验设计报告占位"}.txt`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    };
+  }
+  const dlFile = p.querySelector("#downloadDesignFile");
+  if(dlFile) dlFile.onclick = ()=> safeOpen(hasLink);
+  const openFile = p.querySelector("#openDesignFile");
+  if(openFile) openFile.onclick = ()=> safeOpen(hasLink);
+}
+
+function openPlanSubmitPanel(){
+  const links = getLinks();
+  const submitLink = (links.designSubmit || links.planSubmit || "").trim();
+  const html = submitLink ? `
+    <div class="section">
+      <h3>提交实验设计报告</h3>
+      <div class="mono" style="min-height:260px;white-space:pre-wrap;line-height:1.9;padding:18px;border-radius:14px;border:1px solid rgba(46,74,122,.55);background:rgba(0,0,0,.18);">由于问卷星页面限制了站内嵌入预览，当前改为点击按钮在新标签页打开提交页面。
+
+请先准备好实验设计报告文件，再点击下方按钮进入问卷完成提交。</div>
+      <div class="footerNote">点击下方按钮后，将在浏览器新标签页中打开问卷星提交页面。</div>
+    </div>
+    <div class="btnRow">
+      <div class="btn secondary" id="openSubmitOuter">打开问卷提交页面</div>
+      <div class="btn ghost" id="closeSubmitPanel">关闭</div>
+    </div>
+  ` : `
+    <div class="section">
+      <h3>提交实验设计报告</h3>
+      <textarea class="mono" style="min-height:360px;resize:both;">提交实验设计报告窗口</textarea>
+    </div>
+    <div class="btnRow"><div class="btn ghost" id="closeSubmitPanel">关闭</div></div>
+  `;
+  const p = openPanel({
+    title:"提交实验设计报告",
+    rememberKey:"plan.submit.panel",
+    width:980,
+    height:720,
+    left:72,
+    top:76,
+    html
+  });
+  const closeBtn = p.querySelector("#closeSubmitPanel");
+  if(closeBtn) closeBtn.onclick = ()=> p.remove();
+  const openBtn = p.querySelector("#openSubmitOuter");
+  if(openBtn) openBtn.onclick = ()=> safeOpen(submitLink);
+}
+
+function openPlanDesigner(){
+  const links = getLinks();
+  const draft = { ...getPlanDraftDefault(), ...lsGet(LS_KEYS.planDraft, getPlanDraftDefault()) };
+  const designReportMap = getDesignReportMap();
+  const sampleItems = getPlanSampleItems();
+
+  const p = openPanel({
+    title:"B 实验方案设计（实验样本参考 + AI辅助下的实验设计）",
+    rememberKey:"module.B",
+    width: 1100, height: 760, left: 48, top: 74,
+    html: `
+      <div class="section">
+        <h3>实验样本参考</h3>
+        <div class="btnRow" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;">
+          ${sampleItems.map(item=>`
+            <div class="section" style="margin:0;min-height:108px;display:flex;flex-direction:column;justify-content:space-between;">
+              <div style="font-weight:800;line-height:1.55;word-break:break-word;">${escapeHtml(item.label)}</div>
+              <div class="btnRow" style="margin-top:10px;">
+                <div class="btn ghost sample-open" data-url="${escapeHtml(item.url)}" data-name="${escapeHtml(item.label)}">浏览</div>
+                <div class="btn secondary sample-download" data-url="${escapeHtml(item.url)}" data-name="${escapeHtml(item.label)}">下载</div>
+              </div>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>AI辅助下的实验设计</h3>
+
+        <div class="section" style="margin-top:10px;">
+          <div class="btnRow">
+            <div class="btn" id="toggleTopicRef">实验参考题目</div>
+          </div>
+          <div id="topicRefWrap" style="display:none;margin-top:10px;">
+            <div class="footerNote">提示：请勾选一个参考题目了解一下。</div>
+            <div style="display:grid;grid-template-columns:minmax(280px,360px) minmax(0,1fr);gap:14px;align-items:start;margin-top:10px;">
+              <div id="topicListBox" class="section" style="margin:0;overflow:auto;padding:10px 12px;"></div>
+              <div id="topicDetailBox" class="section" style="margin:0;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section" style="margin-top:10px;">
+          <div class="btnRow">
+            <div class="btn secondary" id="toggleAIDesign">AI辅助实验设计</div>
+          </div>
+          <div id="aiDesignWrap" style="display:none;margin-top:10px;">
+            <div class="footerNote">可以根据参考实验题目设计自己的实验，实验报告书生成后，你们可以进行修改和完善。</div>
+            <div class="footerNote" style="margin-top:6px;">提示：请勾选一个参考题目作为你们的实验项目。</div>
+            <div style="display:grid;grid-template-columns:max-content minmax(0,1fr);gap:14px;align-items:start;margin-top:10px;">
+              <div id="designTopicList" class="section" style="margin:0;overflow:auto;padding:10px 12px;width:max-content;max-width:360px;"></div>
+              <div id="designPreviewBox" class="section" style="margin:0;min-width:380px;position:relative;resize:both;overflow:auto;">
+                <div id="designPreviewToolbar" style="display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:move;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid rgba(46,74,122,.35);">
+                  <div style="font-weight:800;">实验设计报告预览</div>
+                  <div class="btnRow">
+                    <div class="btn good" id="confirmDesignTopic">确定</div>
+                    <div class="btn" id="downloadDesignFile">下载</div>
+                    <div class="btn ghost" id="toggleDesignPreviewFull">全屏</div>
+                  </div>
+                </div>
+                <div id="designPreviewContent" class="mono" style="min-height:320px;line-height:1.7;white-space:pre-wrap;">请先在左侧勾选一个参考题目。</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section" style="margin-top:10px;">
+          <div class="btnRow">
+            <div class="btn" id="openPlanSubmitPanel">提交实验设计报告</div>
+          </div>
+          <div class="footerNote" style="margin-top:8px;">点击按钮后，会在独立可移动、可拉伸、可全屏的窗口中提交实验设计报告。</div>
+        </div>
+      </div>
+    `
+  });
+
+  const topicListBox = p.querySelector("#topicListBox");
+  const topicDetailBox = p.querySelector("#topicDetailBox");
+  const designTopicList = p.querySelector("#designTopicList");
+  const designPreviewBox = p.querySelector("#designPreviewBox");
+  const designPreviewContent = p.querySelector("#designPreviewContent");
+
+  function renderTopicRefs(selectedId){
+    topicListBox.innerHTML = EXPERIMENT_TOPICS.map(topic=>`
+      <label style="display:flex;align-items:flex-start;gap:8px;padding:6px 2px;border-bottom:1px solid rgba(46,74,122,.25);cursor:pointer;line-height:1.45;">
+        <input type="checkbox" class="topic-ref-check" value="${topic.id}" ${selectedId===topic.id ? "checked" : ""} style="margin-top:2px;"/>
+        <span>${topic.no}. ${escapeHtml(topic.name)}</span>
+      </label>
+    `).join("");
+    topicDetailBox.innerHTML = renderTopicDetail(getTopicById(selectedId));
+    requestAnimationFrame(syncTopicRefHeight);
+  }
+
+  function renderDesignTopicList(selectedId){
+    designTopicList.innerHTML = EXPERIMENT_TOPICS.map(topic=>`
+      <label style="display:flex;align-items:flex-start;gap:8px;padding:6px 2px;border-bottom:1px solid rgba(46,74,122,.25);cursor:pointer;line-height:1.45;white-space:nowrap;">
+        <input type="checkbox" class="topic-design-check" value="${topic.id}" ${selectedId===topic.id ? "checked" : ""} style="margin-top:2px;"/>
+        <span>${topic.no}. ${escapeHtml(topic.name)}</span>
+      </label>
+    `).join("");
+    requestAnimationFrame(syncDesignHeight);
+  }
+
+  function syncTopicRefHeight(){
+    const h = Math.max(160, topicDetailBox.offsetHeight || 0);
+    topicListBox.style.height = h + 'px';
+  }
+
+  function syncDesignHeight(){
+    const h = Math.max(320, designTopicList.scrollHeight + 4);
+    designTopicList.style.height = h + 'px';
+    designPreviewBox.style.height = h + 'px';
+  }
+
+  function setSingleCheck(container, cls, value){
+    container.querySelectorAll(`.${cls}`).forEach(box=>{ box.checked = box.value===value; });
+  }
+
+  function renderDesignPreview(topicId){
+    const topic = getTopicById(topicId);
+    const reportLink = (designReportMap[topicId] || "").trim();
+    const previewUrl = getPreviewUrl(reportLink);
+    designPreviewBox.dataset.topicId = topicId || "";
+    designPreviewBox.dataset.reportLink = reportLink;
+    if(!topic){
+      designPreviewContent.innerHTML = "请先在左侧勾选一个参考题目。";
+      return;
+    }
+    if(reportLink){
+      designPreviewContent.innerHTML = `<iframe src="${escapeHtml(previewUrl)}" style="width:100%;height:${Math.max(240, (designPreviewBox.clientHeight||420)-70)}px;border-radius:12px;border:1px solid rgba(46,74,122,.55);background:rgba(0,0,0,.2)"></iframe>`;
+    }else{
+      designPreviewContent.textContent = makePlanPlaceholderText(topic);
+    }
+  }
+
+  function triggerDownload(url, name, fallbackText){
+    const u = String(url || '').trim();
+    if(u){
+      const a = document.createElement('a');
+      a.href = u;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.download = name || '';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      return;
+    }
+    const blob = new Blob([fallbackText || ''], {type:'text/plain;charset=utf-8'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = (name || '实验设计报告') + '.txt';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href), 500);
+    a.remove();
+  }
+
+  function makeDraggableResizablePreview(box, handle, fullBtn){
+    let dragging = false, startX=0, startY=0, startL=0, startT=0;
+    handle.addEventListener('mousedown', (e)=>{
+      if(e.target.closest('.btn')) return;
+      if(box.classList.contains('preview-full')) return;
+      dragging = true;
+      startX = e.clientX; startY = e.clientY;
+      const rect = box.getBoundingClientRect();
+      const parentRect = p.querySelector('#aiDesignWrap').getBoundingClientRect();
+      box.style.position = 'relative';
+      box.style.left = box.style.left || '0px';
+      box.style.top = box.style.top || '0px';
+      startL = parseFloat(box.style.left) || 0;
+      startT = parseFloat(box.style.top) || 0;
+      box.style.zIndex = '5';
+      const move = (ev)=>{
+        if(!dragging) return;
+        box.style.left = (startL + ev.clientX - startX) + 'px';
+        box.style.top = (startT + ev.clientY - startY) + 'px';
+      };
+      const up = ()=>{ dragging = false; document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', up); };
+      document.addEventListener('mousemove', move);
+      document.addEventListener('mouseup', up);
+    });
+    fullBtn.onclick = ()=>{
+      box.classList.toggle('preview-full');
+      if(box.classList.contains('preview-full')){
+        Object.assign(box.style, {position:'fixed', inset:'76px 36px 32px 36px', width:'auto', height:'auto', left:'', top:'', zIndex:'2200'});
+        fullBtn.textContent = '退出全屏';
+      }else{
+        Object.assign(box.style, {position:'relative', inset:'', width:'', height:designTopicList.style.height || '320px', left:'0px', top:'0px', zIndex:'1'});
+        fullBtn.textContent = '全屏';
+        syncDesignHeight();
+      }
+      renderDesignPreview(box.dataset.topicId || '');
+    };
+  }
+
+  p.dataset.selectedTopicId = draft.selectedTopicId || "";
+  p.dataset.designTopicId = draft.designTopicId || "";
+  renderTopicRefs(p.dataset.selectedTopicId);
+  renderDesignTopicList(p.dataset.designTopicId);
+  renderDesignPreview(p.dataset.designTopicId);
+  makeDraggableResizablePreview(designPreviewBox, p.querySelector('#designPreviewToolbar'), p.querySelector('#toggleDesignPreviewFull'));
+
+  p.querySelector("#toggleTopicRef").onclick = ()=>{
+    const el = p.querySelector("#topicRefWrap");
+    el.style.display = el.style.display === "none" ? "block" : "none";
+    requestAnimationFrame(syncTopicRefHeight);
+  };
+  p.querySelector("#toggleAIDesign").onclick = ()=>{
+    const el = p.querySelector("#aiDesignWrap");
+    el.style.display = el.style.display === "none" ? "block" : "none";
+    requestAnimationFrame(syncDesignHeight);
+  };
+
+  topicListBox.addEventListener("change", (e)=>{
+    const target = e.target.closest(".topic-ref-check");
+    if(!target) return;
+    const selectedId = target.checked ? target.value : "";
+    setSingleCheck(topicListBox, "topic-ref-check", selectedId);
+    p.dataset.selectedTopicId = selectedId;
+    topicDetailBox.innerHTML = renderTopicDetail(getTopicById(selectedId));
+    requestAnimationFrame(syncTopicRefHeight);
+  });
+
+  designTopicList.addEventListener("change", (e)=>{
+    const target = e.target.closest(".topic-design-check");
+    if(!target) return;
+    const selectedId = target.checked ? target.value : "";
+    setSingleCheck(designTopicList, "topic-design-check", selectedId);
+    p.dataset.designTopicId = selectedId;
+    renderDesignPreview(selectedId);
+  });
+
+  p.querySelectorAll(".sample-open").forEach(btn=>{
+    btn.onclick = ()=> openPdfPreviewPanel(btn.dataset.name || '实验样本参考', btn.dataset.url || '');
+  });
+  p.querySelectorAll(".sample-download").forEach(btn=>{
+    btn.onclick = ()=> triggerDownload(btn.dataset.url || '', btn.dataset.name || '实验样本参考', btn.dataset.name || '实验样本参考');
+  });
+
+  p.querySelector("#confirmDesignTopic").onclick = ()=>{
+    const selectedId = p.dataset.designTopicId || "";
+    const topic = getTopicById(selectedId);
+    if(!topic){
+      toast("warn","尚未选择题目","请勾选一个参考题目作为你们的实验项目");
+      return;
+    }
+    lsSet(LS_KEYS.planDraft, {
+      ...getPlanDraftDefault(),
+      selectedTopicId: p.dataset.selectedTopicId || "",
+      designTopicId: selectedId,
+      reportLink: designReportMap[selectedId] || "",
+      reportPlaceholder: makePlanPlaceholderText(topic),
+      title: topic.name
+    });
+    toast("success","已确定","已选定当前实验题目");
+  };
+
+  p.querySelector("#downloadDesignFile").onclick = ()=>{
+    const selectedId = p.dataset.designTopicId || "";
+    const topic = getTopicById(selectedId);
+    if(!topic){
+      toast("warn","尚未选择题目","请先勾选一个参考题目");
+      return;
+    }
+    triggerDownload(designPreviewBox.dataset.reportLink || '', topic.name, makePlanPlaceholderText(topic));
+  };
+
+  p.querySelector("#openPlanSubmitPanel").onclick = ()=> openPlanSubmitPanel();
+}
+
+function openPlanPreview(planObj, title){
+  const topic = getTopicById(planObj.designTopicId || planObj.selectedTopicId || "");
+  const content = `
+    <div class="section">
+      <h3>${escapeHtml(planObj.title || topic?.name || "（未命名方案）")}</h3>
+      <div class="kpiRow">
+        <div class="kpi"><div class="k">参考题目</div><div class="v" style="font-size:13px;font-weight:700;color:var(--text);margin-top:6px;line-height:1.4;">${escapeHtml(topic?.name || "—")}</div></div>
+        <div class="kpi"><div class="k">训练内容 / 干预方式</div><div class="v" style="font-size:13px;font-weight:700;color:var(--text);margin-top:6px;line-height:1.4;">${escapeHtml(topic?.training || planObj.protocol || "—")}</div></div>
+        <div class="kpi"><div class="k">主要观察指标</div><div class="v" style="font-size:13px;font-weight:700;color:var(--text);margin-top:6px;line-height:1.4;">${escapeHtml(topic?.indicators || planObj.measures || "—")}</div></div>
+        <div class="kpi"><div class="k">所需设备</div><div class="v" style="font-size:13px;font-weight:700;color:var(--text);margin-top:6px;line-height:1.4;">${escapeHtml(topic?.equipment || "—")}</div></div>
+      </div>
+    </div>
+
+    <div class="section"><h3>AI辅助实验设计说明</h3><div class="mono">${escapeHtml(planObj.reportPlaceholder || makePlanPlaceholderText(topic))}</div></div>
+    <div class="section"><h3>实验设计报告链接</h3><div class="mono">${escapeHtml(planObj.reportLink || "（当前为占位，后续补充腾讯云文件链接）")}</div></div>
+    <div class="section"><h3>补充说明 / 教学备注</h3><div class="mono">${escapeHtml(planObj.customNotes || planObj.notes || "—")}</div></div>
+
+    <div class="btnRow">
+      <div class="btn good" id="confirmOk">确认无误</div>
+      <div class="btn" id="openDesignViewer">浏览实验设计报告</div>
+      <div class="btn ghost" id="confirmClose">关闭</div>
+    </div>
+    <div class="footerNote">
+      提醒：最终“提交实验设计报告”可通过问卷星嵌入链接完成（在 B 模块中点击相应按钮打开）。
+    </div>
+  `;
+
+  const p = openPanel({
+    title: title,
+    rememberKey: "preview.plan",
+    width: 920,
+    height: 640,
+    left: 90,
+    top: 82,
+    html: content
+  });
+  p.querySelector("#confirmOk").onclick = ()=>{
+    toast("success","已确认","你已完成方案预览确认（可继续导入数据）");
+    p.remove();
+  };
+  p.querySelector("#openDesignViewer").onclick = ()=> openDesignReportViewer(planObj.designTopicId || planObj.selectedTopicId || "", planObj.reportLink || "");
+  p.querySelector("#confirmClose").onclick = ()=> p.remove();
+}
+/* ===========================
+   C Data Import + AI Analysis
+=========================== */
+function getApiConfig(){
+  return lsGet(LS_KEYS.apiConfig, { provider:"deepseek", apiKey:"", baseUrl:"https://api.deepseek.com", model:"deepseek-chat", tested:false, status:"未测试" });
+}
+function setApiConfig(cfg){
+  lsSet(LS_KEYS.apiConfig, cfg);
+}
+function maskKey(key){
+  if(!key) return "（未填写）";
+  return key.length <= 10 ? "*".repeat(Math.max(4,key.length)) : `${key.slice(0,6)}********${key.slice(-4)}`;
+}
+function fillMergedCellsInAOA(ws, aoa){
+  const out = (aoa || []).map(row=>Array.isArray(row) ? row.slice() : []);
+  const merges = ws?.['!merges'] || [];
+  merges.forEach(m=>{
+    const v = out?.[m.s.r]?.[m.s.c];
+    for(let r=m.s.r;r<=m.e.r;r++){
+      if(!out[r]) out[r] = [];
+      for(let c=m.s.c;c<=m.e.c;c++){
+        if(out[r][c] === undefined || out[r][c] === null || String(out[r][c]).trim() === '') out[r][c] = v;
+      }
+    }
+  });
+  return out;
+}
+function trimAOA(aoa){
+  const rows = Array.isArray(aoa) ? aoa : [];
+  let minR = Infinity, maxR = -1, minC = Infinity, maxC = -1;
+  rows.forEach((row,r)=>{
+    (row || []).forEach((cell,c)=>{
+      if(cell !== undefined && cell !== null && String(cell).trim() !== ''){
+        if(r < minR) minR = r;
+        if(r > maxR) maxR = r;
+        if(c < minC) minC = c;
+        if(c > maxC) maxC = c;
+      }
+    });
+  });
+  if(maxR < 0) return { aoa: [], rowOffset: 0, colOffset: 0 };
+  const trimmed = [];
+  for(let r=minR;r<=maxR;r++){
+    const src = rows[r] || [];
+    const next = [];
+    let has = false;
+    for(let c=minC;c<=maxC;c++){
+      const v = src[c] ?? '';
+      next.push(v);
+      if(String(v).trim() !== '') has = true;
+    }
+    if(has) trimmed.push(next);
+  }
+  return { aoa: trimmed, rowOffset: minR, colOffset: minC };
+}
+function inferStructuredDataset(ds){
+  const raw = ds?.rawAoa || [];
+  if(!raw.length) return null;
+  const weekRe = /第?[一二三四五六七八九十0-9]+周/;
+  const weekStarts = [];
+  raw.forEach((row, idx)=>{
+    if((row || []).some(cell=>weekRe.test(String(cell || '').trim()))) weekStarts.push(idx);
+  });
+  if(!weekStarts.length) return null;
+  const firstWeek = weekStarts[0];
+  const meta = {};
+  for(let r=0;r<firstWeek-1;r++){
+    const rowA = raw[r] || [];
+    const rowB = raw[r+1] || [];
+    const keys = rowA.map(v=>String(v || '').trim());
+    const vals = rowB;
+    let pairs = 0;
+    for(let c=0;c<Math.max(keys.length, vals.length);c++){
+      const k = keys[c];
+      const v = vals[c];
+      if(k && v !== undefined && v !== null && String(v).trim() !== ''){ meta[k] = v; pairs++; }
+    }
+    if(pairs) r++;
+  }
+  const records = [];
+  const nextStarts = weekStarts.slice(1).concat(raw.length);
+  weekStarts.forEach((start, idx)=>{
+    const end = nextStarts[idx];
+    const groupRow = raw[start] || [];
+    const detailRow = raw[start+1] || [];
+    const weekLabel = (groupRow.find(cell=>weekRe.test(String(cell || '').trim())) || '').toString().trim();
+    for(let r=start+2;r<end;r++){
+      const row = raw[r] || [];
+      if(!row.some(v=>String(v || '').trim() !== '')) continue;
+      if(row.some(v=>weekRe.test(String(v || '').trim()))) continue;
+      const obj = { _row: ds.rawRowOffset + r + 1 };
+      if(weekLabel) obj['周次'] = weekLabel;
+      Object.keys(meta).forEach(k=>{ obj[k] = meta[k]; });
+      let filled = 0;
+      for(let c=0;c<row.length;c++){
+        const value = row[c];
+        if(value === undefined || value === null || String(value).trim() === '') continue;
+        const g = String(groupRow[c] || '').trim();
+        const d = String(detailRow[c] || '').trim();
+        let header = '';
+        if(d && g && d !== g && !weekRe.test(g)) header = `${g}-${d}`;
+        else header = d || (weekRe.test(g) ? '' : g) || `列${c+1}`;
+        header = header.replace(/^第[一二三四五六七八九十0-9]+周[-—]*/, '').trim();
+        if(!header || weekRe.test(header)) continue;
+        obj[header] = value;
+        filled++;
+      }
+      if(filled >= 3) records.push(obj);
+    }
+  });
+  if(!records.length) return null;
+  const headers = [];
+  records.forEach(rec=>{
+    Object.keys(rec).forEach(k=>{
+      if(k !== '_row' && !headers.includes(k)) headers.push(k);
+    });
+  });
+  return { headers, rows: records };
+}
+function normalizeDataset(ds){
+  if(!ds) return null;
+  if(ds.structured && Array.isArray(ds.structured.rows) && ds.structured.rows.length){
+    return { headers: ds.structured.headers || [], rows: ds.structured.rows };
+  }
+  const headers = (ds.headers || []).map((h,i)=>String(h || `列${i+1}`).trim() || `列${i+1}`);
+  const rows = (ds.rows || []).map((row,rowIndex)=>{
+    const obj = { _row: rowIndex + 2 };
+    headers.forEach((h,i)=>{ obj[h] = row?.[i] ?? ""; });
+    return obj;
+  });
+  return { headers, rows };
+}
+function renderNormalizedTable(ds, limit=200){
+  const n = normalizeDataset(ds);
+  if(!n) return `<div class="mono" style="padding:10px;color:var(--muted);">暂无数据。</div>`;
+  return renderTable(["_row", ...n.headers], n.rows.slice(0,limit).map(r=>[r._row ?? '', ...n.headers.map(h=>r[h])]));
+}
+function buildDatasetContext(ds){
+  if(!ds) return null;
+  const normalized = normalizeDataset(ds);
+  const numericSummary = [];
+  (normalized.headers || []).forEach(name=>{
+    const values = [];
+    for(const row of normalized.rows || []){
+      const v = row?.[name];
+      if(v === undefined || v === null || String(v).trim() === '') continue;
+      const num = Number(v);
+      if(Number.isFinite(num)) values.push(num);
+    }
+    if(values.length){
+      const total = values.reduce((a,b)=>a+b,0);
+      numericSummary.push({ name, count: values.length, mean: Number((total / values.length).toFixed(4)), min: Math.min(...values), max: Math.max(...values) });
+    }
+  });
+  return {
+    name: ds.name,
+    sheet: ds.sheet,
+    headers: normalized.headers,
+    rowCount: (normalized.rows || []).length,
+    numericColumns: numericSummary.map((x,i)=>({ index:i, name:x.name })),
+    numericSummary: numericSummary.slice(0,30),
+    sampleRows: normalized.rows.slice(0,20),
+    rawPreview: (ds.rawAoa || []).slice(0,40).map((row, idx)=>({ rowNumber: (ds.rawRowOffset || 0) + idx + 1, cells: row })),
+    structuredDetected: !!(ds.structured && ds.structured.rows && ds.structured.rows.length),
+    structuredRowCount: ds.structured?.rows?.length || 0
+  };
+}
+async function callDeepSeekChat(apiKey, messages, opts={}){
+  const baseUrl = (opts.baseUrl || "https://api.deepseek.com").replace(/\/$/, "");
+  const model = opts.model || "deepseek-chat";
+  const res = await fetch(`${baseUrl}/chat/completions`, {
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      "Authorization":`Bearer ${apiKey}`
+    },
+    body: JSON.stringify({
+      model,
+      temperature: opts.temperature ?? 0.2,
+      messages
+    })
+  });
+  const rawText = await res.text();
+  let data = null;
+  try{ data = rawText ? JSON.parse(rawText) : null; }catch{}
+  if(!res.ok){
+    const msg = data?.error?.message || data?.message || rawText || `HTTP ${res.status}`;
+    throw new Error(msg);
+  }
+  const content = data?.choices?.[0]?.message?.content;
+  if(!content) throw new Error("接口已返回，但未获取到内容");
+  return content;
+}
+function extractJsonObject(text){
+  const cleaned = String(text || "").trim().replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/```$/i, "").trim();
+  const start = cleaned.indexOf('{');
+  const end = cleaned.lastIndexOf('}');
+  if(start === -1 || end === -1 || end <= start) throw new Error("模型返回中未找到 JSON 对象");
+  return JSON.parse(cleaned.slice(start, end + 1));
+}
+function openDataAIAnalysis(){
+  const ds = lsGet(LS_KEYS.dataset, null);
+  const apiCfg = getApiConfig();
+  const savedImproveReport = lsGet(LS_KEYS.experimentImproveReport, null);
+
+  const p = openPanel({
+    title:"C 数据导入与 AI 分析",
+    rememberKey:"module.C.ai",
+    width: 1200, height: 760, left: 26, top: 68,
+    html: `
+      <div class="section">
+        <h3>功能入口</h3>
+        <div class="grid2" style="grid-template-columns:repeat(4,1fr);">
+          <div class="kpi" data-submodule-open="api" style="cursor:pointer;padding:18px;min-height:130px;display:flex;flex-direction:column;justify-content:space-between;">
+            <div class="v" style="font-size:18px;">子模块 1 · 接入 API</div>
+            <div class="k" style="font-size:13px;line-height:1.7;">输入你的 DeepSeek API 密钥，点击确认后可进行真实联通测试。</div>
+          </div>
+          <div class="kpi" data-submodule-open="data" style="cursor:pointer;padding:18px;min-height:130px;display:flex;flex-direction:column;justify-content:space-between;">
+            <div class="v" style="font-size:18px;">子模块 2 · 数据导入与确认</div>
+            <div class="k" style="font-size:13px;line-height:1.7;">导入完整 Excel，查看原始表格与系统整理后的表格，再确认导入。</div>
+          </div>
+          <div class="kpi" data-submodule-open="analysis" style="cursor:pointer;padding:18px;min-height:130px;display:flex;flex-direction:column;justify-content:space-between;">
+            <div class="v" style="font-size:18px;">子模块 3 · 数据分析</div>
+            <div class="k" style="font-size:13px;line-height:1.7;">输入你要分析的具体指标或问题，输出指标统计与可视化结论。</div>
+          </div>
+          <div class="kpi" data-submodule-open="improve" style="cursor:pointer;padding:18px;min-height:130px;display:flex;flex-direction:column;justify-content:space-between;">
+            <div class="v" style="font-size:18px;">子模块 4 · 实验改进</div>
+            <div class="k" style="font-size:13px;line-height:1.7;">导入执行版实验设计报告，结合实验数据与分析结果，由 AI 生成改进建议。</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section" id="sub_api" style="display:none;">
+        <h3>子模块 1：接入 API</h3>
+        <div class="grid2">
+          <div>
+            <label>DeepSeek API 密钥</label>
+            <input id="aiApiKey" type="password" placeholder="请输入你自己的 DeepSeek API 密钥，例如 sk-..." value="${escapeHtml(apiCfg.apiKey || "")}"/>
+            <div class="footerNote">提示：请用户输入自己的 DeepSeek 密钥并点击“确认保存”。密钥仅保存在当前浏览器 localStorage 中，不会自动上传到其他服务器。</div>
+          </div>
+          <div>
+            <label>当前状态</label>
+            <div class="mono" id="apiStatusBox" style="min-height:112px;padding:12px;border-radius:14px;border:1px solid rgba(46,74,122,.55);background:rgba(12,18,35,.55);">
+              提供方：DeepSeek
+
+基础地址：${escapeHtml(apiCfg.baseUrl)}
+模型：${escapeHtml(apiCfg.model)}
+已保存密钥：${escapeHtml(maskKey(apiCfg.apiKey || ""))}
+联通状态：${escapeHtml(apiCfg.status || "未测试")}
+            </div>
+            <div class="btnRow" style="margin-top:10px;">
+              <div class="btn good" id="saveApiBtn">确认保存</div>
+              <div class="btn secondary" id="testApiBtn">API 联通测试</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section" id="sub_data" style="display:none;">
+        <h3>子模块 2：数据导入与结构确认</h3>
+        <div class="grid2">
+          <div>
+            <label>导入 Excel 文件（.xlsx/.xls）</label>
+            <input id="excelFileNew" type="file" accept=".xlsx,.xls"/>
+            <div class="btnRow" style="margin-top:10px;">
+              <div class="btn secondary" id="importBtnNew">开始导入</div>
+              <div class="btn good" id="confirmDatasetBtn">确认导入</div>
+              <div class="btn danger" id="clearDatasetBtn">清空数据</div>
+            </div>
+            <div class="footerNote">建议：先查看“原始表格”和“整理后表格”两种视图，再点击确认导入。默认将显示系统整理后的表格，便于后续分析。</div>
+          </div>
+          <div>
+            <label>当前数据集摘要</label>
+            <div class="mono" id="datasetSummaryBox" style="min-height:112px;padding:12px;border-radius:14px;border:1px solid rgba(46,74,122,.55);background:rgba(12,18,35,.55);"></div>
+          </div>
+        </div>
+        <div class="btnRow" style="margin-top:12px;">
+          <div class="btn ghost" id="tabNormalized">查看整理后表格</div>
+          <div class="btn ghost" id="tabRaw">查看原始表格</div>
+        </div>
+        <div class="section" style="margin-top:12px;">
+          <h3 id="previewTitle">整理后表格预览（前 200 行）</h3>
+          <div class="tableWrap" id="previewWrapNew"></div>
+        </div>
+      </div>
+
+      <div class="section" id="sub_analysis" style="display:none;">
+        <h3>子模块 3：数据分析</h3>
+        <div class="grid2" style="grid-template-columns: 1fr 3fr;">
+          <div>
+            <label>需要分析的问题</label>
+            <textarea id="analysisQuestion" class="mono" style="min-height:115px;" placeholder="请输入具体要分析的指标或问题，例如：
+1. 请分析实验组与对照组在肺活量上的差异。
+2. 请比较训练前后心率变化，并给出适合展示的图表。
+3. 请围绕 50 米成绩和立定跳远指标，输出量化结论与可视化建议。"></textarea>
+            <div class="footerNote">提示：请尽量写明具体指标、比较对象、时间点或你希望回答的问题。你可以反复输入新的问题继续分析。</div>
+            <div class="btnRow" style="margin-top:10px;">
+              <div class="btn good" id="runAIAnalysisBtn">开始分析</div>
+              <div class="btn ghost" id="clearQuestionBtn">清空问题</div>
+            </div>
+            <div class="section" style="margin-top:12px;padding:10px;">
+              <label>问题历史</label>
+              <div id="questionHistory" class="mono" style="min-height:120px;max-height:220px;overflow:auto;padding:10px;border-radius:12px;border:1px solid rgba(46,74,122,.45);background:rgba(12,18,35,.4);"></div>
+            </div>
+          </div>
+          <div>
+            <label>量化与可视化输出</label>
+            <textarea id="analysisOutputBox" class="mono" style="min-height:110px;" placeholder="分析结果将在这里显示"></textarea>
+            <div class="section" style="margin-top:12px;">
+              <label>指标统计表</label>
+              <div id="statsTableBox" class="tableWrap"></div>
+            </div>
+            <div class="section" style="margin-top:12px;">
+              <div class="btnRow" style="justify-content:space-between;align-items:center;">
+                <label style="margin:0;">图表预览</label>
+                <div class="btn secondary" id="downloadAIChartBtn">下载图片</div>
+              </div>
+              <div class="section" style="padding:8px;margin:8px 0 0 0;height:150px;">
+                <canvas id="aiChartCanvas"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section" id="sub_improve" style="display:none;">
+        <h3>子模块 4：实验改进</h3>
+        <div class="grid2">
+          <div>
+            <label>导入执行版实验设计报告（Word）</label>
+            <input id="improveReportFile" type="file" accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"/>
+            <div class="btnRow" style="margin-top:10px;">
+              <div class="btn secondary" id="uploadImproveReportBtn">上传并预览</div>
+              <div class="btn good" id="runImproveBtn">AI 辅助实验改进</div>
+              <div class="btn danger" id="clearImproveReportBtn">清空报告</div>
+            </div>
+            <div class="footerNote">系统会自动调用子模块 2 已确认的数据，以及子模块 3 最近一次分析结果，并结合执行版实验设计报告生成实验改进建议。</div>
+          </div>
+          <div>
+            <label>当前联动状态</label>
+            <div class="mono" id="improveStatusBox" style="min-height:112px;padding:12px;border-radius:14px;border:1px solid rgba(46,74,122,.55);background:rgba(12,18,35,.55);"></div>
+          </div>
+        </div>
+        <div class="grid2" style="margin-top:12px;grid-template-columns:1.1fr .9fr;">
+          <div class="section" style="margin:0;">
+            <label>实验设计报告预览</label>
+            <div id="improveReportPreview" class="mono" style="height:220px;overflow:auto;padding:12px;border-radius:12px;border:1px solid rgba(46,74,122,.45);background:rgba(12,18,35,.4);">暂无已上传的执行版实验设计报告。</div>
+          </div>
+          <div class="section" style="margin:0;">
+            <label>AI 改进建议</label>
+            <textarea id="improveOutputBox" class="mono" style="min-height:220px;" placeholder="这里将显示 AI 基于实验数据、分析结果和执行版实验设计报告给出的改进建议"></textarea>
+          </div>
+        </div>
+      </div>
+    `
+  });
+
+  let previewMode = "normalized";
+  let workingDataset = ds ? JSON.parse(JSON.stringify(ds)) : null;
+  let aiChart = null;
+  let improveReport = savedImproveReport ? JSON.parse(JSON.stringify(savedImproveReport)) : null;
+  const history = [];
+
+  function updateApiStatus(extra){
+    const cfg = getApiConfig();
+    p.querySelector('#apiStatusBox').textContent = [
+      `提供方：DeepSeek`,
+      `基础地址：${cfg.baseUrl}`,
+      `模型：${cfg.model}`,
+      `已保存密钥：${maskKey(cfg.apiKey || '')}`,
+      `联通状态：${cfg.status || '未测试'}`,
+      extra || ''
+    ].filter(Boolean).join('\n');
+  }
+  function renderDatasetSummary(){
+    const box = p.querySelector('#datasetSummaryBox');
+    if(!workingDataset){
+      box.textContent = '当前尚未导入数据。';
+      p.querySelector('#previewWrapNew').innerHTML = `<div class="mono" style="padding:10px;color:var(--muted);">暂无数据。</div>`;
+      updateImproveStatus();
+      return;
+    }
+    const headers = workingDataset.headers || [];
+    const numericCols = (workingDataset.numericCols || []).map(i=>headers[i] || `列${Number(i)+1}`);
+    box.textContent = [
+      `文件：${workingDataset.name || '未命名'}`,
+      `sheet：${workingDataset.sheet || '—'}`,
+      `列数：${headers.length}`,
+      `数据行：${(workingDataset.rows || []).length}`,
+      `识别出的数值列：${numericCols.length ? numericCols.join('、') : '无'}`,
+      `结构化识别：${workingDataset.structured?.rows?.length ? `已识别 ${workingDataset.structured.rows.length} 行实验记录` : '未识别到结构化实验记录，已保留原始表格'}`
+    ].join('\n');
+    if(previewMode === 'raw'){
+      p.querySelector('#previewTitle').textContent = '原始表格预览（前 200 行）';
+      const rawAoa = workingDataset.rawAoa || [];
+      const rawHeaders = Array.from({length: Math.max(...rawAoa.map(r=>r.length), 0)}, (_,i)=>`列${i+1}`);
+      p.querySelector('#previewWrapNew').innerHTML = renderTable(rawHeaders, rawAoa.slice(0,200));
+    }else{
+      p.querySelector('#previewTitle').textContent = '整理后表格预览（前 200 行）';
+      p.querySelector('#previewWrapNew').innerHTML = renderNormalizedTable(workingDataset, 200);
+    }
+    updateImproveStatus();
+  }
+  function showSubmodule(key){
+    ['api','data','analysis','improve'].forEach(name=>{
+      p.querySelector(`#sub_${name}`).style.display = name === key ? 'block' : 'none';
+    });
+  }
+  function renderHistory(){
+    const box = p.querySelector('#questionHistory');
+    if(!history.length){
+      box.textContent = '暂无历史问题。';
+      return;
+    }
+    box.innerHTML = history.map((q,i)=>`<div style="margin-bottom:10px;"><strong>Q${i+1}：</strong>${escapeHtml(q)}</div>`).join('');
+  }
+  function destroyAIChart(){
+    if(aiChart){ aiChart.destroy(); aiChart = null; }
+    const ctx = p.querySelector('#aiChartCanvas').getContext('2d');
+    ctx.clearRect(0,0,9999,9999);
+  }
+  function renderAIChart(spec){
+    destroyAIChart();
+    if(!spec || !Array.isArray(spec.labels) || !Array.isArray(spec.datasets)) return;
+    const ctx = p.querySelector('#aiChartCanvas').getContext('2d');
+    aiChart = new Chart(ctx, {
+      type: spec.type || 'bar',
+      data: { labels: spec.labels, datasets: spec.datasets.map(ds=>({ label: ds.label || '数据', data: ds.data || [] })) },
+      options: {
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{ legend:{ labels:{ color:'#bfefff' } }, title:{ display: !!spec.title, text: spec.title || '', color:'#bfefff' } },
+        scales:{ x:{ ticks:{ color:'#9bb6d6' }, grid:{ color:'rgba(46,74,122,.25)' } }, y:{ ticks:{ color:'#9bb6d6' }, grid:{ color:'rgba(46,74,122,.25)' } } }
+      }
+    });
+  }
+  function renderStatsTable(tableObj){
+    const box = p.querySelector('#statsTableBox');
+    if(!tableObj || !Array.isArray(tableObj.headers) || !Array.isArray(tableObj.rows)){
+      box.innerHTML = `<div class="mono" style="padding:10px;color:var(--muted);">暂无统计表。</div>`;
+      return;
+    }
+    box.innerHTML = renderTable(tableObj.headers, tableObj.rows);
+  }
+  function updateImproveStatus(extra=''){
+    const currentDataset = lsGet(LS_KEYS.dataset, null);
+    const latestRun = (lsGet(LS_KEYS.savedRuns, []) || [])[0] || null;
+    const lines = [
+      `实验数据：${currentDataset ? `${currentDataset.name || '已导入'}（${currentDataset.rows?.length || 0} 行）` : '未确认导入'}`,
+      `最近分析结果：${latestRun ? `${latestRun.question || '已有结果'}（${new Date(latestRun.ts).toLocaleString()}）` : '暂无'}`,
+      `执行版实验设计报告：${improveReport ? improveReport.name : '未上传'}`
+    ];
+    if(extra) lines.push(extra);
+    p.querySelector('#improveStatusBox').textContent = lines.join('\n');
+  }
+  function renderImproveReportPreview(){
+    const box = p.querySelector('#improveReportPreview');
+    if(!improveReport){
+      box.textContent = '暂无已上传的执行版实验设计报告。';
+      updateImproveStatus();
+      return;
+    }
+    if(improveReport.html){
+      box.innerHTML = improveReport.html;
+    }else if(improveReport.text){
+      box.textContent = improveReport.text;
+    }else{
+      box.textContent = `已上传：${improveReport.name}`;
+    }
+    updateImproveStatus();
+  }
+  function downloadCurrentChart(){
+    if(!aiChart){ toast('warn','暂无图表','请先完成一次数据分析并生成图表'); return; }
+    const a = document.createElement('a');
+    a.href = p.querySelector('#aiChartCanvas').toDataURL('image/png');
+    a.download = `AI分析图表_${new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')}.png`;
+    a.click();
+  }
+  async function parseWordReport(file){
+    const arrayBuffer = await file.arrayBuffer();
+    if(window.mammoth && mammoth.convertToHtml){
+      const result = await mammoth.convertToHtml({ arrayBuffer });
+      const rawText = await mammoth.extractRawText({ arrayBuffer });
+      return {
+        id: uid('impdoc'),
+        ts: Date.now(),
+        name: file.name,
+        type: file.type || 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        size: file.size,
+        html: `<div style="line-height:1.8;">${result.value || ''}</div>`,
+        text: String(rawText.value || '').trim()
+      };
+    }
+    return {
+      id: uid('impdoc'),
+      ts: Date.now(),
+      name: file.name,
+      type: file.type || 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      size: file.size,
+      html: '',
+      text: '当前环境未加载 Word 预览组件，无法直接显示正文。'
+    };
+  }
+
+  p.querySelectorAll('[data-submodule-open]').forEach(el=>{
+    el.onclick = ()=> showSubmodule(el.dataset.submoduleOpen);
+  });
+  showSubmodule('api');
+  renderDatasetSummary();
+  renderHistory();
+  updateApiStatus();
+  renderStatsTable(null);
+  renderImproveReportPreview();
+
+  p.querySelector('#saveApiBtn').onclick = ()=>{
+    const next = getApiConfig();
+    next.apiKey = p.querySelector('#aiApiKey').value.trim();
+    next.tested = false;
+    next.status = next.apiKey ? '已保存，未测试' : '未填写密钥';
+    setApiConfig(next);
+    updateApiStatus('已完成保存。');
+    toast('success','已保存','DeepSeek API 密钥已保存到当前浏览器');
+  };
+  p.querySelector('#testApiBtn').onclick = async ()=>{
+    const cfg = getApiConfig();
+    if(!cfg.apiKey){ toast('warn','缺少密钥','请先输入并保存 DeepSeek API 密钥'); return; }
+    updateApiStatus('正在测试联通，请稍候...');
+    try{
+      await callDeepSeekChat(cfg.apiKey, [
+        { role:'system', content:'你是一个接口联通测试助手，只需返回“连接成功”。' },
+        { role:'user', content:'请返回：连接成功' }
+      ], { baseUrl: cfg.baseUrl, model: cfg.model, temperature: 0 });
+      cfg.tested = true;
+      cfg.status = '联通成功';
+      setApiConfig(cfg);
+      updateApiStatus('测试返回：连接成功');
+      toast('success','联通成功','DeepSeek API 已成功连通');
+    }catch(err){
+      cfg.tested = false;
+      cfg.status = `联通失败：${String(err.message || err)}`;
+      setApiConfig(cfg);
+      updateApiStatus();
+      toast('error','联通失败', String(err.message || err));
+    }
+  };
+
+  p.querySelector('#importBtnNew').onclick = async ()=>{
+    const input = p.querySelector('#excelFileNew');
+    const f = input.files?.[0];
+    if(!f){ toast('warn','未选择文件','请选择 Excel 文件后再导入'); return; }
+    try{
+      const buf = await f.arrayBuffer();
+      const wb = XLSX.read(buf, {type:'array'});
+      const sheetName = wb.SheetNames[0];
+      const ws = wb.Sheets[sheetName];
+      const aoaRaw = XLSX.utils.sheet_to_json(ws, {header:1, blankrows:true, raw:true});
+      const aoaFilled = fillMergedCellsInAOA(ws, aoaRaw);
+      const trimmed = trimAOA(aoaFilled);
+      const aoa = trimmed.aoa;
+      if(!aoa || aoa.length < 2) throw new Error('表格数据不足（至少包含表头和 1 行数据）');
+      const headerIndex = Math.max(0, aoa.findIndex(row=>Array.isArray(row) && row.filter(x=>String(x ?? '').trim() !== '').length >= 3));
+      const headers = (aoa[headerIndex] || []).map((h,i)=>String(h ?? `列${i+1}`).trim() || `列${i+1}`);
+      const rows = aoa.slice(headerIndex + 1).filter(r=>Array.isArray(r) && r.some(x=>String(x ?? '').trim() !== ''));
+      const numericCols = [];
+      for(let c=0;c<headers.length;c++){
+        let cnt=0, ok=0;
+        for(let i=0;i<Math.min(rows.length, 200);i++){
+          const v = rows[i]?.[c];
+          if(v===null || v===undefined || String(v).trim()==='') continue;
+          cnt++;
+          const num = Number(v);
+          if(Number.isFinite(num)) ok++;
+        }
+        if(cnt > 0 && ok / cnt >= 0.8) numericCols.push(c);
+      }
+      const draftDs = { id: uid('ds'), ts: Date.now(), name: f.name, sheet: sheetName, headers, rows, numericCols, rawAoa: aoa, rawRowOffset: trimmed.rowOffset };
+      draftDs.structured = inferStructuredDataset(draftDs);
+      workingDataset = draftDs;
+      previewMode = 'normalized';
+      renderDatasetSummary();
+      showSubmodule('data');
+      toast('success','已载入','请确认原始表格和整理后表格，再点击“确认导入”');
+    }catch(err){
+      toast('error','导入失败', String(err.message || err));
+    }
+  };
+  p.querySelector('#confirmDatasetBtn').onclick = ()=>{
+    if(!workingDataset){ toast('warn','暂无数据','请先导入 Excel 数据'); return; }
+    lsSet(LS_KEYS.dataset, workingDataset);
+    updateImproveStatus('实验数据已确认导入。');
+    toast('success','确认成功','数据已确认导入，可进入“数据分析”');
+  };
+  p.querySelector('#clearDatasetBtn').onclick = ()=>{
+    workingDataset = null;
+    localStorage.removeItem(LS_KEYS.dataset);
+    renderDatasetSummary();
+    toast('success','已清空','当前数据集已清空');
+  };
+  p.querySelector('#tabNormalized').onclick = ()=>{ previewMode = 'normalized'; renderDatasetSummary(); };
+  p.querySelector('#tabRaw').onclick = ()=>{ previewMode = 'raw'; renderDatasetSummary(); };
+
+  p.querySelector('#clearQuestionBtn').onclick = ()=>{ p.querySelector('#analysisQuestion').value = ''; };
+  p.querySelector('#downloadAIChartBtn').onclick = ()=> downloadCurrentChart();
+  p.querySelector('#runAIAnalysisBtn').onclick = async ()=>{
+    const cfg = getApiConfig();
+    const currentDataset = lsGet(LS_KEYS.dataset, null);
+    const question = p.querySelector('#analysisQuestion').value.trim();
+    if(!cfg.apiKey){ toast('warn','缺少密钥','请先在“接入 API”中保存并测试 DeepSeek API 密钥'); showSubmodule('api'); return; }
+    if(!currentDataset){ toast('warn','缺少数据','请先在“数据导入与确认”中确认导入 Excel 数据'); showSubmodule('data'); return; }
+    if(!question){ toast('warn','请输入问题','请先输入具体要分析的指标或问题'); return; }
+    history.unshift(question);
+    if(history.length > 12) history.pop();
+    renderHistory();
+    p.querySelector('#analysisOutputBox').value = '正在调用 DeepSeek 分析，请稍候...';
+    renderStatsTable(null);
+    destroyAIChart();
+    try{
+      const context = buildDatasetContext(currentDataset);
+      const prompt = `请基于给定数据集上下文，回答用户的数据分析问题。你必须仅返回 JSON，不要输出其他任何解释。JSON 结构如下：
+{
+  "summaryText": "面向学生的中文结论，包含量化结论和可视化说明",
+  "statsTable": {"headers": ["指标", "值"], "rows": [["示例", "1"]]},
+  "chartSpec": {
+    "type": "bar",
+    "title": "图标题",
+    "labels": ["A", "B"],
+    "datasets": [{"label": "数据集1", "data": [1,2]}]
+  }
+}
+要求：
+1. summaryText 必须直接回答用户问题，并尽量结合具体指标名称。
+2. statsTable 至少输出 3 行，内容应与问题相关。
+3. chartSpec 只能使用 bar、line、radar、pie 中的一种。
+4. 如果无法严谨计算完整统计量，可以基于已提供的 numericSummary 与 sampleRows 生成“建议性统计表”，但要在 summaryText 中说明依据。
+5. 全部使用中文。
+
+数据集上下文：${JSON.stringify(context)}
+
+用户问题：${question}`;
+      const content = await callDeepSeekChat(cfg.apiKey, [
+        { role:'system', content:'你是一个体育实验数据分析助手，擅长将 Excel 数据分析需求转成可视化建议和量化结论。' },
+        { role:'user', content: prompt }
+      ], { baseUrl: cfg.baseUrl, model: cfg.model, temperature: 0.2 });
+      const parsed = extractJsonObject(content);
+      p.querySelector('#analysisOutputBox').value = parsed.summaryText || '已完成分析，但未返回 summaryText。';
+      renderStatsTable(parsed.statsTable);
+      renderAIChart(parsed.chartSpec);
+      const run = { id: uid('airun'), ts: Date.now(), question, output: parsed.summaryText || '', statsTable: parsed.statsTable || null, chartSpec: parsed.chartSpec || null };
+      const allRuns = lsGet(LS_KEYS.savedRuns, []);
+      allRuns.unshift(run);
+      lsSet(LS_KEYS.savedRuns, allRuns.slice(0, 50));
+      updateImproveStatus('最近分析结果已更新。');
+      toast('success','分析完成','结果已生成，并保存到运行记录中');
+      showSubmodule('analysis');
+    }catch(err){
+      p.querySelector('#analysisOutputBox').value = `分析失败：${String(err.message || err)}`;
+      toast('error','分析失败', String(err.message || err));
+    }
+  };
+
+  p.querySelector('#uploadImproveReportBtn').onclick = async ()=>{
+    const file = p.querySelector('#improveReportFile').files?.[0];
+    if(!file){ toast('warn','未选择文件','请先选择执行版实验设计报告 Word 文件'); return; }
+    try{
+      improveReport = await parseWordReport(file);
+      lsSet(LS_KEYS.experimentImproveReport, improveReport);
+      renderImproveReportPreview();
+      toast('success','上传成功',`已加载：${file.name}`);
+      showSubmodule('improve');
+    }catch(err){
+      toast('error','上传失败', String(err.message || err));
+    }
+  };
+  p.querySelector('#clearImproveReportBtn').onclick = ()=>{
+    improveReport = null;
+    localStorage.removeItem(LS_KEYS.experimentImproveReport);
+    renderImproveReportPreview();
+    p.querySelector('#improveOutputBox').value = '';
+    toast('success','已清空','执行版实验设计报告已清空');
+  };
+  p.querySelector('#runImproveBtn').onclick = async ()=>{
+    const cfg = getApiConfig();
+    const currentDataset = lsGet(LS_KEYS.dataset, null);
+    const latestRun = (lsGet(LS_KEYS.savedRuns, []) || [])[0] || null;
+    if(!cfg.apiKey){ toast('warn','缺少密钥','请先在“接入 API”中保存并测试 DeepSeek API 密钥'); showSubmodule('api'); return; }
+    if(!currentDataset){ toast('warn','缺少数据','请先在子模块 2 中确认导入实验数据'); showSubmodule('data'); return; }
+    if(!latestRun){ toast('warn','缺少分析结果','请先在子模块 3 至少完成一次数据分析'); showSubmodule('analysis'); return; }
+    if(!improveReport){ toast('warn','缺少报告','请先上传执行版实验设计报告 Word 文件'); return; }
+    p.querySelector('#improveOutputBox').value = '正在结合实验数据、分析结果和实验设计报告生成改进建议，请稍候...';
+    try{
+      const datasetContext = buildDatasetContext(currentDataset);
+      const improvePrompt = `你是一名体育实验教学改进助手。请结合以下三类信息，输出可执行的中文改进建议：
+1. 实验数据上下文
+2. 最近一次数据分析结果
+3. 执行版实验设计报告正文
+
+请仅返回 JSON，不要输出其他说明。JSON 结构如下：
+{
+  "adviceText": "请只给出最主要的 3-4 条建议，使用 1. 2. 3. 4. 编号输出。"
+}
+要求：
+- 只保留最重要、最有操作性的 3 至 4 条建议，不要给太多泛泛而谈的内容。
+- 优先围绕以下重点展开：
+  1. 数据记录是否完整（例如周次不足、缺测、缺行、关键指标遗漏）。
+  2. 当前数据能否支撑实验设计报告中的目标与假设；如果不能，要明确指出差距。
+  3. 后续如何完善测量方法、记录频率、时间点设置和数据收集流程。
+  4. 如何进一步补充和改进实验数据，使其更能支持结论。
+- 如果发现数据周次不足、记录缺失、核心指标与设计不匹配、指标采集不连续等问题，要明确指出并给出改进措施。
+- 如果信息不足，也要说明还需要补充哪些内容，但仍然总共控制在 3 至 4 条建议内。
+- 输出使用中文，措辞精炼，适合直接给学生或教师查看。
+
+实验数据上下文：${JSON.stringify(datasetContext)}
+
+最近一次数据分析结果：${JSON.stringify(latestRun)}
+
+执行版实验设计报告正文：${JSON.stringify((improveReport.text || '').slice(0, 20000))}`;
+      const content = await callDeepSeekChat(cfg.apiKey, [
+        { role:'system', content:'你是一个体育实验改进助手，擅长结合实验设计、原始数据和分析结果提出改进建议。请始终只输出最关键的 3 至 4 条建议，重点检查数据是否完整、数据是否能支撑实验目标和假设，以及后续如何完善测量与数据记录。' },
+        { role:'user', content: improvePrompt }
+      ], { baseUrl: cfg.baseUrl, model: cfg.model, temperature: 0.2 });
+      const parsed = extractJsonObject(content);
+      p.querySelector('#improveOutputBox').value = parsed.adviceText || '已完成分析，但未返回 adviceText。';
+      updateImproveStatus('AI 改进建议已生成。');
+      toast('success','生成完成','实验改进建议已生成');
+      showSubmodule('improve');
+    }catch(err){
+      p.querySelector('#improveOutputBox').value = `生成失败：${String(err.message || err)}`;
+      toast('error','生成失败', String(err.message || err));
+    }
+  };
+}
+
+
+/* ===========================
+   C Import & Preview
+=========================== */
+function openImport(){
+  const links = getLinks();
+  const ds = lsGet(LS_KEYS.dataset, null);
+
+  const p = openPanel({
+    title:"C 数据导入及预览（Excel → localStorage）",
+    rememberKey:"module.C",
+    width: 1050, height: 680, left: 40, top: 76,
+    html: `
+      <div class="section">
+        <h3>模板下载与导入</h3>
+        <div class="grid2">
+          <div>
+            <label>Excel 模板下载链接（腾讯云文件）</label>
+            <input id="excelTemplate" type="url" value="${escapeHtml(links.excelTemplate)}"/>
+            <div class="btnRow" style="margin-top:10px;">
+              <div class="btn" id="downloadTpl">下载模板</div>
+              <div class="btn good" id="saveLinks">保存链接</div>
+            </div>
+          </div>
+          <div>
+            <label>导入 Excel 文件（.xlsx/.xls）</label>
+            <input id="excelFile" type="file" accept=".xlsx,.xls"/>
+            <div class="btnRow" style="margin-top:10px;">
+              <div class="btn secondary" id="importBtn">开始导入</div>
+              <div class="btn danger" id="clearData">清空数据集</div>
+            </div>
+          </div>
+        </div>
+        <div class="footerNote">
+          导入后会保存：表头、数据行、可识别数值列等。D 模块可直接使用。
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>当前数据集状态</h3>
+        <div class="kpiRow" id="dsKpis"></div>
+      </div>
+
+      <div class="section">
+        <h3>原始数据预览（前 200 行）</h3>
+        <div class="tableWrap" id="previewWrap"></div>
+      </div>
+    `
+  });
+
+  function renderDS(){
+    const cur = lsGet(LS_KEYS.dataset, null);
+    const k = p.querySelector("#dsKpis");
+    if(!cur){
+      k.innerHTML = `
+        <div class="kpi"><div class="k">状态</div><div class="v">未导入</div></div>
+        <div class="kpi"><div class="k">建议</div><div class="v" style="font-size:13px;">先下载模板再导入</div></div>
+      `;
+      p.querySelector("#previewWrap").innerHTML = `<div class="mono" style="padding:10px;color:var(--muted);">暂无数据。</div>`;
+      return;
+    }
+    k.innerHTML = `
+      <div class="kpi"><div class="k">数据集ID</div><div class="v mono">${escapeHtml(cur.id)}</div></div>
+      <div class="kpi"><div class="k">表头列数</div><div class="v">${cur.headers?.length||0}</div></div>
+      <div class="kpi"><div class="k">数据行数</div><div class="v">${cur.rows?.length||0}</div></div>
+      <div class="kpi"><div class="k">数值列识别</div><div class="v">${cur.numericCols?.length||0}</div></div>
+    `;
+    p.querySelector("#previewWrap").innerHTML = renderTable(cur.headers, cur.rows.slice(0,200));
+  }
+  renderDS();
+
+  p.querySelector("#downloadTpl").onclick = ()=> safeOpen(p.querySelector("#excelTemplate").value);
+  p.querySelector("#saveLinks").onclick = ()=>{
+    const next = getLinks();
+    next.excelTemplate = p.querySelector("#excelTemplate").value.trim();
+    setLinks(next);
+    toast("success","保存成功","Excel 模板链接已保存");
+  };
+
+  p.querySelector("#clearData").onclick = ()=>{
+    openConfirm("清空数据集", "确定清空当前数据集吗？（不会清空分析记录）", ()=>{
+      localStorage.removeItem(LS_KEYS.dataset);
+      toast("success","已清空","数据集已清空");
+      renderDS();
+    });
+  };
+
+  p.querySelector("#importBtn").onclick = async ()=>{
+    const input = p.querySelector("#excelFile");
+    const f = input.files?.[0];
+    if(!f){ toast("warn","未选择文件","请选择 Excel 文件后再导入"); return; }
+    try{
+      const buf = await f.arrayBuffer();
+      const wb = XLSX.read(buf, {type:"array"});
+      const sheetName = wb.SheetNames[0];
+      const ws = wb.Sheets[sheetName];
+      const aoa = XLSX.utils.sheet_to_json(ws, {header:1, blankrows:false});
+      if(!aoa || aoa.length<2) throw new Error("表格数据不足（至少包含表头+1行数据）");
+
+      const headers = aoa[0].map(h=>String(h ?? "").trim());
+      const rows = aoa.slice(1).filter(r=>Array.isArray(r) && r.some(x=>String(x ?? "").trim()!==""));
+
+      // identify numeric columns
+      const numericCols = [];
+      for(let c=0;c<headers.length;c++){
+        let cnt=0, ok=0;
+        for(let i=0;i<Math.min(rows.length, 200);i++){
+          const v = rows[i]?.[c];
+          if(v===null||v===undefined||String(v).trim()==="") continue;
+          cnt++;
+          const num = Number(v);
+          if(Number.isFinite(num)) ok++;
+        }
+        if(cnt>0 && ok/cnt >= 0.8) numericCols.push(c);
+      }
+
+      const dsObj = {
+        id: uid("ds"),
+        ts: Date.now(),
+        name: f.name,
+        sheet: sheetName,
+        headers,
+        rows,
+        numericCols
+      };
+      lsSet(LS_KEYS.dataset, dsObj);
+      toast("success","导入成功",`已导入：${f.name}（${rows.length} 行）`);
+      renderDS();
+    }catch(err){
+      toast("error","导入失败", String(err?.message || err));
+    }
+  };
+}
+
+function renderTable(headers, rows){
+  const h = headers || [];
+  const r = rows || [];
+  const thead = `<thead><tr>${h.map(x=>`<th>${escapeHtml(x||"")}</th>`).join("")}</tr></thead>`;
+  const tbody = `<tbody>${r.map(row=>`<tr>${h.map((_,i)=>`<td>${escapeHtml(row?.[i] ?? "")}</td>`).join("")}</tr>`).join("")}</tbody>`;
+  return `<table>${thead}${tbody}</table>`;
+}
+
+/* ===========================
+   D Analysis & Visualization
+   - descriptive stats
+   - t-test (paired / independent)
+   - correlation (Pearson)
+   - linear regression
+   - savedRuns store: config + results + chart base64
+=========================== */
+function openAnalysis(){
+  const ds = lsGet(LS_KEYS.dataset, null);
+  const runs = lsGet(LS_KEYS.savedRuns, []);
+
+  const p = openPanel({
+    title:"D 数据分析及可视化（savedRuns + base64 图表）",
+    rememberKey:"module.D",
+    width: 1120, height: 720, left: 24, top: 72,
+    html: `
+      <div class="section">
+        <h3>数据源</h3>
+        <div class="grid3">
+          <div>
+            <label>当前数据集</label>
+            <input type="text" readonly value="${ds ? escapeHtml(ds.name) : "（未导入）"}"/>
+          </div>
+          <div>
+            <label>sheet</label>
+            <input type="text" readonly value="${ds ? escapeHtml(ds.sheet) : "—"}"/>
+          </div>
+          <div>
+            <label>运行记录数 savedRuns</label>
+            <input type="text" readonly value="${runs.length}"/>
+          </div>
+        </div>
+        <div class="btnRow" style="margin-top:10px;">
+          <div class="btn" id="openImport">去导入数据（C）</div>
+          <div class="btn secondary" id="openRuns">查看运行记录</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>分析配置</h3>
+        <div class="grid3">
+          <div>
+            <label>分析类型</label>
+            <select id="atype">
+              <option value="desc">描述统计（单列）</option>
+              <option value="ttest_paired">t 检验（配对样本，两列）</option>
+              <option value="ttest_ind">t 检验（独立样本：组别列+数值列）</option>
+              <option value="corr">相关分析（Pearson，两列）</option>
+              <option value="reg">回归分析（线性：Y ~ X）</option>
+            </select>
+          </div>
+          <div>
+            <label>列 A（数值列优先）</label>
+            <select id="colA"></select>
+          </div>
+          <div>
+            <label>列 B（按需）/ 组别列（ttest_ind）</label>
+            <select id="colB"></select>
+          </div>
+        </div>
+
+        <div class="grid2" style="margin-top:10px;">
+          <div>
+            <label>运行名称（用于 savedRuns）</label>
+            <input id="runName" type="text" placeholder="例如：训练前后心率配对t检验"/>
+          </div>
+          <div class="btnRow" style="align-items:flex-end;">
+            <div class="btn good" id="runBtn">运行分析</div>
+            <div class="btn secondary" id="saveRunBtn">保存为运行记录</div>
+            <div class="btn ghost" id="clearChartBtn">清空图表</div>
+          </div>
+        </div>
+
+        <div class="footerNote">
+          说明：<br/>
+          - 描述统计：均值/标准差/中位数/最小/最大/样本量。<br/>
+          - 配对 t：对同一对象训练前/后两列进行配对。<br/>
+          - 独立样本 t：使用“组别列”将数据分为两组（仅支持两组）。<br/>
+          - 相关：Pearson r。<br/>
+          - 回归：最小二乘线性回归，输出斜率/截距/R²。<br/>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>结果与图表</h3>
+        <div class="grid2">
+          <div>
+            <label>结果输出</label>
+            <textarea id="resultBox" class="mono" style="min-height:220px;"></textarea>
+          </div>
+          <div>
+            <label>图表预览（可保存 base64）</label>
+            <div class="section" style="padding:8px;margin:0;">
+              <canvas id="chartCanvas" height="180"></canvas>
+            </div>
+            <div class="btnRow" style="margin-top:10px;">
+              <div class="btn" id="exportChart">导出图表 PNG</div>
+              <div class="btn ghost" id="copyBase64">复制 base64</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `
+  });
+
+  p.querySelector("#openImport").onclick = ()=> openImport();
+  p.querySelector("#openRuns").onclick = ()=> openRunsCenter();
+
+  const atype = p.querySelector("#atype");
+  const colA = p.querySelector("#colA");
+  const colB = p.querySelector("#colB");
+  const resultBox = p.querySelector("#resultBox");
+  const runName = p.querySelector("#runName");
+
+  // fill columns
+  function fillCols(){
+    colA.innerHTML = "";
+    colB.innerHTML = "";
+    if(!ds){
+      colA.innerHTML = `<option value="">（无数据）</option>`;
+      colB.innerHTML = `<option value="">（无数据）</option>`;
+      return;
+    }
+    const opts = ds.headers.map((h,i)=>({i, h: h || ("列"+(i+1))}));
+    const numericSet = new Set(ds.numericCols || []);
+    const sorted = opts.sort((x,y)=> (numericSet.has(y.i)-numericSet.has(x.i)) || (x.i-y.i));
+    for(const o of sorted){
+      const label = `${o.h}  [${o.i}]${numericSet.has(o.i) ? " ·数值" : ""}`;
+      colA.insertAdjacentHTML("beforeend", `<option value="${o.i}">${escapeHtml(label)}</option>`);
+      colB.insertAdjacentHTML("beforeend", `<option value="${o.i}">${escapeHtml(label)}</option>`);
+    }
+  }
+  fillCols();
+
+  // chart
+  let chart = null;
+  function setChart(type, labels, data, title){
+    const ctx = p.querySelector("#chartCanvas").getContext("2d");
+    if(chart) chart.destroy();
+    chart = new Chart(ctx, {
+      type,
+      data:{
+        labels,
+        datasets:[{
+          label: title || "数据",
+          data
+        }]
+      },
+      options:{
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{
+          legend:{ labels:{ color:"#bfefff" } },
+          title:{ display:false }
+        },
+        scales:{
+          x:{ ticks:{ color:"#9bb6d6" }, grid:{ color:"rgba(46,74,122,.25)" } },
+          y:{ ticks:{ color:"#9bb6d6" }, grid:{ color:"rgba(46,74,122,.25)" } }
+        }
+      }
+    });
+  }
+
+  function clearChart(){
+    if(chart){ chart.destroy(); chart=null; }
+    const ctx = p.querySelector("#chartCanvas").getContext("2d");
+    ctx.clearRect(0,0,9999,9999);
+  }
+
+  p.querySelector("#clearChartBtn").onclick = ()=>{ clearChart(); toast("info","已清空","图表已清空"); };
+
+  // exporting
+  p.querySelector("#exportChart").onclick = ()=>{
+    if(!chart){ toast("warn","无图表","请先运行分析生成图表"); return; }
+    const canvas = p.querySelector("#chartCanvas");
+    const a = document.createElement("a");
+    a.href = canvas.toDataURL("image/png");
+    a.download = (runName.value.trim() || "图表") + ".png";
+    a.click();
+  };
+  p.querySelector("#copyBase64").onclick = async ()=>{
+    if(!chart){ toast("warn","无图表","请先运行分析生成图表"); return; }
+    const base64 = p.querySelector("#chartCanvas").toDataURL("image/png");
+    try{
+      await navigator.clipboard.writeText(base64);
+      toast("success","已复制","base64 已复制到剪贴板");
+    }catch{
+      toast("warn","复制失败","浏览器不支持剪贴板 API，可用导出 PNG");
+    }
+  };
+
+  // helpers: data extraction
+  function colValuesNumeric(colIndex){
+    if(!ds) return [];
+    const idx = Number(colIndex);
+    const out = [];
+    for(const row of ds.rows){
+      const v = row?.[idx];
+      const num = Number(v);
+      if(Number.isFinite(num)) out.push(num);
+    }
+    return out;
+  }
+  function pairedNumeric(colIndexA, colIndexB){
+    if(!ds) return {a:[], b:[]};
+    const ia = Number(colIndexA), ib = Number(colIndexB);
+    const A=[], B=[];
+    for(const row of ds.rows){
+      const va = Number(row?.[ia]);
+      const vb = Number(row?.[ib]);
+      if(Number.isFinite(va) && Number.isFinite(vb)){
+        A.push(va); B.push(vb);
+      }
+    }
+    return {a:A, b:B};
+  }
+  function splitByGroup(groupColIndex, valueColIndex){
+    if(!ds) return null;
+    const ig = Number(groupColIndex), iv = Number(valueColIndex);
+    const map = new Map();
+    for(const row of ds.rows){
+      const g = String(row?.[ig] ?? "").trim();
+      const v = Number(row?.[iv]);
+      if(!g || !Number.isFinite(v)) continue;
+      if(!map.has(g)) map.set(g, []);
+      map.get(g).push(v);
+    }
+    const groups = [...map.entries()];
+    return groups;
+  }
+
+  // stats
+  function mean(arr){ return arr.reduce((a,b)=>a+b,0)/arr.length; }
+  function variance(arr){
+    const m = mean(arr);
+    return arr.reduce((s,x)=>s+(x-m)*(x-m),0)/(arr.length-1);
+  }
+  function sd(arr){ return Math.sqrt(variance(arr)); }
+  function median(arr){
+    const a=[...arr].sort((x,y)=>x-y);
+    const mid = Math.floor(a.length/2);
+    return a.length%2 ? a[mid] : (a[mid-1]+a[mid])/2;
+  }
+  function pearson(x,y){
+    const n = Math.min(x.length, y.length);
+    const X=x.slice(0,n), Y=y.slice(0,n);
+    const mx=mean(X), my=mean(Y);
+    let num=0, dx=0, dy=0;
+    for(let i=0;i<n;i++){
+      const a = X[i]-mx, b = Y[i]-my;
+      num += a*b;
+      dx += a*a;
+      dy += b*b;
+    }
+    const den = Math.sqrt(dx*dy);
+    return den===0 ? NaN : num/den;
+  }
+  function linearRegression(x,y){
+    const n = Math.min(x.length, y.length);
+    const X=x.slice(0,n), Y=y.slice(0,n);
+    const mx=mean(X), my=mean(Y);
+    let sxx=0, sxy=0;
+    for(let i=0;i<n;i++){
+      const dx = X[i]-mx;
+      sxx += dx*dx;
+      sxy += dx*(Y[i]-my);
+    }
+    const slope = sxx===0 ? NaN : sxy/sxx;
+    const intercept = my - slope*mx;
+
+    // R^2
+    let ssTot=0, ssRes=0;
+    for(let i=0;i<n;i++){
+      const yi = Y[i];
+      const yhat = slope*X[i] + intercept;
+      ssTot += (yi-my)*(yi-my);
+      ssRes += (yi-yhat)*(yi-yhat);
+    }
+    const r2 = ssTot===0 ? NaN : (1 - ssRes/ssTot);
+    return { n, slope, intercept, r2 };
+  }
+
+  // Normal CDF (approx) for p-value (two-sided) using erf approximation
+  function erf(x){
+    // Abramowitz and Stegun approximation
+    const sign = x>=0 ? 1 : -1;
+    x = Math.abs(x);
+    const a1=0.254829592, a2=-0.284496736, a3=1.421413741, a4=-1.453152027, a5=1.061405429;
+    const p=0.3275911;
+    const t=1/(1+p*x);
+    const y=1-((((a5*t+a4)*t+a3)*t+a2)*t+a1)*t*Math.exp(-x*x);
+    return sign*y;
+  }
+  function normalCdf(x){
+    return 0.5*(1+erf(x/Math.SQRT2));
+  }
+  function approxPvalueFromT(t){
+    // Teaching demo: use normal approximation for p-value (two-sided)
+    const z = Math.abs(t);
+    const p = 2*(1 - normalCdf(z));
+    return p;
+  }
+
+  function tTestPaired(a,b){
+    const n = Math.min(a.length, b.length);
+    if(n<2) return { n, t:NaN, df:n-1, p:NaN };
+    const d = [];
+    for(let i=0;i<n;i++) d.push(a[i]-b[i]);
+    const md = mean(d);
+    const sdd = sd(d);
+    const t = md / (sdd/Math.sqrt(n));
+    const df = n-1;
+    const p = approxPvalueFromT(t);
+    return { n, t, df, p, md, sdd };
+  }
+
+  function tTestIndependent(g1,g2){
+    const n1=g1.length, n2=g2.length;
+    if(n1<2 || n2<2) return { n1,n2, t:NaN, df:NaN, p:NaN };
+    const m1=mean(g1), m2=mean(g2);
+    const v1=variance(g1), v2=variance(g2);
+    // Welch's t-test
+    const t = (m1-m2)/Math.sqrt(v1/n1 + v2/n2);
+    const df = Math.pow(v1/n1 + v2/n2, 2) / (Math.pow(v1/n1,2)/(n1-1) + Math.pow(v2/n2,2)/(n2-1));
+    const p = approxPvalueFromT(t);
+    return { n1,n2, t, df, p, m1,m2, v1,v2 };
+  }
+
+  let lastRun = null;
+
+  function formatNum(x){
+    if(!Number.isFinite(x)) return "NaN";
+    const ax = Math.abs(x);
+    if(ax>=1000 || ax<0.001) return x.toExponential(4);
+    return x.toFixed(4);
+  }
+
+  function run(){
+    if(!ds){
+      toast("error","无数据集","请先在 C 模块导入 Excel 数据");
+      return;
+    }
+    const type = atype.value;
+    const a = colA.value;
+    const b = colB.value;
+    let out = "";
+    let chartSpec = null;
+
+    const colName = (i)=> ds.headers?.[i] ?? ("列"+(Number(i)+1));
+
+    if(type==="desc"){
+      const arr = colValuesNumeric(a);
+      if(arr.length<2){ toast("warn","数据不足","该列可用数值少于 2"); return; }
+      out += `【描述统计】\n列：${colName(a)} [${a}]\n样本量 n=${arr.length}\n`;
+      out += `均值 mean=${formatNum(mean(arr))}\n标准差 sd=${formatNum(sd(arr))}\n中位数 median=${formatNum(median(arr))}\n最小 min=${formatNum(Math.min(...arr))}\n最大 max=${formatNum(Math.max(...arr))}\n`;
+      chartSpec = { type:"line", labels: arr.map((_,i)=>String(i+1)), data: arr, title: colName(a) };
+    }
+
+    if(type==="ttest_paired"){
+      const {a:A, b:B} = pairedNumeric(a,b);
+      if(A.length<2){ toast("warn","数据不足","两列有效配对样本少于 2"); return; }
+      const r = tTestPaired(A,B);
+      out += `【配对样本 t 检验（教学演示：p 值为正态近似）】\nA：${colName(a)} [${a}]\nB：${colName(b)} [${b}]\n`;
+      out += `样本量 n=${r.n}\n均值差 md(A-B)=${formatNum(r.md)}\n差值标准差 sd(d)=${formatNum(r.sdd)}\n`;
+      out += `t=${formatNum(r.t)}\ndf=${r.df}\np≈${formatNum(r.p)}\n`;
+      // plot paired series
+      chartSpec = { type:"line", labels: A.map((_,i)=>String(i+1)), data: A, title: colName(a)+"（A）" };
+    }
+
+    if(type==="ttest_ind"){
+      const groups = splitByGroup(b, a); // B as group, A as value
+      if(!groups || groups.length<2){
+        toast("warn","分组不足","请确保组别列至少存在两组且数值列可解析为数字");
+        return;
+      }
+      if(groups.length!==2){
+        toast("warn","仅支持两组","当前识别到 "+groups.length+" 组。教学演示仅支持两组独立样本 t。");
+        return;
+      }
+      const [g1, g2] = groups;
+      const r = tTestIndependent(g1[1], g2[1]);
+      out += `【独立样本 t 检验（Welch，教学演示：p 值为正态近似）】\n数值列：${colName(a)} [${a}]\n组别列：${colName(b)} [${b}]\n`;
+      out += `组1=${g1[0]}，n=${r.n1}，mean=${formatNum(r.m1)}\n组2=${g2[0]}，n=${r.n2}，mean=${formatNum(r.m2)}\n`;
+      out += `t=${formatNum(r.t)}\ndf≈${formatNum(r.df)}\np≈${formatNum(r.p)}\n`;
+      chartSpec = { type:"bar", labels:[String(g1[0]), String(g2[0])], data:[r.m1, r.m2], title:"两组均值对比" };
+    }
+
+    if(type==="corr"){
+      const {a:A, b:B} = pairedNumeric(a,b);
+      if(A.length<3){ toast("warn","数据不足","两列有效样本少于 3"); return; }
+      const r = pearson(A,B);
+      out += `【相关分析（Pearson）】\nX：${colName(a)} [${a}]\nY：${colName(b)} [${b}]\n`;
+      out += `样本量 n=${Math.min(A.length,B.length)}\nr=${formatNum(r)}\n`;
+      // show scatter as line chart with index or regression line? Use scatter dataset
+      chartSpec = { scatter:true, x:A, y:B, title:"散点图（X,Y）" };
+    }
+
+    if(type==="reg"){
+      const {a:X, b:Y} = pairedNumeric(a,b);
+      if(X.length<3){ toast("warn","数据不足","两列有效样本少于 3"); return; }
+      const r = linearRegression(X,Y);
+      out += `【线性回归（最小二乘）】\nX：${colName(a)} [${a}]\nY：${colName(b)} [${b}]\n`;
+      out += `样本量 n=${r.n}\n斜率 slope=${formatNum(r.slope)}\n截距 intercept=${formatNum(r.intercept)}\nR²=${formatNum(r.r2)}\n`;
+      chartSpec = { scatter:true, x:X, y:Y, regLine:r, title:"散点 + 回归" };
+    }
+
+    resultBox.value = out;
+    lastRun = { type, colA:Number(a), colB:Number(b), ts:Date.now(), text: out, chartBase64:null, chartMeta:null };
+
+    // render chart
+    try{
+      if(chartSpec){
+        if(chartSpec.scatter){
+          // build scatter chart
+          const ctx = p.querySelector("#chartCanvas").getContext("2d");
+          if(chart) chart.destroy();
+          const points = chartSpec.x.map((x,i)=>({x, y: chartSpec.y[i]}));
+          const datasets = [{
+            label: chartSpec.title || "散点",
+            data: points,
+            showLine:false
+          }];
+
+          // regression line
+          if(chartSpec.regLine && Number.isFinite(chartSpec.regLine.slope)){
+            const xs = [...chartSpec.x].sort((a,b)=>a-b);
+            const x1 = xs[0], x2 = xs[xs.length-1];
+            const y1 = chartSpec.regLine.slope*x1 + chartSpec.regLine.intercept;
+            const y2 = chartSpec.regLine.slope*x2 + chartSpec.regLine.intercept;
+            datasets.push({
+              label: "回归线",
+              data: [{x:x1,y:y1},{x:x2,y:y2}],
+              showLine:true,
+              pointRadius:0
+            });
+          }
+
+          chart = new Chart(ctx, {
+            type:"scatter",
+            data:{ datasets },
+            options:{
+              responsive:true,
+              maintainAspectRatio:false,
+              plugins:{ legend:{ labels:{ color:"#bfefff" } } },
+              scales:{
+                x:{ ticks:{ color:"#9bb6d6" }, grid:{ color:"rgba(46,74,122,.25)" } },
+                y:{ ticks:{ color:"#9bb6d6" }, grid:{ color:"rgba(46,74,122,.25)" } }
+              }
+            }
+          });
+        }else{
+          setChart(chartSpec.type, chartSpec.labels, chartSpec.data, chartSpec.title);
+        }
+      }else{
+        clearChart();
+      }
+      toast("success","分析完成","结果已生成，可保存为运行记录");
+    }catch(err){
+      toast("warn","图表生成失败","结果已生成，但图表渲染失败："+String(err?.message||err));
+    }
+  }
+
+  p.querySelector("#runBtn").onclick = run;
+
+  p.querySelector("#saveRunBtn").onclick = ()=>{
+    if(!lastRun){
+      toast("warn","无可保存结果","请先运行一次分析");
+      return;
+    }
+    const name = runName.value.trim() || ("运行记录_"+new Date(lastRun.ts).toLocaleString());
+    let base64 = null;
+    let chartMeta = null;
+    if(chart){
+      try{
+        const canvas = p.querySelector("#chartCanvas");
+        base64 = canvas.toDataURL("image/png");
+        chartMeta = {
+          type: atype.value,
+          colA: colA.value,
+          colB: colB.value,
+          datasetId: ds?.id,
+          datasetName: ds?.name
+        };
+      }catch{}
+    }
+
+    const entry = {
+      id: uid("run"),
+      name,
+      ts: lastRun.ts,
+      config: { type: atype.value, colA:Number(colA.value), colB:Number(colB.value) },
+      dataset: { id: ds.id, name: ds.name, sheet: ds.sheet },
+      resultText: lastRun.text,
+      chartBase64: base64,
+      chartMeta
+    };
+    const list = lsGet(LS_KEYS.savedRuns, []);
+    list.unshift(entry);
+    lsSet(LS_KEYS.savedRuns, list);
+    toast("success","已保存", `已保存运行记录：${name}`);
+  };
+
+  // auto runName suggestion
+  function suggestName(){
+    if(runName.value.trim()) return;
+    if(!ds) return;
+    const cn = (i)=> ds.headers?.[i] ?? ("列"+(Number(i)+1));
+    const t = atype.value;
+    if(t==="desc") runName.value = `描述统计_${cn(colA.value)}`;
+    if(t==="ttest_paired") runName.value = `配对t_${cn(colA.value)}_vs_${cn(colB.value)}`;
+    if(t==="ttest_ind") runName.value = `独立t_${cn(colA.value)}_按_${cn(colB.value)}分组`;
+    if(t==="corr") runName.value = `相关_${cn(colA.value)}_与_${cn(colB.value)}`;
+    if(t==="reg") runName.value = `回归_${cn(colB.value)}~${cn(colA.value)}`;
+  }
+  atype.onchange = suggestName;
+  colA.onchange = suggestName;
+  colB.onchange = suggestName;
+  suggestName();
+}
+
+/* ===========================
+   Runs center (savedRuns)
+=========================== */
+function openRunsCenter(){
+  const list = lsGet(LS_KEYS.savedRuns, []);
+  const p = openPanel({
+    title:"分析运行记录（savedRuns）",
+    rememberKey:"runs.center",
+    width: 1040, height: 680, left: 40, top: 76,
+    html: `
+      <div class="section">
+        <h3>运行记录列表（含图表 base64）</h3>
+        <div class="btnRow">
+          <div class="btn" id="exportRuns">导出运行记录 JSON</div>
+          <div class="btn danger" id="clearRuns">清空运行记录</div>
+        </div>
+        <div class="footerNote">点击“查看/回放”可打开结果与图表；可导出用于教学展示留存。</div>
+      </div>
+      <div class="section">
+        <div class="tableWrap">
+          <table>
+            <thead>
+              <tr>
+                <th>名称</th>
+                <th>时间</th>
+                <th>数据集</th>
+                <th>类型</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="runBody"></tbody>
+          </table>
+        </div>
+      </div>
+    `
+  });
+
+  const body = p.querySelector("#runBody");
+
+  function render(){
+    const items = lsGet(LS_KEYS.savedRuns, []);
+    body.innerHTML = items.map(r=>`
+      <tr>
+        <td>${escapeHtml(r.name)}</td>
+        <td>${new Date(r.ts).toLocaleString()}</td>
+        <td>${escapeHtml(r.dataset?.name || "—")}</td>
+        <td class="mono">${escapeHtml(r.config?.type || "")}</td>
+        <td>
+          <div class="btnRow">
+            <div class="btn" data-act="view" data-id="${escapeHtml(r.id)}">查看/回放</div>
+            <div class="btn ghost" data-act="copy" data-id="${escapeHtml(r.id)}">复制结果</div>
+            <div class="btn danger" data-act="del" data-id="${escapeHtml(r.id)}">删除</div>
+          </div>
+        </td>
+      </tr>
+    `).join("") || `<tr><td colspan="5" class="mono" style="color:var(--muted);">暂无运行记录。</td></tr>`;
+  }
+  render();
+
+  p.querySelector("#exportRuns").onclick = ()=>{
+    const data = lsGet(LS_KEYS.savedRuns, []);
+    const blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `savedRuns_${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+    toast("success","导出完成","已导出运行记录 JSON");
+  };
+
+  p.querySelector("#clearRuns").onclick = ()=>{
+    openConfirm("清空运行记录", "确定清空所有 savedRuns 吗？", ()=>{
+      lsSet(LS_KEYS.savedRuns, []);
+      toast("success","已清空","运行记录已清空");
+      render();
+    });
+  };
+
+  body.addEventListener("click", async (e)=>{
+    const btn = e.target.closest(".btn");
+    if(!btn) return;
+    const id = btn.dataset.id;
+    const act = btn.dataset.act;
+    const items = lsGet(LS_KEYS.savedRuns, []);
+    const r = items.find(x=>x.id===id);
+    if(!r) return;
+
+    if(act==="view"){
+      openRunPlayback(r);
+    }
+    if(act==="copy"){
+      try{
+        await navigator.clipboard.writeText(r.resultText || "");
+        toast("success","已复制","结果文本已复制");
+      }catch{
+        toast("warn","复制失败","浏览器不支持剪贴板 API");
+      }
+    }
+    if(act==="del"){
+      openConfirm("删除运行记录", `确定删除：${r.name}？`, ()=>{
+        lsSet(LS_KEYS.savedRuns, items.filter(x=>x.id!==id));
+        toast("success","已删除","运行记录已删除");
+        render();
+      });
+    }
+  });
+}
+
+function openRunPlayback(run){
+  const p = openPanel({
+    title:"运行回放 · " + (run.name || "未命名"),
+    rememberKey:"run.playback",
+    width: 980, height: 680, left: 70, top: 76,
+    html: `
+      <div class="section">
+        <h3>运行信息</h3>
+        <div class="grid3">
+          <div><label>时间</label><input type="text" readonly value="${escapeHtml(new Date(run.ts).toLocaleString())}"/></div>
+          <div><label>数据集</label><input type="text" readonly value="${escapeHtml(run.dataset?.name||"—")}"/></div>
+          <div><label>类型</label><input type="text" readonly value="${escapeHtml(run.config?.type||"")}"/></div>
+        </div>
+      </div>
+      <div class="section">
+        <h3>结果文本</h3>
+        <textarea class="mono" style="min-height:230px;" readonly>${escapeHtml(run.resultText||"")}</textarea>
+      </div>
+      <div class="section">
+        <h3>图表（若保存）</h3>
+        <div id="imgWrap" class="section" style="padding:10px;margin:0;"></div>
+      </div>
+      <div class="btnRow" style="margin-top:12px;">
+        <div class="btn" id="downloadImg">导出图表</div>
+        <div class="btn ghost" id="close">关闭</div>
+      </div>
+    `
+  });
+
+  const imgWrap = p.querySelector("#imgWrap");
+  if(run.chartBase64){
+    imgWrap.innerHTML = `<img src="${run.chartBase64}" style="max-width:100%;border-radius:12px;border:1px solid rgba(46,74,122,.55);" />`;
+  }else{
+    imgWrap.innerHTML = `<div class="mono" style="color:var(--muted);">该运行记录未保存图表（或当时未生成图表）。</div>`;
+  }
+
+  p.querySelector("#downloadImg").onclick = ()=>{
+    if(!run.chartBase64){
+      toast("warn","无图表","该记录没有图表");
+      return;
+    }
+    const a = document.createElement("a");
+    a.href = run.chartBase64;
+    a.download = (run.name || "图表") + ".png";
+    a.click();
+  };
+  p.querySelector("#close").onclick = ()=> p.remove();
+}
+
+/* ===========================
+   D Report Submit
+=========================== */
+function openReport(){
+  const draftDoc = lsGet(LS_KEYS.reportDraftDoc, null);
+  const submitDoc = lsGet(LS_KEYS.reportSubmitDoc, null);
+  const links = getLinks();
+
+  const p = openPanel({
+    title:"D 报告提交（初稿修改 / 嵌入式提交）",
+    rememberKey:"module.D.report",
+    width: 1060, height: 720, left: 48, top: 76,
+    html: `
+      <div class="section">
+        <div class="submoduleCards" style="margin-bottom:8px;">
+          <div class="menuCard" data-sub-open="draft" style="min-height:96px;">
+            <div class="tag">1</div>
+            <div class="title">初稿修改 - AI 辅助</div>
+            <div class="desc">上传 Word 初稿，左侧浏览，右侧生成精简修改建议</div>
+          </div>
+          <div class="menuCard" data-sub-open="submit" style="min-height:96px;">
+            <div class="tag">2</div>
+            <div class="title">提交报告</div>
+            <div class="desc">上传待提交文件，并通过嵌入问卷星完成提交</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="d_sub_draft" class="section">
+        <h3>子模块 1 · 初稿修改 - AI 辅助</h3>
+        <div class="footerNote">请上传 <strong>Word 初稿（.doc/.docx）</strong>。AI 将重点检查格式完整性、内容缺漏、错别字、结论量化分析与图表展示是否齐全，并给出少量关键建议。</div>
+        <div class="btnRow" style="margin-top:10px; align-items:center;">
+          <input id="draftWordInput" type="file" accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
+          <div class="btn good" id="uploadDraftWord">上传报告初稿</div>
+          <div class="btn" id="runDraftReview">AI 辅助修改</div>
+        </div>
+        <div class="grid2" style="grid-template-columns:2fr 1fr; gap:14px; margin-top:12px; align-items:start;">
+          <div>
+            <label>报告浏览框</label>
+            <div id="draftPreviewBox" class="mono" style="height:320px; overflow:auto; border:1px solid rgba(46,74,122,.55); border-radius:12px; padding:12px; background:rgba(0,0,0,.18);">暂无已上传初稿。</div>
+          </div>
+          <div>
+            <label>建议框</label>
+            <div id="draftSuggestBox" class="mono" style="height:320px; overflow:auto; border:1px solid rgba(46,74,122,.55); border-radius:12px; padding:12px; background:rgba(0,0,0,.18); white-space:pre-wrap;">请先上传 Word 初稿，再点击“AI 辅助修改”。</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="d_sub_submit" class="section" style="display:none;">
+        <h3>子模块 2 · 提交报告</h3>
+        <div class="footerNote">请上传最终提交版文件，然后点击按钮在新标签页中打开问卷星完成提交。</div>
+        <div class="btnRow" style="margin-top:10px; align-items:center;">
+          <input id="submitReportInput" type="file" />
+          <div class="btn good" id="saveSubmitDoc">上传文件</div>
+          <div class="btn secondary" id="openReportSubmitLink">打开问卷提交页面</div>
+        </div>
+        <div class="grid2" style="margin-top:12px; grid-template-columns:280px 1fr; gap:14px; align-items:start;">
+          <div class="section" style="margin:0;">
+            <h3 style="margin-top:0;">文件状态</h3>
+            <div id="submitDocInfo" class="mono" style="white-space:pre-wrap; color:var(--muted);">尚未上传提交文件。</div>
+          </div>
+          <div>
+            <label>提交说明</label>
+            <div class="mono" style="height:220px;overflow:auto;border:1px solid rgba(46,74,122,.55);border-radius:12px;padding:14px;background:rgba(0,0,0,.12);white-space:pre-wrap;line-height:1.9;">由于问卷星页面限制了站内嵌入预览，当前改为点击“打开问卷提交页面”按钮，在浏览器新标签页中完成提交。
+
+建议步骤：
+1. 先在左侧上传最终提交版文件；
+2. 核对文件名称与版本；
+3. 点击按钮打开问卷星页面；
+4. 在问卷中按要求上传并提交文件。</div>
+          </div>
+        </div>
+      </div>
+    `
+  });
+
+  function parseWordReportGlobal(file){
+    return file.arrayBuffer().then(async arrayBuffer=>{
+      if(window.mammoth && mammoth.convertToHtml){
+        const result = await mammoth.convertToHtml({ arrayBuffer });
+        const rawText = await mammoth.extractRawText({ arrayBuffer });
+        return {
+          id: uid('draftdoc'), ts: Date.now(), name: file.name, size: file.size,
+          type: file.type || 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+          html: `<div style="line-height:1.85;">${result.value || ''}</div>`,
+          text: String(rawText.value || '').trim()
+        };
+      }
+      return { id: uid('draftdoc'), ts: Date.now(), name: file.name, size: file.size, type: file.type || 'application/octet-stream', html:'', text:'当前环境未加载 Word 解析组件，无法读取正文。' };
+    });
+  }
+
+  let currentDraft = draftDoc;
+  function renderDraft(){
+    const box = p.querySelector('#draftPreviewBox');
+    if(!currentDraft){
+      box.textContent = '暂无已上传初稿。';
+      return;
+    }
+    if(currentDraft.html) box.innerHTML = currentDraft.html;
+    else box.textContent = currentDraft.text || currentDraft.name;
+  }
+  function renderSubmitInfo(){
+    const info = p.querySelector('#submitDocInfo');
+    const sub = lsGet(LS_KEYS.reportSubmitDoc, null);
+    if(!sub){
+      info.textContent = '尚未上传提交文件。';
+      return;
+    }
+    info.textContent = `文件名：${sub.name}
+上传时间：${new Date(sub.ts).toLocaleString()}
+大小：${(sub.size/1024).toFixed(1)} KB`;
+  }
+  function showSub(k){
+    p.querySelector('#d_sub_draft').style.display = k==='draft' ? 'block' : 'none';
+    p.querySelector('#d_sub_submit').style.display = k==='submit' ? 'block' : 'none';
+  }
+  p.querySelectorAll('[data-sub-open]').forEach(el=>el.onclick=()=>showSub(el.dataset.subOpen));
+  showSub('draft');
+  renderDraft();
+  renderSubmitInfo();
+
+  p.querySelector('#uploadDraftWord').onclick = async ()=>{
+    const file = p.querySelector('#draftWordInput').files?.[0];
+    if(!file){ toast('warn','未选择文件','请先选择 Word 初稿'); return; }
+    try{
+      currentDraft = await parseWordReportGlobal(file);
+      lsSet(LS_KEYS.reportDraftDoc, currentDraft);
+      renderDraft();
+      p.querySelector('#draftSuggestBox').textContent = '初稿已上传。请点击“AI 辅助修改”生成建议。';
+      toast('success','上传成功',`已上传：${file.name}`);
+    }catch(err){
+      toast('error','上传失败', String(err.message || err));
+    }
+  };
+
+  p.querySelector('#runDraftReview').onclick = async ()=>{
+    if(!currentDraft || !String(currentDraft.text||'').trim()){
+      toast('warn','缺少初稿','请先上传可读取正文的 Word 初稿');
+      return;
+    }
+    const cfg = getApiConfig();
+    const suggestBox = p.querySelector('#draftSuggestBox');
+    suggestBox.textContent = '正在生成修改建议，请稍候...';
+    const excerpt = String(currentDraft.text || '').replace(/\s+/g,' ').slice(0, 7000);
+    const prompt = `请基于以下实验报告初稿内容，给出 3-4 条最关键的修改建议。要求：
+1. 建议精简，每条 1-2 句；
+2. 重点检查：格式是否完整、缺哪些必要内容、是否有明显错别字或表述问题、实验结论是否包含量化分析与图表展示；
+3. 如果缺少摘要、目的、方法、结果、讨论、结论、参考文献等要指出；
+4. 不要泛泛而谈，不要输出超过 4 条。
+
+实验报告初稿内容：
+${excerpt}`;
+    try{
+      if(!cfg.apiKey) throw new Error('尚未配置 DeepSeek API 密钥');
+      const res = await callDeepSeekChat(cfg.apiKey, [
+        { role:'system', content:'你是严谨的实验报告指导教师。请输出 3-4 条简明、可执行的修改建议，使用编号列表。' },
+        { role:'user', content: prompt }
+      ], { baseUrl: cfg.baseUrl, model: cfg.model, temperature: 0.2 });
+      suggestBox.textContent = String(res || '').trim();
+    }catch(err){
+      const raw = excerpt;
+      const tips = [];
+      if(!/摘要/.test(raw)) tips.push('1. 请补充摘要，简要交代研究目的、对象、方法、主要结果与结论。');
+      if(!/方法|实验方法|研究方法/.test(raw)) tips.push('2. 方法部分不够明确时，请补充对象人数、分组方式、干预周期、测量指标与统计处理。');
+      if(!/图|表|均值|标准差|显著|p\s*[<≤=]/i.test(raw)) tips.push('3. 结果与结论部分建议加入量化分析结果和对应图表，避免只写定性描述。');
+      if(!/讨论|结论/.test(raw)) tips.push('4. 请检查是否补齐讨论与结论，说明结果是否支持实验目标与假设。');
+      suggestBox.textContent = (tips.slice(0,4).join('\n') || '暂未生成 AI 建议，请检查 API 联通状态后重试。') + `\n\n（提示：${String(err.message || err)}）`;
+    }
+  };
+
+  p.querySelector('#saveSubmitDoc').onclick = ()=>{
+    const file = p.querySelector('#submitReportInput').files?.[0];
+    if(!file){ toast('warn','未选择文件','请先选择要提交的文件'); return; }
+    const info = { id: uid('submitdoc'), ts: Date.now(), name: file.name, size: file.size, type: file.type || 'application/octet-stream' };
+    lsSet(LS_KEYS.reportSubmitDoc, info);
+    renderSubmitInfo();
+    toast('success','上传成功',`已记录提交文件：${file.name}`);
+  };
+}
+
+/* ===========================
+   utils
+=========================== */
+function safeOpen(url){
+  const u = String(url || "").trim();
+  if(!u){
+    toast("warn","链接未设置","请先补充有效链接");
+    return;
+  }
+  window.open(u, "_blank", "noopener,noreferrer");
+}
+
+function safeJson(s, fallback){
+  try{ return JSON.parse(s); }catch{ return fallback; }
+}
+
+/* ===========================
+   Startup
+=========================== */
+toast("info","系统已启动","V2.0 教学展示版：点击 A-D 进入模块（所有数据保存在本地）", 4200);
+</script>
 </body>
 </html>
