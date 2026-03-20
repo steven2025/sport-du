@@ -154,6 +154,147 @@
       margin-top:14px;
     }
 
+    .guideToggleWrap{
+      margin-top:22px;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+    }
+    .guideToggleCard{
+      width:min(100%, 420px);
+      min-height:128px;
+      padding:16px 34px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      gap:8px;
+      border-radius:999px;
+      background:radial-gradient(circle at 30% 25%, rgba(255,255,255,.24), rgba(255,255,255,0) 30%), linear-gradient(135deg, rgba(87,200,255,.95), rgba(63,126,255,.92) 54%, rgba(127,90,255,.9));
+      border:3px solid rgba(170,238,255,.82);
+      box-shadow:0 18px 38px rgba(27,116,255,.3), 0 0 0 10px rgba(83,197,255,.12), inset 0 2px 0 rgba(255,255,255,.34), inset 0 -16px 28px rgba(10,35,120,.22);
+      position:relative;
+      overflow:hidden;
+      cursor:pointer;
+      transition:transform .18s ease, box-shadow .18s ease;
+    }
+    .guideToggleCard:hover{
+      transform:translateY(-2px) scale(1.01);
+      box-shadow:0 22px 42px rgba(27,116,255,.36), 0 0 0 12px rgba(83,197,255,.14), inset 0 2px 0 rgba(255,255,255,.38), inset 0 -18px 30px rgba(10,35,120,.24);
+    }
+    .guideToggleCard::before{
+      content:"";
+      position:absolute;
+      inset:10px;
+      border-radius:999px;
+      background:linear-gradient(180deg, rgba(255,255,255,.15), rgba(255,255,255,.02) 55%, rgba(0,0,0,.05));
+      pointer-events:none;
+    }
+    .guideToggleCard::after{
+      content:"";
+      position:absolute;
+      left:20px;
+      right:20px;
+      top:12px;
+      height:34px;
+      border-radius:999px;
+      background:linear-gradient(180deg, rgba(255,255,255,.26), rgba(255,255,255,0));
+      pointer-events:none;
+      filter:blur(.2px);
+    }
+    .guideToggleCard .tag{ background:rgba(255,255,255,.32); border-color:rgba(255,255,255,.42); color:#5b2a59; font-weight:900; position:relative; z-index:1; }
+    .guideToggleCard .title{ color:#ffffff; font-size:26px; letter-spacing:1px; text-shadow:0 2px 8px rgba(98,33,88,.22); position:relative; z-index:1; }
+    .guideToggleCard .desc{ color:#fff7fb; font-weight:800; font-size:15px; position:relative; z-index:1; }
+
+    .guidePanel{
+      margin-top:16px;
+      padding:20px 22px 18px;
+      border-radius:22px;
+      background:linear-gradient(145deg, rgba(10,20,40,.9), rgba(8,14,28,.82));
+      border:1px solid rgba(76,122,196,.45);
+      box-shadow: var(--shadow), 0 0 26px rgba(0,240,255,.08);
+    }
+    .guidePanel.collapsed{ display:none; }
+    .guideTitleRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom:12px;
+    }
+    .guideTitle{
+      font-size:24px;
+      font-weight:900;
+      color:#8fe7ff;
+      text-shadow:0 0 18px rgba(0,240,255,.18);
+      letter-spacing:.4px;
+    }
+    .guideSub{
+      font-size:13px;
+      font-weight:700;
+      color:#ffd36b;
+    }
+    .guideFlow{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin:10px 0 16px;
+    }
+    .guideChip{
+      padding:8px 14px;
+      border-radius:999px;
+      font-size:14px;
+      font-weight:800;
+      color:#f5fbff;
+      border:1px solid rgba(255,255,255,.18);
+      box-shadow:0 0 16px rgba(0,0,0,.15);
+    }
+    .guideChip:nth-child(1){ background:linear-gradient(135deg, rgba(255,163,79,.9), rgba(255,120,87,.72)); }
+    .guideChip:nth-child(2){ background:linear-gradient(135deg, rgba(86,155,255,.92), rgba(116,109,255,.72)); }
+    .guideChip:nth-child(3){ background:linear-gradient(135deg, rgba(53,202,175,.92), rgba(46,135,255,.72)); }
+    .guideChip:nth-child(4){ background:linear-gradient(135deg, rgba(195,118,255,.9), rgba(255,98,164,.72)); }
+    .guideChip:nth-child(5){ background:linear-gradient(135deg, rgba(255,214,92,.92), rgba(255,151,59,.76)); color:#10233d; }
+    .guideCards{
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(210px, 1fr));
+      gap:12px;
+    }
+    .guideCard{
+      padding:14px 14px 13px;
+      border-radius:16px;
+      background:rgba(13,22,42,.78);
+      border:1px solid rgba(86,126,188,.35);
+      min-height:122px;
+    }
+    .guideCard .step{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:30px;
+      height:30px;
+      border-radius:50%;
+      margin-bottom:8px;
+      font-size:15px;
+      font-weight:900;
+      color:#061321;
+      background:linear-gradient(135deg, #9af4ff, #8bb2ff);
+      box-shadow:0 0 14px rgba(0,240,255,.2);
+    }
+    .guideCard h4{
+      margin:0 0 7px;
+      font-size:18px;
+      font-weight:900;
+      color:#ffffff;
+    }
+    .guideCard p{
+      margin:0;
+      font-size:14px;
+      line-height:1.55;
+      color:#d9e7fb;
+    }
+
     /* glass card with tilt */
     .menuCard{
       position:relative;
@@ -195,7 +336,22 @@
       line-height:1.45;
       transform: translateZ(18px);
     }
-    .menuCard .tag{
+    
+    /* colorful module and submodule buttons */
+    #menuGrid .menuCard:nth-child(1){ background:linear-gradient(135deg, rgba(255,122,89,.22), rgba(255,186,73,.16)); border-color:rgba(255,170,95,.55); }
+    #menuGrid .menuCard:nth-child(2){ background:linear-gradient(135deg, rgba(98,126,255,.24), rgba(140,92,255,.14)); border-color:rgba(126,149,255,.55); }
+    #menuGrid .menuCard:nth-child(3){ background:linear-gradient(135deg, rgba(30,200,160,.22), rgba(55,143,255,.14)); border-color:rgba(90,206,192,.55); }
+    #menuGrid .menuCard:nth-child(4){ background:linear-gradient(135deg, rgba(255,96,160,.22), rgba(172,106,255,.14)); border-color:rgba(255,140,195,.55); }
+    #menuGrid .menuCard .tag{ background:rgba(255,255,255,.2); border-color:rgba(255,255,255,.28); }
+    .section .grid2 [data-submodule-open]{ border:1px solid transparent; }
+    .section .grid2 [data-submodule-open]:nth-child(1){ background:linear-gradient(135deg, rgba(255,160,76,.22), rgba(255,116,76,.12)); border-color:rgba(255,175,112,.55); }
+    .section .grid2 [data-submodule-open]:nth-child(2){ background:linear-gradient(135deg, rgba(76,174,255,.22), rgba(76,118,255,.12)); border-color:rgba(116,180,255,.55); }
+    .section .grid2 [data-submodule-open]:nth-child(3){ background:linear-gradient(135deg, rgba(90,214,170,.22), rgba(62,170,255,.12)); border-color:rgba(118,226,185,.55); }
+    .section .grid2 [data-submodule-open]:nth-child(4){ background:linear-gradient(135deg, rgba(199,120,255,.22), rgba(255,99,171,.12)); border-color:rgba(218,161,255,.55); }
+    .submoduleCards .menuCard{ min-height:auto !important; padding:14px 18px; border:1px solid transparent; }
+    .submoduleCards .menuCard:nth-child(1){ background:linear-gradient(135deg, rgba(255,172,76,.22), rgba(255,119,76,.12)); border-color:rgba(255,180,110,.55); }
+    .submoduleCards .menuCard:nth-child(2){ background:linear-gradient(135deg, rgba(98,168,255,.22), rgba(124,96,255,.12)); border-color:rgba(132,187,255,.55); }
+.menuCard .tag{
       position:absolute;
       right:12px; top:12px;
       font-size:11px;
@@ -475,6 +631,9 @@
       header .center{ position:static; transform:none; margin:0 auto; font-size:12px; }
       .noticeBar{ width:100%; min-width:0; }
       .noticeTrack{ font-size:22px; }
+      .guidePanel{ padding:16px 14px; }
+      .guideTitle{ font-size:20px; }
+      .guideCards{ grid-template-columns:1fr; }
     }
   </style>
 </head>
@@ -518,6 +677,56 @@
         <div class="desc">初稿修改 AI 辅助 + Word 浏览建议 + 问卷星嵌入式提交</div>
       </div>
     </div>
+
+    <div class="guideToggleWrap">
+      <div class="guideToggleCard" id="guideToggleBtn" role="button" tabindex="0" aria-expanded="false" aria-controls="guidePanel">
+        <div class="tag">实验小助手</div>
+        <div class="title">学生操作指引</div>
+        <div class="desc">点击查看 / 再点可收起</div>
+      </div>
+    </div>
+
+    <section class="guidePanel collapsed" id="guidePanel" aria-label="学生操作指引">
+      <div class="guideTitleRow">
+        <div class="guideTitle">学生操作指引</div>
+        <div class="guideSub">首次使用建议先按下面顺序完成</div>
+      </div>
+      <div class="guideFlow">
+        <div class="guideChip">1. 学习</div>
+        <div class="guideChip">2. 实验设计</div>
+        <div class="guideChip">3. 数据分析</div>
+        <div class="guideChip">4. 修改报告</div>
+        <div class="guideChip">5. 提交报告</div>
+      </div>
+      <div class="guideCards">
+        <div class="guideCard">
+          <div class="step">1</div>
+          <h4>先学习</h4>
+          <p>进入 A 模块，先看老师提供的资料，弄清楚本次实验要做什么、最后要交什么。</p>
+        </div>
+        <div class="guideCard">
+          <div class="step">2</div>
+          <h4>做实验设计</h4>
+          <p>进入 B 模块，先看参考题目，再用 AI 完善实验方案，最后提交实验设计报告。</p>
+        </div>
+        <div class="guideCard">
+          <div class="step">3</div>
+          <h4>导入并分析数据</h4>
+          <p>进入 C 模块，导入实验数据，输入想分析的问题，查看文字结果和图表。</p>
+        </div>
+        <div class="guideCard">
+          <div class="step">4</div>
+          <h4>修改实验报告</h4>
+          <p>进入 D 模块，先上传初稿，结合 AI 建议检查结构、错别字和结论是否完整。</p>
+        </div>
+        <div class="guideCard">
+          <div class="step">5</div>
+          <h4>提交最终报告</h4>
+          <p>确认是最终版本后，再点击提交按钮进入问卷星，完成最后提交。</p>
+        </div>
+      </div>
+    </section>
+
   </div>
 </div>
 
@@ -890,6 +1099,25 @@ document.getElementById("menuGrid").addEventListener("click",(e)=>{
   if(m==="D") openReport();
 });
 
+const guideToggleBtn = document.getElementById("guideToggleBtn");
+const guidePanel = document.getElementById("guidePanel");
+function toggleGuidePanel(){
+  const willShow = guidePanel.classList.contains("collapsed");
+  guidePanel.classList.toggle("collapsed", !willShow);
+  guideToggleBtn.setAttribute("aria-expanded", String(willShow));
+  guideToggleBtn.querySelector(".desc").textContent = willShow ? "再次点击可收起" : "点击查看 / 再点可收起";
+  if(willShow){
+    requestAnimationFrame(()=> guidePanel.scrollIntoView({behavior:"smooth", block:"nearest"}));
+  }
+}
+guideToggleBtn.addEventListener("click", toggleGuidePanel);
+guideToggleBtn.addEventListener("keydown", (e)=>{
+  if(e.key === "Enter" || e.key === " "){
+    e.preventDefault();
+    toggleGuidePanel();
+  }
+});
+
 /* ===========================
    A Learning
 =========================== */
@@ -986,16 +1214,26 @@ function openLearningPreview(item){
     `;
   }else if(item.type==="ppt" || item.type==="word"){
     const embedUrl = officeEmbed(url);
-    body = `
-      <div class="section">
-        <h3>${escapeHtml(item.code)} · ${escapeHtml(item.title)}</h3>
-        <iframe src="${embedUrl}"
-          style="width:100%;height:560px;border-radius:12px;border:1px solid rgba(46,74,122,.55);background:rgba(0,0,0,.25)"></iframe>
-        <div class="footerNote">
-          说明：此处为 Office 在线预览。若预览失败，可在浏览器地址栏直接打开原始链接。
+    if(isFileProtocol()){
+      body = `
+        <div class="section">
+          <h3>${escapeHtml(item.code)} · ${escapeHtml(item.title)}</h3>
+          ${makeLocalPreviewBlockedHtml('已停止在本地 file:// 页面中加载 Office 在线预览。')}
+          <div class="footerNote">说明：请直接使用“浏览”或“新标签页打开”查看原始链接。</div>
         </div>
-      </div>
-    `;
+      `;
+    }else{
+      body = `
+        <div class="section">
+          <h3>${escapeHtml(item.code)} · ${escapeHtml(item.title)}</h3>
+          <iframe src="${embedUrl}"
+            style="width:100%;height:560px;border-radius:12px;border:1px solid rgba(46,74,122,.55);background:rgba(0,0,0,.25)"></iframe>
+          <div class="footerNote">
+            说明：此处为 Office 在线预览。若预览失败，可在浏览器地址栏直接打开原始链接。
+          </div>
+        </div>
+      `;
+    }
   }else{
     body = `<div class="mono" style="color:var(--muted);">未知类型，无法预览。</div>`;
   }
@@ -1124,9 +1362,32 @@ function renderTopicDetail(topic){
   `;
 }
 
+function isSafePreviewUrl(url){
+  const u = String(url || '').trim();
+  if(!u) return false;
+  return /^(https?:|blob:|data:)/i.test(u);
+}
+
+function isFileProtocol(){
+  try{
+    return String(window.location.protocol || '').toLowerCase() === 'file:';
+  }catch(_){
+    return false;
+  }
+}
+
+function makeLocalPreviewBlockedHtml(extra){
+  return `<div class="section" style="margin:0;min-height:220px;display:flex;align-items:center;justify-content:center;">
+    <div class="mono" style="line-height:1.9;color:var(--muted);max-width:760px;white-space:pre-wrap;">当前页面是通过本地 file:// 方式打开，浏览器会阻止页面内嵌预览部分文件。
+请使用下方“浏览 / 下载 / 新标签页打开”查看原文件，或把页面放到本地服务器后再使用内嵌预览。${extra ? `
+${escapeHtml(extra)}` : ''}</div>
+  </div>`;
+}
+
 function getPreviewUrl(url){
   const u = String(url || '').trim();
   if(!u) return "";
+  if(!isSafePreviewUrl(u)) return "";
   const clean = u.split('#')[0].split('?')[0].toLowerCase();
   const encoded = encodeURIComponent(u);
   if(/\.(doc|docx|ppt|pptx|xls|xlsx)$/i.test(clean)){
@@ -1185,6 +1446,15 @@ function openPdfPreviewPanel(title, url){
 
   const renderPdfFrame = (src, note)=>{
     activeOpenUrl = src || u;
+    if(isFileProtocol()){
+      host.innerHTML = `
+        <div style="height:100%;display:flex;flex-direction:column;">
+          ${makeLocalPreviewBlockedHtml('当前已关闭面板内 iframe 预览，避免再次触发 file:// 安全限制。')}
+          <div class="footerNote" style="margin-top:8px;">${note || '请改用新标签页打开。'}</div>
+        </div>
+      `;
+      return;
+    }
     host.innerHTML = `
       <div style="height:100%;display:flex;flex-direction:column;">
         <iframe src="${escapeHtml(src)}" style="width:100%;height:100%;min-height:560px;border-radius:12px;border:1px solid rgba(46,74,122,.55);background:#fff"></iframe>
@@ -1235,11 +1505,23 @@ function openDesignReportViewer(topicId, reportLink){
   const placeholderText = makePlanPlaceholderText(topic);
   const hasLink = (reportLink || "").trim();
   const previewUrl = getPreviewUrl(hasLink);
-  const body = hasLink ? `
+  const body = (hasLink && previewUrl && !isFileProtocol()) ? `
     <div class="section">
       <h3>${escapeHtml(topic ? topic.name : "实验设计报告")}</h3>
       <iframe src="${escapeHtml(previewUrl)}" style="width:100%;height:520px;border-radius:12px;border:1px solid rgba(46,74,122,.55);background:rgba(0,0,0,.2)"></iframe>
       <div class="footerNote">点击“下载”可保存当前实验设计报告文件。</div>
+    </div>
+    <div class="btnRow">
+      <div class="btn" id="downloadDesignFile">下载文件</div>
+      <div class="btn secondary" id="openDesignFile">新标签页打开</div>
+      <div class="btn ghost" id="closeDesignViewer">关闭</div>
+    </div>
+  ` : hasLink ? `
+    <div class="section">
+      <h3>${escapeHtml(topic ? topic.name : "实验设计报告")}</h3>
+      <div class="mono" style="min-height:220px;line-height:1.9;white-space:pre-wrap;">当前链接属于本地文件或浏览器不允许内嵌预览的地址，已停止在页面内加载，避免触发 file:// 安全限制。
+请点击下方“下载文件”或“新标签页打开”查看原文件。</div>
+      <div class="footerNote">本地 file:// 场景下，浏览器通常会阻止 iframe 直接嵌入文件。</div>
     </div>
     <div class="btnRow">
       <div class="btn" id="downloadDesignFile">下载文件</div>
@@ -1337,11 +1619,13 @@ function openPlanDesigner(){
         <h3>实验样本参考</h3>
         <div class="btnRow" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;">
           ${sampleItems.map(item=>`
-            <div class="section" style="margin:0;min-height:108px;display:flex;flex-direction:column;justify-content:space-between;">
-              <div style="font-weight:800;line-height:1.55;word-break:break-word;">${escapeHtml(item.label)}</div>
-              <div class="btnRow" style="margin-top:10px;">
-                <div class="btn ghost sample-open" data-url="${escapeHtml(item.url)}" data-name="${escapeHtml(item.label)}">浏览</div>
-                <div class="btn secondary sample-download" data-url="${escapeHtml(item.url)}" data-name="${escapeHtml(item.label)}">下载</div>
+            <div class="section" style="margin:0;padding:12px 14px;display:flex;flex-direction:column;justify-content:center;">
+              <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:nowrap;">
+                <div style="font-weight:800;line-height:1.55;word-break:break-word;flex:1;min-width:0;">${escapeHtml(item.label)}</div>
+                <div class="btnRow" style="margin-top:0;flex:0 0 auto;white-space:nowrap;">
+                  <div class="btn ghost sample-open" data-url="${escapeHtml(item.url)}" data-name="${escapeHtml(item.label)}">浏览</div>
+                  <div class="btn secondary sample-download" data-url="${escapeHtml(item.url)}" data-name="${escapeHtml(item.label)}">下载</div>
+                </div>
               </div>
             </div>
           `).join("")}
@@ -1349,50 +1633,48 @@ function openPlanDesigner(){
       </div>
 
       <div class="section">
-        <h3>AI辅助下的实验设计</h3>
-
-        <div class="section" style="margin-top:10px;">
-          <div class="btnRow">
-            <div class="btn" id="toggleTopicRef">实验参考题目</div>
-          </div>
-          <div id="topicRefWrap" style="display:none;margin-top:10px;">
-            <div class="footerNote">提示：请勾选一个参考题目了解一下。</div>
-            <div style="display:grid;grid-template-columns:minmax(280px,360px) minmax(0,1fr);gap:14px;align-items:start;margin-top:10px;">
-              <div id="topicListBox" class="section" style="margin:0;overflow:auto;padding:10px 12px;"></div>
-              <div id="topicDetailBox" class="section" style="margin:0;"></div>
-            </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;">
+          <h3 style="margin:0;">AI辅助下的实验设计</h3>
+          <div class="btnRow" id="planTabRow" style="justify-content:center;flex:1 1 100%;width:100%;">
+            <div class="btn" id="toggleTopicRef" style="background:linear-gradient(135deg,#4f8cff,#2457c5);border-color:#7fb0ff;color:#fff;">实验参考题目</div>
+            <div class="btn" id="toggleAIDesign" style="background:linear-gradient(135deg,#26b36c,#0f8b4b);border-color:#73d8a7;color:#fff;">AI辅助实验设计</div>
+            <div class="btn" id="openPlanSubmitPanel" style="background:linear-gradient(135deg,#b66dff,#7a3ee6);border-color:#d1b3ff;color:#fff;">提交实验设计报告</div>
           </div>
         </div>
 
-        <div class="section" style="margin-top:10px;">
-          <div class="btnRow">
-            <div class="btn secondary" id="toggleAIDesign">AI辅助实验设计</div>
+        <div id="topicRefWrap" style="display:block;margin-top:10px;">
+          <div class="footerNote">提示：请勾选一个参考题目了解一下。</div>
+          <div style="display:grid;grid-template-columns:minmax(420px,540px) minmax(0,1fr);gap:14px;align-items:start;margin-top:10px;">
+            <div id="topicListBox" class="section" style="margin:0;overflow:auto;padding:10px 12px;"></div>
+            <div id="topicDetailBox" class="section" style="margin:0;"></div>
           </div>
-          <div id="aiDesignWrap" style="display:none;margin-top:10px;">
-            <div class="footerNote">可以根据参考实验题目设计自己的实验，实验报告书生成后，你们可以进行修改和完善。</div>
-            <div class="footerNote" style="margin-top:6px;">提示：请勾选一个参考题目作为你们的实验项目。</div>
-            <div style="display:grid;grid-template-columns:max-content minmax(0,1fr);gap:14px;align-items:start;margin-top:10px;">
-              <div id="designTopicList" class="section" style="margin:0;overflow:auto;padding:10px 12px;width:max-content;max-width:360px;"></div>
-              <div id="designPreviewBox" class="section" style="margin:0;min-width:380px;position:relative;resize:both;overflow:auto;">
-                <div id="designPreviewToolbar" style="display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:move;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid rgba(46,74,122,.35);">
-                  <div style="font-weight:800;">实验设计报告预览</div>
-                  <div class="btnRow">
-                    <div class="btn good" id="confirmDesignTopic">确定</div>
-                    <div class="btn" id="downloadDesignFile">下载</div>
-                    <div class="btn ghost" id="toggleDesignPreviewFull">全屏</div>
-                  </div>
+        </div>
+
+        <div id="aiDesignWrap" style="display:none;margin-top:10px;">
+          <div class="footerNote">可以根据参考实验题目设计自己的实验，实验报告书生成后，你们可以进行修改和完善。</div>
+          <div class="footerNote" style="margin-top:6px;">提示：请勾选一个参考题目作为你们的实验项目。</div>
+          <div style="display:grid;grid-template-columns:max-content minmax(0,1fr);gap:14px;align-items:start;margin-top:10px;">
+            <div id="designTopicList" class="section" style="margin:0;overflow:auto;padding:10px 12px;width:max-content;max-width:360px;"></div>
+            <div id="designPreviewBox" class="section" style="margin:0;min-width:380px;position:relative;resize:both;overflow:auto;">
+              <div id="designPreviewToolbar" style="display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:move;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid rgba(46,74,122,.35);">
+                <div style="font-weight:800;">实验设计报告预览</div>
+                <div class="btnRow">
+                  <div class="btn good" id="confirmDesignTopic">确定</div>
+                  <div class="btn" id="downloadDesignFile">下载</div>
+                  <div class="btn ghost" id="toggleDesignPreviewFull">全屏</div>
                 </div>
-                <div id="designPreviewContent" class="mono" style="min-height:320px;line-height:1.7;white-space:pre-wrap;">请先在左侧勾选一个参考题目。</div>
               </div>
+              <div id="designPreviewContent" class="mono" style="min-height:320px;line-height:1.7;white-space:pre-wrap;">请先在左侧勾选一个参考题目。</div>
             </div>
           </div>
         </div>
 
-        <div class="section" style="margin-top:10px;">
-          <div class="btnRow">
-            <div class="btn" id="openPlanSubmitPanel">提交实验设计报告</div>
+        <div id="planSubmitWrap" style="display:none;margin-top:10px;">
+          <div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:0;min-height:610px;padding-top:8px;">
+            <div id="planSubmitLaunchWrap" style="display:flex;justify-content:center;align-items:flex-start;width:100%;padding:0;">
+              <a id="openPlanSubmitAction" href="https://v.wjx.cn/vm/e0hVQ0D.aspx" target="_blank" rel="noopener" style="width:180px;height:180px;border-radius:50%;border:2px solid rgba(110,208,255,.85);background:radial-gradient(circle at 30% 30%, rgba(122,240,255,.96), rgba(34,102,255,.95) 58%, rgba(15,32,94,.98) 100%);box-shadow:0 0 0 10px rgba(67,118,255,.12), 0 0 28px rgba(110,208,255,.45), inset 0 0 18px rgba(255,255,255,.2);color:#ecf8ff;font-size:24px;font-weight:800;letter-spacing:1px;cursor:pointer;transition:transform .18s ease, box-shadow .18s ease;display:flex;align-items:center;justify-content:center;text-align:center;padding:18px;line-height:1.35;text-decoration:none;">提交实验设计报告</a>
+            </div>
           </div>
-          <div class="footerNote" style="margin-top:8px;">点击按钮后，会在独立可移动、可拉伸、可全屏的窗口中提交实验设计报告。</div>
         </div>
       </div>
     `
@@ -1406,8 +1688,8 @@ function openPlanDesigner(){
 
   function renderTopicRefs(selectedId){
     topicListBox.innerHTML = EXPERIMENT_TOPICS.map(topic=>`
-      <label style="display:flex;align-items:flex-start;gap:8px;padding:6px 2px;border-bottom:1px solid rgba(46,74,122,.25);cursor:pointer;line-height:1.45;">
-        <input type="checkbox" class="topic-ref-check" value="${topic.id}" ${selectedId===topic.id ? "checked" : ""} style="margin-top:2px;"/>
+      <label style="display:flex;align-items:flex-start;gap:8px;padding:6px 2px;border-bottom:1px solid rgba(46,74,122,.25);cursor:pointer;line-height:1.45;font-size:1.5em;">
+        <input type="checkbox" class="topic-ref-check" value="${topic.id}" ${selectedId===topic.id ? "checked" : ""} style="margin-top:4px;transform:scale(1.2);transform-origin:top left;"/>
         <span>${topic.no}. ${escapeHtml(topic.name)}</span>
       </label>
     `).join("");
@@ -1450,8 +1732,10 @@ function openPlanDesigner(){
       designPreviewContent.innerHTML = "请先在左侧勾选一个参考题目。";
       return;
     }
-    if(reportLink){
+    if(reportLink && previewUrl && !isFileProtocol()){
       designPreviewContent.innerHTML = `<iframe src="${escapeHtml(previewUrl)}" style="width:100%;height:${Math.max(240, (designPreviewBox.clientHeight||420)-70)}px;border-radius:12px;border:1px solid rgba(46,74,122,.55);background:rgba(0,0,0,.2)"></iframe>`;
+    }else if(reportLink){
+      designPreviewContent.innerHTML = `<div class="mono" style="line-height:1.9;">当前链接属于本地文件或浏览器不允许内嵌预览的地址，已停止在页面内加载，避免触发 file:// 安全限制。<br/>请使用下方“浏览 / 下载 / 新标签页打开”查看原文件。</div>`;
     }else{
       designPreviewContent.textContent = makePlanPlaceholderText(topic);
     }
@@ -1525,16 +1809,36 @@ function openPlanDesigner(){
   renderDesignPreview(p.dataset.designTopicId);
   makeDraggableResizablePreview(designPreviewBox, p.querySelector('#designPreviewToolbar'), p.querySelector('#toggleDesignPreviewFull'));
 
-  p.querySelector("#toggleTopicRef").onclick = ()=>{
-    const el = p.querySelector("#topicRefWrap");
-    el.style.display = el.style.display === "none" ? "block" : "none";
-    requestAnimationFrame(syncTopicRefHeight);
-  };
-  p.querySelector("#toggleAIDesign").onclick = ()=>{
-    const el = p.querySelector("#aiDesignWrap");
-    el.style.display = el.style.display === "none" ? "block" : "none";
-    requestAnimationFrame(syncDesignHeight);
-  };
+  const topicRefWrap = p.querySelector("#topicRefWrap");
+  const aiDesignWrap = p.querySelector("#aiDesignWrap");
+  const planSubmitWrap = p.querySelector("#planSubmitWrap");
+  const toggleTopicRefBtn = p.querySelector("#toggleTopicRef");
+  const toggleAIDesignBtn = p.querySelector("#toggleAIDesign");
+  const openPlanSubmitBtn = p.querySelector("#openPlanSubmitPanel");
+
+  function setPlanTab(tab){
+    topicRefWrap.style.display = tab === 'topic' ? 'block' : 'none';
+    aiDesignWrap.style.display = tab === 'design' ? 'block' : 'none';
+    planSubmitWrap.style.display = tab === 'submit' ? 'block' : 'none';
+
+    toggleTopicRefBtn.className = tab === 'topic' ? 'btn' : 'btn secondary';
+    toggleAIDesignBtn.className = tab === 'design' ? 'btn' : 'btn secondary';
+    openPlanSubmitBtn.className = tab === 'submit' ? 'btn' : 'btn secondary';
+
+    if(tab === 'topic') requestAnimationFrame(syncTopicRefHeight);
+    if(tab === 'design') requestAnimationFrame(syncDesignHeight);
+  }
+
+  toggleTopicRefBtn.onclick = ()=> setPlanTab('topic');
+  toggleAIDesignBtn.onclick = ()=> setPlanTab('design');
+  openPlanSubmitBtn.onclick = ()=> setPlanTab('submit');
+  const openPlanSubmitAction = p.querySelector("#openPlanSubmitAction");
+  if(openPlanSubmitAction){
+    openPlanSubmitAction.href = 'https://v.wjx.cn/vm/e0hVQ0D.aspx';
+    openPlanSubmitAction.onmouseenter = ()=> openPlanSubmitAction.style.transform = 'scale(1.04)';
+    openPlanSubmitAction.onmouseleave = ()=> openPlanSubmitAction.style.transform = 'scale(1)';
+  }
+  setPlanTab('topic');
 
   topicListBox.addEventListener("change", (e)=>{
     const target = e.target.closest(".topic-ref-check");
@@ -1590,7 +1894,6 @@ function openPlanDesigner(){
     triggerDownload(designPreviewBox.dataset.reportLink || '', topic.name, makePlanPlaceholderText(topic));
   };
 
-  p.querySelector("#openPlanSubmitPanel").onclick = ()=> openPlanSubmitPanel();
 }
 
 function openPlanPreview(planObj, title){
@@ -1848,22 +2151,18 @@ function openDataAIAnalysis(){
     html: `
       <div class="section">
         <h3>功能入口</h3>
-        <div class="grid2" style="grid-template-columns:repeat(4,1fr);">
-          <div class="kpi" data-submodule-open="api" style="cursor:pointer;padding:18px;min-height:130px;display:flex;flex-direction:column;justify-content:space-between;">
-            <div class="v" style="font-size:18px;">子模块 1 · 接入 API</div>
-            <div class="k" style="font-size:13px;line-height:1.7;">输入你的 DeepSeek API 密钥，点击确认后可进行真实联通测试。</div>
+        <div class="grid2" style="grid-template-columns:repeat(4,1fr);align-items:start;">
+          <div class="kpi" data-submodule-open="api" style="cursor:pointer;padding:14px 18px;min-height:auto;display:flex;align-items:center;justify-content:center;">
+            <div class="v" style="font-size:18px;line-height:1.45;text-align:center;">子模块 1 · 接入 API</div>
           </div>
-          <div class="kpi" data-submodule-open="data" style="cursor:pointer;padding:18px;min-height:130px;display:flex;flex-direction:column;justify-content:space-between;">
-            <div class="v" style="font-size:18px;">子模块 2 · 数据导入与确认</div>
-            <div class="k" style="font-size:13px;line-height:1.7;">导入完整 Excel，查看原始表格与系统整理后的表格，再确认导入。</div>
+          <div class="kpi" data-submodule-open="data" style="cursor:pointer;padding:14px 18px;min-height:auto;display:flex;align-items:center;justify-content:center;">
+            <div class="v" style="font-size:18px;line-height:1.45;text-align:center;">子模块 2 · 数据导入与确认</div>
           </div>
-          <div class="kpi" data-submodule-open="analysis" style="cursor:pointer;padding:18px;min-height:130px;display:flex;flex-direction:column;justify-content:space-between;">
-            <div class="v" style="font-size:18px;">子模块 3 · 数据分析</div>
-            <div class="k" style="font-size:13px;line-height:1.7;">输入你要分析的具体指标或问题，输出指标统计与可视化结论。</div>
+          <div class="kpi" data-submodule-open="analysis" style="cursor:pointer;padding:14px 18px;min-height:auto;display:flex;align-items:center;justify-content:center;">
+            <div class="v" style="font-size:18px;line-height:1.45;text-align:center;">子模块 3 · 数据分析</div>
           </div>
-          <div class="kpi" data-submodule-open="improve" style="cursor:pointer;padding:18px;min-height:130px;display:flex;flex-direction:column;justify-content:space-between;">
-            <div class="v" style="font-size:18px;">子模块 4 · 实验改进</div>
-            <div class="k" style="font-size:13px;line-height:1.7;">导入执行版实验设计报告，结合实验数据与分析结果，由 AI 生成改进建议。</div>
+          <div class="kpi" data-submodule-open="improve" style="cursor:pointer;padding:14px 18px;min-height:auto;display:flex;align-items:center;justify-content:center;">
+            <div class="v" style="font-size:18px;line-height:1.45;text-align:center;">子模块 4 · 实验改进</div>
           </div>
         </div>
       </div>
@@ -1926,8 +2225,8 @@ function openDataAIAnalysis(){
         <h3>子模块 3：数据分析</h3>
         <div class="grid2" style="grid-template-columns: 1fr 3fr;">
           <div>
-            <label>需要分析的问题</label>
-            <textarea id="analysisQuestion" class="mono" style="min-height:115px;" placeholder="请输入具体要分析的指标或问题，例如：
+            <label style="font-size:1.5em;">需要分析的问题</label>
+            <textarea id="analysisQuestion" class="mono" style="min-height:115px;font-size:1.5em;line-height:1.5;" placeholder="请输入具体要分析的指标或问题，例如：
 1. 请分析实验组与对照组在肺活量上的差异。
 2. 请比较训练前后心率变化，并给出适合展示的图表。
 3. 请围绕 50 米成绩和立定跳远指标，输出量化结论与可视化建议。"></textarea>
@@ -1942,18 +2241,18 @@ function openDataAIAnalysis(){
             </div>
           </div>
           <div>
-            <label>量化与可视化输出</label>
-            <textarea id="analysisOutputBox" class="mono" style="min-height:110px;" placeholder="分析结果将在这里显示"></textarea>
+            <label style="font-size:1.5em;">量化与可视化输出</label>
+            <textarea id="analysisOutputBox" class="mono" style="min-height:165px;font-size:1.5em;line-height:1.5;" placeholder="分析结果将在这里显示"></textarea>
             <div class="section" style="margin-top:12px;">
               <label>指标统计表</label>
               <div id="statsTableBox" class="tableWrap"></div>
             </div>
             <div class="section" style="margin-top:12px;">
               <div class="btnRow" style="justify-content:space-between;align-items:center;">
-                <label style="margin:0;">图表预览</label>
+                <label style="margin:0;font-size:1.5em;">图表预览</label>
                 <div class="btn secondary" id="downloadAIChartBtn">下载图片</div>
               </div>
-              <div class="section" style="padding:8px;margin:8px 0 0 0;height:150px;">
+              <div class="section" style="padding:8px;margin:8px 0 0 0;height:225px;">
                 <canvas id="aiChartCanvas"></canvas>
               </div>
             </div>
@@ -1972,21 +2271,21 @@ function openDataAIAnalysis(){
               <div class="btn good" id="runImproveBtn">AI 辅助实验改进</div>
               <div class="btn danger" id="clearImproveReportBtn">清空报告</div>
             </div>
-            <div class="footerNote">系统会自动调用子模块 2 已确认的数据，以及子模块 3 最近一次分析结果，并结合执行版实验设计报告生成实验改进建议。</div>
+            <div class="footerNote" style="margin-top:10px;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,210,90,.65);background:rgba(255,210,90,.16);color:#fff3bf;font-size:1.12em;font-weight:700;line-height:1.7;">请根据AI提供的建议，完善实验，祝你们组后续提交高质量的最终报告提供！</div>
           </div>
           <div>
             <label>当前联动状态</label>
             <div class="mono" id="improveStatusBox" style="min-height:112px;padding:12px;border-radius:14px;border:1px solid rgba(46,74,122,.55);background:rgba(12,18,35,.55);"></div>
           </div>
         </div>
-        <div class="grid2" style="margin-top:12px;grid-template-columns:1.1fr .9fr;">
+        <div class="grid2" style="margin-top:12px;grid-template-columns:1fr 1fr;">
           <div class="section" style="margin:0;">
             <label>实验设计报告预览</label>
             <div id="improveReportPreview" class="mono" style="height:220px;overflow:auto;padding:12px;border-radius:12px;border:1px solid rgba(46,74,122,.45);background:rgba(12,18,35,.4);">暂无已上传的执行版实验设计报告。</div>
           </div>
           <div class="section" style="margin:0;">
             <label>AI 改进建议</label>
-            <textarea id="improveOutputBox" class="mono" style="min-height:220px;" placeholder="这里将显示 AI 基于实验数据、分析结果和执行版实验设计报告给出的改进建议"></textarea>
+            <textarea id="improveOutputBox" class="mono" style="min-height:220px;font-size:1.3em;line-height:1.5;" placeholder="这里将显示 AI 基于实验数据、分析结果和执行版实验设计报告给出的改进建议"></textarea>
           </div>
         </div>
       </div>
@@ -2061,14 +2360,43 @@ function openDataAIAnalysis(){
     destroyAIChart();
     if(!spec || !Array.isArray(spec.labels) || !Array.isArray(spec.datasets)) return;
     const ctx = p.querySelector('#aiChartCanvas').getContext('2d');
+    const datasets = spec.datasets.map(ds=>({ label: ds.label || '数据', data: ds.data || [] }));
+    const numericValues = datasets.flatMap(ds=>(Array.isArray(ds.data) ? ds.data : []).map(v=> Number(v)).filter(v=> Number.isFinite(v)));
+    let yScale = { ticks:{ color:'#9bb6d6', font:{ size: 18 } }, grid:{ color:'rgba(46,74,122,.25)' } };
+    if(numericValues.length && !['pie','radar'].includes(spec.type || 'bar')){
+      let minVal = Math.min(...numericValues);
+      let maxVal = Math.max(...numericValues);
+      if(minVal === maxVal){
+        const pad = Math.max(Math.abs(minVal) * 0.1, 1);
+        minVal -= pad;
+        maxVal += pad;
+      }else{
+        const pad = Math.max((maxVal - minVal) * 0.1, 0.5);
+        minVal -= pad;
+        maxVal += pad;
+      }
+      yScale = {
+        min: Number(minVal.toFixed(2)),
+        max: Number(maxVal.toFixed(2)),
+        beginAtZero: false,
+        ticks:{ color:'#9bb6d6', font:{ size: 18 } },
+        grid:{ color:'rgba(46,74,122,.25)' }
+      };
+    }
     aiChart = new Chart(ctx, {
       type: spec.type || 'bar',
-      data: { labels: spec.labels, datasets: spec.datasets.map(ds=>({ label: ds.label || '数据', data: ds.data || [] })) },
+      data: { labels: spec.labels, datasets },
       options: {
         responsive:true,
         maintainAspectRatio:false,
-        plugins:{ legend:{ labels:{ color:'#bfefff' } }, title:{ display: !!spec.title, text: spec.title || '', color:'#bfefff' } },
-        scales:{ x:{ ticks:{ color:'#9bb6d6' }, grid:{ color:'rgba(46,74,122,.25)' } }, y:{ ticks:{ color:'#9bb6d6' }, grid:{ color:'rgba(46,74,122,.25)' } } }
+        plugins:{
+          legend:{ labels:{ color:'#bfefff', font:{ size: 18 } } },
+          title:{ display: !!spec.title, text: spec.title || '', color:'#bfefff', font:{ size: 20 } }
+        },
+        scales:{
+          x:{ ticks:{ color:'#9bb6d6', font:{ size: 18 } }, grid:{ color:'rgba(46,74,122,.25)' } },
+          y: yScale
+        }
       }
     });
   }
@@ -3202,16 +3530,12 @@ function openReport(){
     width: 1060, height: 720, left: 48, top: 76,
     html: `
       <div class="section">
-        <div class="submoduleCards" style="margin-bottom:8px;">
-          <div class="menuCard" data-sub-open="draft" style="min-height:96px;">
-            <div class="tag">1</div>
-            <div class="title">初稿修改 - AI 辅助</div>
-            <div class="desc">上传 Word 初稿，左侧浏览，右侧生成精简修改建议</div>
+        <div class="submoduleCards" style="margin-bottom:8px;display:flex;justify-content:center;gap:18px;align-items:center;flex-wrap:wrap;">
+          <div class="menuCard" data-sub-open="draft" style="min-height:auto;width:auto;padding:12px 24px;display:inline-flex;align-items:center;justify-content:center;">
+            <div class="title" style="margin:0;text-align:center;">初稿修改 - AI 辅助</div>
           </div>
-          <div class="menuCard" data-sub-open="submit" style="min-height:96px;">
-            <div class="tag">2</div>
-            <div class="title">提交报告</div>
-            <div class="desc">上传待提交文件，并通过嵌入问卷星完成提交</div>
+          <div class="menuCard" data-sub-open="submit" style="min-height:auto;width:auto;padding:12px 24px;display:inline-flex;align-items:center;justify-content:center;">
+            <div class="title" style="margin:0;text-align:center;">提交报告</div>
           </div>
         </div>
       </div>
@@ -3224,40 +3548,30 @@ function openReport(){
           <div class="btn good" id="uploadDraftWord">上传报告初稿</div>
           <div class="btn" id="runDraftReview">AI 辅助修改</div>
         </div>
-        <div class="grid2" style="grid-template-columns:2fr 1fr; gap:14px; margin-top:12px; align-items:start;">
+        <div class="grid2" style="grid-template-columns:1fr 1fr; gap:14px; margin-top:12px; align-items:start;">
           <div>
             <label>报告浏览框</label>
             <div id="draftPreviewBox" class="mono" style="height:320px; overflow:auto; border:1px solid rgba(46,74,122,.55); border-radius:12px; padding:12px; background:rgba(0,0,0,.18);">暂无已上传初稿。</div>
           </div>
           <div>
-            <label>建议框</label>
-            <div id="draftSuggestBox" class="mono" style="height:320px; overflow:auto; border:1px solid rgba(46,74,122,.55); border-radius:12px; padding:12px; background:rgba(0,0,0,.18); white-space:pre-wrap;">请先上传 Word 初稿，再点击“AI 辅助修改”。</div>
+            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:6px;">
+              <label style="font-size:130%; margin:0;">建议框</label>
+              <div class="btn good" id="draftCheckStructure" style="background:linear-gradient(135deg,#5b8cff,#6ed0ff);">报告结构</div>
+              <div class="btn good" id="draftCheckTypos" style="background:linear-gradient(135deg,#28c76f,#81fbb8);">错别字</div>
+              <div class="btn good" id="draftCheckGoal" style="background:linear-gradient(135deg,#ff9f43,#ffd56a); color:#2d1c00;">实验目标达成度</div>
+            </div>
+            <div id="draftSuggestBox" class="mono" style="height:320px; overflow:auto; border:1px solid rgba(46,74,122,.55); border-radius:12px; padding:12px; background:rgba(0,0,0,.18); white-space:pre-wrap; font-size:130%; line-height:1.85;">请先上传 Word 初稿，再点击对应按钮生成建议。
+
+标准报告格式链接占位：待你提供正式链接后替换。</div>
           </div>
         </div>
       </div>
 
       <div id="d_sub_submit" class="section" style="display:none;">
         <h3>子模块 2 · 提交报告</h3>
-        <div class="footerNote">请上传最终提交版文件，然后点击按钮在新标签页中打开问卷星完成提交。</div>
-        <div class="btnRow" style="margin-top:10px; align-items:center;">
-          <input id="submitReportInput" type="file" />
-          <div class="btn good" id="saveSubmitDoc">上传文件</div>
-          <div class="btn secondary" id="openReportSubmitLink">打开问卷提交页面</div>
-        </div>
-        <div class="grid2" style="margin-top:12px; grid-template-columns:280px 1fr; gap:14px; align-items:start;">
-          <div class="section" style="margin:0;">
-            <h3 style="margin-top:0;">文件状态</h3>
-            <div id="submitDocInfo" class="mono" style="white-space:pre-wrap; color:var(--muted);">尚未上传提交文件。</div>
-          </div>
-          <div>
-            <label>提交说明</label>
-            <div class="mono" style="height:220px;overflow:auto;border:1px solid rgba(46,74,122,.55);border-radius:12px;padding:14px;background:rgba(0,0,0,.12);white-space:pre-wrap;line-height:1.9;">由于问卷星页面限制了站内嵌入预览，当前改为点击“打开问卷提交页面”按钮，在浏览器新标签页中完成提交。
-
-建议步骤：
-1. 先在左侧上传最终提交版文件；
-2. 核对文件名称与版本；
-3. 点击按钮打开问卷星页面；
-4. 在问卷中按要求上传并提交文件。</div>
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:0;min-height:610px;padding-top:8px;">
+          <div id="reportSubmitLaunchWrap" style="display:flex;justify-content:center;align-items:flex-start;width:100%;padding:0;">
+            <a id="openReportSubmitEmbed" href="https://tp.wjx.top/vm/Yr3euZW.aspx" target="_blank" rel="noopener" style="width:180px;height:180px;border-radius:50%;border:2px solid rgba(110,208,255,.85);background:radial-gradient(circle at 30% 30%, rgba(122,240,255,.96), rgba(34,102,255,.95) 58%, rgba(15,32,94,.98) 100%);box-shadow:0 0 0 10px rgba(67,118,255,.12), 0 0 28px rgba(110,208,255,.45), inset 0 0 18px rgba(255,255,255,.2);color:#ecf8ff;font-size:30px;font-weight:800;letter-spacing:2px;cursor:pointer;transition:transform .18s ease, box-shadow .18s ease;display:flex;align-items:center;justify-content:center;text-decoration:none;">提交报告</a>
           </div>
         </div>
       </div>
@@ -3280,6 +3594,144 @@ function openReport(){
     });
   }
 
+
+  const REPORT_STANDARD_PLACEHOLDER = {
+    url: '【标准报告格式文本链接待补充】',
+    headings: ['摘要','实验目的','实验原理','实验对象与方法','实验结果与分析','讨论','结论','参考文献']
+  };
+
+  function normalizeText(s){
+    return String(s || '').replace(/\r/g,'').replace(/\u00a0/g,' ').trim();
+  }
+  function splitLines(s){
+    return normalizeText(s).split(/\n+/).map(v=>v.trim()).filter(Boolean);
+  }
+  function extractHeadings(text){
+    const lines = splitLines(text);
+    const headings = [];
+    lines.forEach(line=>{
+      const clean = line.replace(/^[(（]?\d+[)）.、\s-]*/,'').trim();
+      if(!clean) return;
+      const isLikelyHeading = (
+        /^(摘要|引言|前言|实验目的|目的|实验原理|原理|实验对象与方法|对象与方法|实验方法|研究方法|实验器材|器材|实验步骤|步骤|结果|实验结果|结果与分析|实验结果与分析|分析|讨论|结论|参考文献|附录)$/.test(clean)
+        || (/^[一二三四五六七八九十]+[、.]/.test(line) && clean.length <= 20)
+        || (/^\d+(\.\d+)?\s*/.test(line) && clean.length <= 20)
+      );
+      if(isLikelyHeading && !headings.includes(clean)) headings.push(clean);
+    });
+    return headings;
+  }
+  function locateHeadingPosition(text, heading){
+    const lines = splitLines(text);
+    const idx = lines.findIndex(line=> line.includes(heading));
+    if(idx < 0) return '';
+    return `第${idx+1}行附近`;
+  }
+  function extractSection(text, patterns){
+    const raw = normalizeText(text);
+    const lines = splitLines(raw);
+    const regex = new RegExp(`^(?:${patterns.join('|')})\s*$`);
+    const headingIdx = lines.findIndex(line=> regex.test(line.replace(/^[(（]?\d+[)）.、\s-]*/, '').trim()));
+    if(headingIdx < 0){
+      const alt = new RegExp(`(?:${patterns.join('|')})[:：]?([\s\S]{0,600})`);
+      const m = raw.match(alt);
+      return m ? m[1].trim() : '';
+    }
+    let end = lines.length;
+    for(let i=headingIdx+1;i<lines.length;i++){
+      const clean = lines[i].replace(/^[(（]?\d+[)）.、\s-]*/, '').trim();
+      if(/^(摘要|引言|前言|实验目的|目的|实验原理|原理|实验对象与方法|对象与方法|实验方法|研究方法|实验器材|器材|实验步骤|步骤|结果|实验结果|结果与分析|实验结果与分析|分析|讨论|结论|参考文献|附录)$/.test(clean)){
+        end = i; break;
+      }
+    }
+    return lines.slice(headingIdx+1, end).join('\n').trim();
+  }
+  function splitGoals(goalText){
+    const raw = normalizeText(goalText);
+    if(!raw) return [];
+    const lines = raw.split(/\n+/).map(s=>s.trim()).filter(Boolean);
+    let items = lines.filter(line=> /^[(（]?\d+[)）.、]/.test(line) || /^[一二三四五六七八九十]+[、.]/.test(line) || /^[•·●]/.test(line));
+    if(items.length >= 1) return items.map(s=>s.replace(/^[(（]?\d+[)）.、\s]*/,'').replace(/^[一二三四五六七八九十]+[、.\s]*/,'').replace(/^[•·●]\s*/,'').trim()).filter(Boolean);
+    items = raw.split(/[；;。\n]+/).map(s=>s.trim()).filter(Boolean);
+    return items.length > 1 ? items : [raw];
+  }
+  function keywordSet(text){
+    const matches = String(text || '').match(/[\u4e00-\u9fa5A-Za-z0-9]+/g) || [];
+    return matches.filter(w=>w.length >= 2);
+  }
+  function assessGoalAchievement(goal, conclusion){
+    const kws = keywordSet(goal).filter(w=> !/实验|目的|研究|通过|观察|分析|探究|影响|是否|能够|学生|结果/.test(w));
+    const hits = kws.filter(w=> conclusion.includes(w));
+    let status = '基本达成';
+    if(kws.length && hits.length === 0) status = '结论中体现不足';
+    else if(kws.length >= 2 && hits.length >= Math.max(1, Math.ceil(kws.length/2))) status = '已基本达成';
+    const advice = status === '结论中体现不足'
+      ? `建议在结论中补充对“${goal.slice(0,22)}${goal.length>22?'…':''}”的直接回应。`
+      : `建议保留现有结论，并适当补充与“${goal.slice(0,18)}${goal.length>18?'…':''}”对应的数据或表述。`;
+    return { status, advice, hits };
+  }
+  function runStructureCheck(){
+    const suggestBox = p.querySelector('#draftSuggestBox');
+    if(!currentDraft || !String(currentDraft.text||'').trim()){
+      toast('warn','缺少初稿','请先上传可读取正文的 Word 初稿');
+      return;
+    }
+    const text = String(currentDraft.text || '');
+    const userHeadings = extractHeadings(text);
+    const standardHeadings = REPORT_STANDARD_PLACEHOLDER.headings.slice();
+    const missing = standardHeadings.filter(h=> !userHeadings.some(u=>u===h || u.includes(h) || h.includes(u)));
+    if(missing.length === 0){
+      suggestBox.textContent = '恭喜！您上传的实验报告结构完整';
+      return;
+    }
+    suggestBox.textContent = missing.map(h=> `报告中缺少一级标题：${h}`).join('\n');
+  }
+  function runTyposCheck(){
+    const suggestBox = p.querySelector('#draftSuggestBox');
+    if(!currentDraft || !String(currentDraft.text||'').trim()){
+      toast('warn','缺少初稿','请先上传可读取正文的 Word 初稿');
+      return;
+    }
+    const lines = splitLines(currentDraft.text || '');
+    const issues = [];
+    const rules = [
+      ['试验目的','实验目的'],['实脸','实验'],['试验结果','实验结果'],['结论分折','结论分析'],['分折','分析'],['讨仑','讨论'],['试脸','实验'],['目地','目的'],['心肺工能','心肺功能']
+    ];
+    lines.forEach((line, idx)=>{
+      rules.forEach(([bad, good])=>{
+        if(line.includes(bad)) issues.push(`“${bad}”应为“${good}”，位置：第${idx+1}行附近。`);
+      });
+      if(/的的|了了|并并|和和/.test(line)){
+        const m = line.match(/的的|了了|并并|和和/)[0];
+        issues.push(`疑似重复字“${m}”，位置：第${idx+1}行附近。`);
+      }
+    });
+    suggestBox.textContent = issues.length ? Array.from(new Set(issues)).join('\n') : '恭喜！您上传的实验报告无错别字';
+  }
+  function runGoalCheck(){
+    const suggestBox = p.querySelector('#draftSuggestBox');
+    if(!currentDraft || !String(currentDraft.text||'').trim()){
+      toast('warn','缺少初稿','请先上传可读取正文的 Word 初稿');
+      return;
+    }
+    const text = String(currentDraft.text || '');
+    const goalText = extractSection(text, ['实验目的','目的']);
+    const conclusionText = extractSection(text, ['实验结论','结论']);
+    if(!goalText || !conclusionText){
+      suggestBox.textContent = '未能在上传报告中同时定位“实验目的”和“实验结论”部分，请检查标题是否明确。';
+      return;
+    }
+    const goals = splitGoals(goalText);
+    const results = goals.map((g, idx)=>{
+      const r = assessGoalAchievement(g, conclusionText);
+      return `${idx+1}. 实验目的：${g}\n达成情况：${r.status}`;
+    });
+    const weak = goals.map((g, idx)=> ({goal:g, ...assessGoalAchievement(g, conclusionText)})).filter(x=> x.status !== '已基本达成');
+    const advice = weak.length
+      ? weak.slice(0,2).map(x=> x.advice).join('\n')
+      : '最必要的修改建议：结论已大体回应实验目的，可仅补充少量数据或更明确的对应表述。';
+    suggestBox.textContent = `${results.join('\n\n')}\n\n最必要的修改建议：\n${advice}`;
+  }
   let currentDraft = draftDoc;
   function renderDraft(){
     const box = p.querySelector('#draftPreviewBox');
@@ -3292,6 +3744,7 @@ function openReport(){
   }
   function renderSubmitInfo(){
     const info = p.querySelector('#submitDocInfo');
+    if(!info) return;
     const sub = lsGet(LS_KEYS.reportSubmitDoc, null);
     if(!sub){
       info.textContent = '尚未上传提交文件。';
@@ -3323,6 +3776,10 @@ function openReport(){
       toast('error','上传失败', String(err.message || err));
     }
   };
+
+  p.querySelector('#draftCheckStructure').onclick = runStructureCheck;
+  p.querySelector('#draftCheckTypos').onclick = runTyposCheck;
+  p.querySelector('#draftCheckGoal').onclick = runGoalCheck;
 
   p.querySelector('#runDraftReview').onclick = async ()=>{
     if(!currentDraft || !String(currentDraft.text||'').trim()){
@@ -3359,14 +3816,12 @@ ${excerpt}`;
     }
   };
 
-  p.querySelector('#saveSubmitDoc').onclick = ()=>{
-    const file = p.querySelector('#submitReportInput').files?.[0];
-    if(!file){ toast('warn','未选择文件','请先选择要提交的文件'); return; }
-    const info = { id: uid('submitdoc'), ts: Date.now(), name: file.name, size: file.size, type: file.type || 'application/octet-stream' };
-    lsSet(LS_KEYS.reportSubmitDoc, info);
-    renderSubmitInfo();
-    toast('success','上传成功',`已记录提交文件：${file.name}`);
-  };
+  const submitBtn = p.querySelector('#openReportSubmitEmbed');
+  if(submitBtn){
+    submitBtn.href = 'https://tp.wjx.top/vm/Yr3euZW.aspx';
+    submitBtn.onmouseenter = ()=> submitBtn.style.transform = 'scale(1.04)';
+    submitBtn.onmouseleave = ()=> submitBtn.style.transform = 'scale(1)';
+  }
 }
 
 /* ===========================
@@ -3378,7 +3833,12 @@ function safeOpen(url){
     toast("warn","链接未设置","请先补充有效链接");
     return;
   }
-  window.open(u, "_blank", "noopener,noreferrer");
+  const a = document.createElement("a");
+  a.href = u;
+  a.target = "_blank";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
 }
 
 function safeJson(s, fallback){
