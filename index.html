@@ -161,51 +161,77 @@
       align-items:center;
     }
     .guideToggleCard{
-      width:min(100%, 420px);
-      min-height:128px;
-      padding:16px 34px;
+      width:min(100%, 470px);
+      min-height:132px;
+      padding:16px 28px;
       display:flex;
-      flex-direction:column;
       align-items:center;
       justify-content:center;
-      text-align:center;
-      gap:8px;
-      border-radius:999px;
-      background:radial-gradient(circle at 30% 25%, rgba(255,255,255,.24), rgba(255,255,255,0) 30%), linear-gradient(135deg, rgba(87,200,255,.95), rgba(63,126,255,.92) 54%, rgba(127,90,255,.9));
-      border:3px solid rgba(170,238,255,.82);
-      box-shadow:0 18px 38px rgba(27,116,255,.3), 0 0 0 10px rgba(83,197,255,.12), inset 0 2px 0 rgba(255,255,255,.34), inset 0 -16px 28px rgba(10,35,120,.22);
+      gap:18px;
+      border-radius:34px;
+      background:linear-gradient(145deg, rgba(20,31,62,.96), rgba(11,18,36,.92));
+      border:1px solid rgba(124,199,255,.75);
+      box-shadow:0 20px 44px rgba(0,0,0,.36), 0 0 0 1px rgba(255,255,255,.08) inset, 0 0 38px rgba(0,240,255,.13);
       position:relative;
       overflow:hidden;
       cursor:pointer;
-      transition:transform .18s ease, box-shadow .18s ease;
+      transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
     }
     .guideToggleCard:hover{
-      transform:translateY(-2px) scale(1.01);
-      box-shadow:0 22px 42px rgba(27,116,255,.36), 0 0 0 12px rgba(83,197,255,.14), inset 0 2px 0 rgba(255,255,255,.38), inset 0 -18px 30px rgba(10,35,120,.24);
+      transform:translateY(-3px) scale(1.012);
+      border-color:rgba(167,228,255,.95);
+      box-shadow:0 24px 52px rgba(0,0,0,.42), 0 0 0 1px rgba(255,255,255,.1) inset, 0 0 48px rgba(0,240,255,.18);
     }
     .guideToggleCard::before{
       content:"";
       position:absolute;
-      inset:10px;
-      border-radius:999px;
-      background:linear-gradient(180deg, rgba(255,255,255,.15), rgba(255,255,255,.02) 55%, rgba(0,0,0,.05));
+      inset:0;
+      background:radial-gradient(circle at 18% 22%, rgba(255,255,255,.18), transparent 26%), radial-gradient(circle at 84% 18%, rgba(124,77,255,.18), transparent 28%), linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,0) 40%);
       pointer-events:none;
     }
     .guideToggleCard::after{
       content:"";
       position:absolute;
-      left:20px;
-      right:20px;
-      top:12px;
-      height:34px;
-      border-radius:999px;
-      background:linear-gradient(180deg, rgba(255,255,255,.26), rgba(255,255,255,0));
+      inset:10px;
+      border-radius:26px;
+      border:1px solid rgba(255,255,255,.08);
       pointer-events:none;
-      filter:blur(.2px);
     }
-    .guideToggleCard .tag{ background:rgba(255,255,255,.32); border-color:rgba(255,255,255,.42); color:#5b2a59; font-weight:900; position:relative; z-index:1; }
-    .guideToggleCard .title{ color:#ffffff; font-size:26px; letter-spacing:1px; text-shadow:0 2px 8px rgba(98,33,88,.22); position:relative; z-index:1; }
-    .guideToggleCard .desc{ color:#fff7fb; font-weight:800; font-size:15px; position:relative; z-index:1; }
+    .guideToggleIconWrap{
+      position:relative;
+      z-index:1;
+      width:84px;
+      height:84px;
+      flex:0 0 84px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      filter:drop-shadow(0 8px 16px rgba(0,0,0,.28));
+    }
+    .guideToggleIcon3D{
+      width:84px;
+      height:84px;
+      display:block;
+      object-fit:contain;
+      filter:drop-shadow(0 14px 24px rgba(0,0,0,.35)) drop-shadow(0 0 18px rgba(102,208,255,.22));
+      transform:translateZ(0);
+      user-select:none;
+      -webkit-user-drag:none;
+    }
+    .guideToggleText{
+      position:relative;
+      z-index:1;
+      min-width:0;
+      display:flex;
+      flex-direction:column;
+      align-items:flex-start;
+      justify-content:center;
+      gap:6px;
+      text-align:left;
+    }
+    .guideToggleCard .tag{ background:rgba(255,255,255,.14); border-color:rgba(188,232,255,.38); color:#d9f5ff; font-weight:900; position:relative; z-index:1; }
+    .guideToggleCard .title{ color:#ffffff; font-size:clamp(22px, 3vw, 30px); letter-spacing:.8px; text-shadow:0 3px 10px rgba(0,0,0,.25); position:relative; z-index:1; line-height:1.15; }
+    .guideToggleCard .desc{ color:#dff6ff; font-weight:800; font-size:clamp(13px, 1.7vw, 15px); position:relative; z-index:1; line-height:1.4; }
 
     .guidePanel{
       margin-top:16px;
@@ -631,6 +657,10 @@
       header .center{ position:static; transform:none; margin:0 auto; font-size:12px; }
       .noticeBar{ width:100%; min-width:0; }
       .noticeTrack{ font-size:22px; }
+      .guideToggleCard{ width:100%; min-height:118px; padding:14px 18px; gap:12px; border-radius:24px; }
+      .guideToggleIconWrap{ width:64px; height:64px; flex-basis:64px; }
+      .guideToggleIcon3D{ width:64px; height:64px; }
+      .guideToggleText{ gap:4px; }
       .guidePanel{ padding:16px 14px; }
       .guideTitle{ font-size:20px; }
       .guideCards{ grid-template-columns:1fr; }
@@ -651,7 +681,7 @@
   <div class="main">
     <div class="topHint">
       <div class="noticeBar">
-        <div class="noticeTrack" id="courseNoticeTrack">课程通告：请同学们在3月25前在本系统提交实验设计报告，每个组一份。</div>
+        <div class="noticeTrack" id="courseNoticeTrack">课程通告：请同学们在4月15前在本系统提交实验设计报告，每个组一份。</div>
       </div>
     </div>
 
@@ -680,9 +710,14 @@
 
     <div class="guideToggleWrap">
       <div class="guideToggleCard" id="guideToggleBtn" role="button" tabindex="0" aria-expanded="false" aria-controls="guidePanel">
-        <div class="tag">实验小助手</div>
-        <div class="title">学生操作指引</div>
-        <div class="desc">点击查看 / 再点可收起</div>
+        <div class="guideToggleIconWrap" aria-hidden="true">
+          <img class="guideToggleIcon3D" id="guideToggleIconImg" src="https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/%E5%9B%BE%E6%A0%87.png" alt="学生操作指引图标" />
+        </div>
+        <div class="guideToggleText">
+          <div class="tag">实验小助手</div>
+          <div class="title">学生操作指引</div>
+          <div class="desc">点击查看 / 再点可收起</div>
+        </div>
       </div>
     </div>
 
@@ -1031,6 +1066,24 @@ const SAMPLE_REF_DEFAULTS = {
   sampleRef2: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A2%EF%BC%9A%E5%8A%9F%E7%8E%87%E8%87%AA%E8%A1%8C%E8%BD%A6%E8%80%90%E5%8A%9B%E8%AE%AD%E7%BB%83%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A.pdf"
 };
 
+const REMOTE_TEXT_CONFIG = {
+  noticeTextUrl: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/%E8%AF%BE%E7%A8%8B%E9%80%9A%E7%9F%A5.txt",
+  designSubmitUrlText: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A%E6%8F%90%E4%BA%A4%E9%93%BE%E6%8E%A5.txt",
+  reportSubmitUrlText: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A%E6%8F%90%E4%BA%A4%E9%93%BE%E6%8E%A5.txt",
+  guideIconUrl: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/%E5%9B%BE%E6%A0%87.png"
+};
+
+const RUNTIME_REMOTE_STATE = {
+  noticeText: "",
+  designSubmitUrl: "",
+  reportSubmitUrl: "",
+  guideIconUrl: REMOTE_TEXT_CONFIG.guideIconUrl,
+  noticeLoadFailed: false,
+  designSubmitLoadFailed: false,
+  reportSubmitLoadFailed: false
+};
+
+
 function normalizeSampleRefLink(url, key){
   const raw = String(url || '').trim();
   if(!raw) return SAMPLE_REF_DEFAULTS[key] || raw;
@@ -1055,8 +1108,8 @@ function getLinks(){
 
  // B 方案：样例PDF + 提交链接
     samplePdf: "https://example.com/sample.pdf",
-    planSubmit: "https://v.wjx.cn/vm/e0hVQ0D.aspx",
-    designSubmit: "https://v.wjx.cn/vm/e0hVQ0D.aspx",
+    planSubmit: "",
+    designSubmit: "",
     sampleRef1: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A1%EF%BC%9A%E6%8E%A2%E7%A9%B6%E9%95%BF%E8%B7%91%E5%AF%B9%E4%BA%BA%E4%BD%93%E5%BF%83%E8%82%BA%E5%8A%9F%E8%83%BD%E7%9A%84%E5%BD%B1%E5%93%8D.pdf",
     sampleRef2: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A2%EF%BC%9A%E5%8A%9F%E7%8E%87%E8%87%AA%E8%A1%8C%E8%BD%A6%E8%80%90%E5%8A%9B%E8%AE%AD%E7%BB%83%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A.pdf",
     sampleRef3: "",
@@ -1067,7 +1120,7 @@ function getLinks(){
 
     // E 报告模板下载（腾讯云） + 提交链接
     reportTemplate: "https://example.com/report-template.docx",
-    reportSubmit: "https://tp.wjx.top/vm/Yr3euZW.aspx"
+    reportSubmit: ""
   };
   const v = lsGet(LS_KEYS.links, null);
   if(!v){
@@ -1197,82 +1250,49 @@ function openLearningPreview(item){
     return;
   }
 
-  // Office 在线预览（PPT/Word）
-  const officeEmbed = (srcUrl)=> {
-    const u = encodeURIComponent(srcUrl);
-    return `https://view.officeapps.live.com/op/embed.aspx?src=${u}`;
-  };
-
-  let body = "";
   if(item.type==="video"){
-    body = `
+    const body = `
       <div class="section">
         <h3>${escapeHtml(item.code)} · ${escapeHtml(item.title)}</h3>
         <video src="${escapeHtml(url)}" controls style="width:100%;max-height:520px;border-radius:12px;border:1px solid rgba(46,74,122,.55);background:rgba(0,0,0,.35)"></video>
         <div class="footerNote">若无法播放，请确认链接可公网访问或尝试在新标签页打开视频链接。</div>
       </div>
     `;
-  }else if(item.type==="ppt" || item.type==="word"){
-    const embedUrl = officeEmbed(url);
-    if(isFileProtocol()){
-      body = `
-        <div class="section">
-          <h3>${escapeHtml(item.code)} · ${escapeHtml(item.title)}</h3>
-          ${makeLocalPreviewBlockedHtml('已停止在本地 file:// 页面中加载 Office 在线预览。')}
-          <div class="footerNote">说明：请直接使用“浏览”或“新标签页打开”查看原始链接。</div>
-        </div>
-      `;
-    }else{
-      body = `
-        <div class="section">
-          <h3>${escapeHtml(item.code)} · ${escapeHtml(item.title)}</h3>
-          <iframe src="${embedUrl}"
-            style="width:100%;height:560px;border-radius:12px;border:1px solid rgba(46,74,122,.55);background:rgba(0,0,0,.25)"></iframe>
-          <div class="footerNote">
-            说明：此处为 Office 在线预览。若预览失败，可在浏览器地址栏直接打开原始链接。
-          </div>
-        </div>
-      `;
-    }
-  }else{
-    body = `<div class="mono" style="color:var(--muted);">未知类型，无法预览。</div>`;
+    openPanel({
+      title:`预览 · ${item.code}`,
+      rememberKey:`learn.preview.${item.code}`,
+      width: 980, height: 720, left: 90, top: 82,
+      html: body
+    });
+    return;
   }
 
-  openPanel({
-    title:`预览 · ${item.code}`,
-    rememberKey:`learn.preview.${item.code}`,
-    width: 980, height: 720, left: 90, top: 82,
-    html: body
+  openDocumentPreviewPanel({
+    title:`预览 · ${item.code} · ${item.title}`,
+    url,
+    rememberKey:`learn.preview.${item.code}`
   });
 }
 /* ===========================
    B Plan Designer (reference topics + AI assisted design + versions)
 =========================== */
 const EXPERIMENT_TOPICS = [
-  {id:"t1", no:1, name:"4周慢跑训练对心肺功能的影响", duration:"4周", expType:"训练干预", training:"每周3次，20－30分钟慢跑", indicators:"心率、血压、肺活量、台阶试验", equipment:"心率设备、血压计、肺活量计、台阶试验", difficulty:"★★★★★"},
-  {id:"t2", no:2, name:"4周快走训练对心血管机能的影响", duration:"4周", expType:"训练干预", training:"每周4次，30分钟快走", indicators:"心率、血压、主观感受", equipment:"心率、血压、RPE", difficulty:"★★★★"},
-  {id:"t3", no:3, name:"HIIT训练对心肺适应的影响", duration:"4周", expType:"训练干预", training:"间歇骑车或跑步", indicators:"心率、血压、肺活量、RPE", equipment:"功率自行车、心率、血压、肺活量", difficulty:"★★★★★"},
-  {id:"t4", no:4, name:"功率自行车耐力训练对台阶试验成绩的影响", duration:"4周", expType:"训练干预", training:"每周3次骑车训练", indicators:"台阶试验、心率、血压", equipment:"功率自行车、台阶试验、心率、血压", difficulty:"★★★★★"},
-  {id:"t5", no:5, name:"8周有氧训练对静息心率的影响", duration:"8周", expType:"训练干预", training:"慢跑/骑车训练", indicators:"静息心率、血压、RPE", equipment:"心率、血压", difficulty:"★★★★★"},
-  {id:"t6", no:6, name:"不同训练强度对运动后恢复心率的影响", duration:"4周", expType:"对比实验", training:"低强度、中高强度训练", indicators:"即刻心率、恢复1/3/5分钟心率", equipment:"心率、秒表", difficulty:"★★★★★"},
-  {id:"t7", no:7, name:"4周训练对肺活量的影响", duration:"4周", expType:"训练干预", training:"跑步或骑车训练", indicators:"肺活量、心率", equipment:"肺活量计、心率", difficulty:"★★★★★"},
-  {id:"t8", no:8, name:"有氧训练对体重和皮脂的影响", duration:"6周", expType:"训练干预", training:"每周3－4次有氧训练", indicators:"体重、皮脂、心率", equipment:"身高体重仪、皮脂仪、心率", difficulty:"★★★★"},
-  {id:"t9", no:9, name:"有氧训练对BMI和体脂相关指标的影响", duration:"6周", expType:"训练干预", training:"快走或慢跑", indicators:"体重、BMI、皮脂", equipment:"身高体重仪、皮脂仪", difficulty:"★★★"},
-  {id:"t10", no:10, name:"不同恢复方式对运动后主观疲劳的影响", duration:"4周", expType:"对比实验", training:"静息恢复 vs 轻活动恢复", indicators:"心率、RPE、血压", equipment:"心率、血压、RPE", difficulty:"★★★★"},
-  {id:"t11", no:11, name:"运动疲劳对反应时的影响", duration:"4周", expType:"训练干预", training:"台阶试验或骑车至疲劳", indicators:"反应时、心率、RPE", equipment:"反应时仪、功率自行车/台阶试验、心率", difficulty:"★★★★★"},
-  {id:"t12", no:12, name:"不同强度运动后反应时变化比较", duration:"4周", expType:"对比实验", training:"低强度 vs 高强度运动", indicators:"反应时、心率", equipment:"反应时仪、功率自行车、心率", difficulty:"★★★★"},
-  {id:"t13", no:13, name:"短期耐力训练对闪光融合频率的影响", duration:"4周", expType:"训练干预", training:"有氧训练", indicators:"闪光融合频率、RPE、心率", equipment:"闪光融合频率仪、心率", difficulty:"★★★"},
-  {id:"t14", no:14, name:"运动疲劳对闪光融合频率的影响", duration:"4周", expType:"对比实验", training:"运动前后比较", indicators:"闪光融合频率、心率、RPE", equipment:"闪光融合频率仪、功率自行车、心率", difficulty:"★★★"},
-  {id:"t15", no:15, name:"功率自行车训练对下肢力量表现的影响", duration:"4周", expType:"训练干预", training:"骑车训练", indicators:"握力、台阶试验、RPE", equipment:"功率自行车、握力器、台阶试验", difficulty:"★★★"},
-  {id:"t16", no:16, name:"一般体能训练对握力水平的影响", duration:"4周", expType:"训练干预", training:"综合训练或循环训练", indicators:"握力、体重、RPE", equipment:"握力器、身高体重仪", difficulty:"★★★"},
-  {id:"t17", no:17, name:"训练前后握力与体重关系的变化", duration:"4周", expType:"对比实验", training:"训练前后测试", indicators:"握力、体重、BMI", equipment:"握力器、身高体重仪", difficulty:"★★★"},
-  {id:"t18", no:18, name:"不同运动方式对血压变化的影响", duration:"4周", expType:"对比实验", training:"跑步 vs 功率车", indicators:"运动前后血压、心率", equipment:"功率自行车、血压计、心率", difficulty:"★★★★"},
-  {id:"t19", no:19, name:"台阶训练对心肺耐力的影响", duration:"4周", expType:"训练干预", training:"每周3次台阶训练", indicators:"台阶试验、心率、肺活量", equipment:"台阶试验设备、心率、肺活量", difficulty:"★★★★"},
-  {id:"t20", no:20, name:"4周综合训练对身体机能的影响", duration:"4周", expType:"训练干预", training:"有氧+力量+柔韧结合", indicators:"心率、血压、肺活量、皮脂、握力、RPE", equipment:"多项设备", difficulty:"★★★★★"},
-  {id:"t21", no:21, name:"训练水平不同学生的机能指标比较", duration:"4周", expType:"相关研究", training:"对比不同训练水平学生", indicators:"心率、肺活量、握力、皮脂、台阶试验", equipment:"基础设备", difficulty:"★★★"},
-  {id:"t22", no:22, name:"骨密度与日常训练水平的关系", duration:"4周", expType:"相关研究", training:"问卷+测试", indicators:"骨密度、体重、BMI、训练水平", equipment:"骨密度仪、身高体重仪", difficulty:"★★★"}
+  { id:"t1", no:1, name:"慢跑（或快走）训练对心肺功能的影响", duration:"8周", expType:"训练干预", training:"每周 3 次，20–30 分钟慢跑", indicators:"心率、血压、肺活量以及台阶试验成绩", equipment:"心率监测设备（心率手环或心率表）、血压计、肺活量计、台阶试验台阶及计时器、实验记录表", difficulty:"★★★★★" },
+  { id:"t2", no:2, name:"HIIT 训练对心肺适应的影响", duration:"8周", expType:"训练干预", training:"每周 3-4 次间歇骑车或间歇跑步", indicators:"心率、血压、肺活量以及运动主观感受（RPE）", equipment:"功率自行车或跑步设备、心率监测设备（心率手环或心率表）、血压计、肺活量计、RPE 主观疲劳等级量表、实验记录表", difficulty:"★★★★" },
+  { id:"t3", no:3, name:"有氧训练对骨密度影响的研究", duration:"4周", expType:"对比实验", training:"实验组每天 1 小时有氧运动（跑步、爬山、球类、游泳等），对照组缺乏运动", indicators:"骨密度、体重、BMI", equipment:"骨密度测量仪、身高体重仪、实验记录表", difficulty:"★★★☆" },
+  { id:"t4", no:4, name:"不同方式对运动后疲劳恢复的影响", duration:"4周", expType:"对比实验", training:"运动后分消极恢复、轻积极恢复两种方式干预", indicators:"运动后心率、血压、RPE 评分", equipment:"心率监测设备（心率表或心率手环）、血压计、RPE 疲劳等级量表、实验记录表", difficulty:"★★★★" },
+  { id:"t5", no:5, name:"8周有氧训练对静息心率的影响", duration:"8周", expType:"训练干预", training:"每周 3-4 次，每次 1 小时左右慢跑 / 骑车（含准备、整理活动）", indicators:"静息心率、血压、RPE 评分", equipment:"心率监测设备（心率表或心率手环）、血压计、RPE 主观疲劳等级量表、实验记录表", difficulty:"★★★★" },
+  { id:"t6", no:6, name:"训练对运动后心率恢复能力的影响", duration:"8周", expType:"对比实验", training:"分低强度、中高强度两种模式训练，每周规定次数训练", indicators:"运动后即刻心率、恢复 2/4/6 分钟心率", equipment:"心率监测设备（心率表或心率手环）、秒表、实验记录表", difficulty:"★★★★" },
+  { id:"t7", no:7, name:"大强度运动后反应时变化比较", duration:"4周", expType:"对比实验", training:"功率自行车低强度、高强度运动干预", indicators:"反应时、运动心率", equipment:"反应时测试仪、功率自行车、心率监测设备（心率表或心率手环）、实验记录表", difficulty:"★★★☆" },
+  { id:"t8", no:8, name:"8周耐力训练对肺活量的影响", duration:"8周", expType:"训练干预", training:"每周 3 次，每次约 1 小时跑步 / 骑车（含准备、整理活动）", indicators:"肺活量、运动心率", equipment:"肺活量计、心率监测设备（心率表或心率手环）、实验记录表", difficulty:"★★★★" },
+  { id:"t9", no:9, name:"耐力训练对闪光融合频率的影响", duration:"4周", expType:"训练干预", training:"每周 3 次，每次 20-30 分钟中等强度有氧训练（慢跑、骑车等）", indicators:"闪光融合频率、心率、RPE 评分", equipment:"闪光融合频率测试仪、心率监测设备（心率表或心率手环）、RPE 主观疲劳等级量表、实验记录表", difficulty:"★★★☆" },
+  { id:"t10", no:10, name:"功率自行车训练对下肢力量的影响", duration:"4周", expType:"训练干预", training:"每周 2 次，每次 20-30 分钟功率自行车骑行训练", indicators:"握力、台阶试验成绩、RPE 评分", equipment:"功率自行车、握力器、台阶试验设备、RPE 主观疲劳等级量表、实验记录表", difficulty:"★★★★" },
+  { id:"t11", no:11, name:"一般体能训练对握力水平的影响", duration:"4周", expType:"训练干预", training:"每周 3 次，每次 20-30 分钟综合体能 / 循环训练", indicators:"握力、体重、RPE 评分", equipment:"握力器、身高体重仪、RPE 主观疲劳等级量表、实验记录表", difficulty:"★★★☆" },
+  { id:"t12", no:12, name:"不同运动方式对血压变化的影响", duration:"4周", expType:"对比实验", training:"分跑步、功率自行车两种运动方式，运动时间 / 强度一致", indicators:"运动前后血压、心率", equipment:"功率自行车、血压计、心率监测设备（心率表或心率手环）、实验记录表", difficulty:"★★★★" },
+  { id:"t13", no:13, name:"台阶训练对心肺耐力的影响", duration:"4周", expType:"训练干预", training:"每周 3 次，每次正式训练 15-20 分钟台阶训练", indicators:"台阶试验成绩、心率、肺活量", equipment:"台阶试验设备、心率监测设备（心率表或心率手环）、肺活量计、实验记录表", difficulty:"★★★★★" },
+  { id:"t14", no:14, name:"功率自行车耐力训练对台阶试验成绩的影响", duration:"8周", expType:"训练干预", training:"每周 3 次，每次 20-30 分钟功率自行车中等强度骑行", indicators:"台阶试验成绩、心率、血压", equipment:"功率自行车、台阶试验台阶、心率监测设备（心率表或心率手环）、血压计、实验记录表", difficulty:"★★★★" },
+  { id:"t15", no:15, name:"有氧训练对体重和体脂的影响", duration:"6周", expType:"训练干预", training:"每周 3-4 次，每次 1 小时慢跑 / 骑车 / 快走，心率控制 130-150 次 / 分", indicators:"体重、体脂厚度、运动心率", equipment:"身高体重仪、体脂厚度测量仪（体脂仪）、心率监测设备（心率表或心率手环）、实验记录表", difficulty:"★★★★★" }
 ];
-
 function getPlanDraftDefault(){
   return {
     selectedTopicId:"",
@@ -1286,8 +1306,8 @@ function getPlanDraftDefault(){
 function getPlanSampleItems(){
   const links = getLinks();
   return [
-    { key:"sampleRef1", label:"实验1：探究长跑对人体心肺功能的影响", url: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A1%EF%BC%9A%E6%8E%A2%E7%A9%B6%E9%95%BF%E8%B7%91%E5%AF%B9%E4%BA%BA%E4%BD%93%E5%BF%83%E8%82%BA%E5%8A%9F%E8%83%BD%E7%9A%84%E5%BD%B1%E5%93%8D.docx" },
-    { key:"sampleRef2", label:"实验报告2：功率自行车耐力训练实验报告", url: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A2%EF%BC%9A%E5%8A%9F%E7%8E%87%E8%87%AA%E8%A1%8C%E8%BD%A6%E8%80%90%E5%8A%9B%E8%AE%AD%E7%BB%83%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A.docx" },
+    { key:"sampleRef1", label:"实验1：长跑运动对人体机能的影响实验报告", url: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A1%EF%BC%9A%E9%95%BF%E8%B7%91%E8%BF%90%E5%8A%A8%E5%AF%B9%E4%BA%BA%E4%BD%93%E6%9C%BA%E8%83%BD%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A.docx" },
+    { key:"sampleRef2", label:"实验报告2：（待补充）", url: "#" },
     { key:"sampleRef3", label:"其它报告", url: links.sampleRef3 || "" }
   ];
 }
@@ -1297,29 +1317,23 @@ function getTopicById(id){
 }
 
 const DESIGN_REPORT_LINK_DEFAULTS = {
-  t1: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/1.%E6%85%A2%E8%B7%91%E8%AE%AD%E7%BB%83%E5%AF%B9%E5%BF%83%E8%82%BA%E5%8A%9F%E8%83%BD%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
-  t2: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/2.%E5%BF%AB%E8%B5%B0%E8%AE%AD%E7%BB%83%E5%AF%B9%E5%BF%83%E8%A1%80%E7%AE%A1%E6%9C%BA%E8%83%BD%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
-  t3: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/3.HIIT%E8%AE%AD%E7%BB%83%E5%AF%B9%E5%BF%83%E8%82%BA%E9%80%82%E5%BA%94%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
-  t4: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/4.%E5%8A%9F%E7%8E%87%E8%87%AA%E8%A1%8C%E8%BD%A6%E8%80%90%E5%8A%9B%E8%AE%AD%E7%BB%83%E5%AF%B9%E5%8F%B0%E9%98%B6%E8%AF%95%E9%AA%8C%E6%88%90%E7%BB%A9%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
-  t5: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/5.8%E5%91%A8%E6%9C%89%E6%B0%A7%E8%AE%AD%E7%BB%83%E5%AF%B9%E9%9D%99%E6%81%AF%E5%BF%83%E7%8E%87%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
-  t6: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/6.%E4%B8%8D%E5%90%8C%E8%AE%AD%E7%BB%83%E5%BC%BA%E5%BA%A6%E5%AF%B9%E8%BF%90%E5%8A%A8%E5%90%8E%E6%81%A2%E5%A4%8D%E5%BF%83%E7%8E%87%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
-  t7: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/7.4%E5%91%A8%E8%AE%AD%E7%BB%83%E5%AF%B9%E8%82%BA%E6%B4%BB%E9%87%8F%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
-  t8: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/8.%E6%9C%89%E6%B0%A7%E8%AE%AD%E7%BB%83%E5%AF%B9%E4%BD%93%E9%87%8D%E5%92%8C%E7%9A%AE%E8%84%82%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
-  t9: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/9.%E6%9C%89%E6%B0%A7%E8%AE%AD%E7%BB%83%E5%AF%B9BMI%E5%92%8C%E4%BD%93%E8%84%82%E7%9B%B8%E5%85%B3%E6%8C%87%E6%A0%87%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
-  t10: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/10.%E4%B8%8D%E5%90%8C%E6%81%A2%E5%A4%8D%E6%96%B9%E5%BC%8F%E5%AF%B9%E8%BF%90%E5%8A%A8%E5%90%8E%E4%B8%BB%E8%A7%82%E7%96%B2%E5%8A%B3%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
-  t11: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/11.%E8%BF%90%E5%8A%A8%E7%96%B2%E5%8A%B3%E5%AF%B9%E5%8F%8D%E5%BA%94%E6%97%B6%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
-  t12: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/12.%E4%B8%8D%E5%90%8C%E5%BC%BA%E5%BA%A6%E8%BF%90%E5%8A%A8%E5%90%8E%E5%8F%8D%E5%BA%94%E6%97%B6%E5%8F%98%E5%8C%96%E6%AF%94%E8%BE%83%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
-  t13: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/13.%E7%9F%AD%E6%9C%9F%E8%80%90%E5%8A%9B%E8%AE%AD%E7%BB%83%E5%AF%B9%E9%97%AA%E5%85%89%E8%9E%8D%E5%90%88%E9%A2%91%E7%8E%87%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
-  t14: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/14.%E8%BF%90%E5%8A%A8%E7%96%B2%E5%8A%B3%E5%AF%B9%E9%97%AA%E5%85%89%E8%9E%8D%E5%90%88%E9%A2%91%E7%8E%87%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
-  t15: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/15.%E5%8A%9F%E7%8E%87%E8%87%AA%E8%A1%8C%E8%BD%A6%E8%AE%AD%E7%BB%83%E5%AF%B9%E4%B8%8B%E8%82%A2%E5%8A%9B%E9%87%8F%E8%A1%A8%E7%8E%B0%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
-  t16: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/16.%E4%B8%80%E8%88%AC%E4%BD%93%E8%83%BD%E8%AE%AD%E7%BB%83%E5%AF%B9%E6%8F%A1%E5%8A%9B%E6%B0%B4%E5%B9%B3%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
-  t17: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/17.%E8%AE%AD%E7%BB%83%E5%89%8D%E5%90%8E%E6%8F%A1%E5%8A%9B%E4%B8%8E%E4%BD%93%E9%87%8D%E5%85%B3%E7%B3%BB%E7%9A%84%E5%8F%98%E5%8C%96%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
-  t18: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/18.%E4%B8%8D%E5%90%8C%E8%BF%90%E5%8A%A8%E6%96%B9%E5%BC%8F%E5%AF%B9%E8%A1%80%E5%8E%8B%E5%8F%98%E5%8C%96%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
-  t19: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/19.%E5%8F%B0%E9%98%B6%E8%AE%AD%E7%BB%83%E5%AF%B9%E5%BF%83%E8%82%BA%E8%80%90%E5%8A%9B%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
-  t20: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/20.4%E5%91%A8%E7%BB%BC%E5%90%88%E8%AE%AD%E7%BB%83%E5%AF%B9%E8%BA%AB%E4%BD%93%E6%9C%BA%E8%83%BD%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
-  t21: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/21.%E8%AE%AD%E7%BB%83%E6%B0%B4%E5%B9%B3%E4%B8%8D%E5%90%8C%E5%AD%A6%E7%94%9F%E7%9A%84%E6%9C%BA%E8%83%BD%E6%8C%87%E6%A0%87%E6%AF%94%E8%BE%83%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
-  t22: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/22.%E9%AA%A8%E5%AF%86%E5%BA%A6%E4%B8%8E%E6%97%A5%E5%B8%B8%E8%AE%AD%E7%BB%83%E6%B0%B4%E5%B9%B3%E7%9A%84%E5%85%B3%E7%B3%BB%E7%A0%94%E7%A9%B6%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx"
-};
+  t1: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/1.%E6%85%A2%E8%B7%91%EF%BC%88%E6%88%96%E5%BF%AB%E8%B5%B0%EF%BC%89%E8%AE%AD%E7%BB%83%E5%AF%B9%E5%BF%83%E8%82%BA%E5%8A%9F%E8%83%BD%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
+  t2: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/2.HIIT%E8%AE%AD%E7%BB%83%E5%AF%B9%E5%BF%83%E8%82%BA%E9%80%82%E5%BA%94%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
+  t3: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/3.%E5%8A%9F%E7%8E%87%E8%87%AA%E8%A1%8C%E8%BD%A6%E8%80%90%E5%8A%9B%E8%AE%AD%E7%BB%83%E5%AF%B9%E5%8F%B0%E9%98%B6%E8%AF%95%E9%AA%8C%E6%88%90%E7%BB%A9%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
+  t4: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/4.8%E5%91%A8%E6%9C%89%E6%B0%A7%E8%AE%AD%E7%BB%83%E5%AF%B9%E9%9D%99%E6%81%AF%E5%BF%83%E7%8E%87%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
+  t5: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/5.%E8%AE%AD%E7%BB%83%E5%AF%B9%E8%BF%90%E5%8A%A8%E5%90%8E%E5%BF%83%E7%8E%87%E6%81%A2%E5%A4%8D%E8%83%BD%E5%8A%9B%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
+  t6: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/6.8%E5%91%A8%E8%AE%AD%E7%BB%83%E5%AF%B9%E8%82%BA%E6%B4%BB%E9%87%8F%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
+  t7: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/7.%E6%9C%89%E6%B0%A7%E8%AE%AD%E7%BB%83%E5%AF%B9%E4%BD%93%E9%87%8D%E5%92%8C%E4%BD%93%E8%84%82%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
+  t8: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/8.%E4%B8%8D%E5%90%8C%E6%81%A2%E5%A4%8D%E6%96%B9%E5%BC%8F%E5%AF%B9%E8%BF%90%E5%8A%A8%E5%90%8E%E4%B8%BB%E8%A7%82%E7%96%B2%E5%8A%B3%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
+  t9: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/9%E5%A4%A7%E5%BC%BA%E5%BA%A6%E8%BF%90%E5%8A%A8%E5%90%8E%E5%8F%8D%E5%BA%94%E6%97%B6%E5%8F%98%E5%8C%96%E6%AF%94%E8%BE%83%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
+  t10: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/10.%E8%80%90%E5%8A%9B%E8%AE%AD%E7%BB%83%E5%AF%B9%E9%97%AA%E5%85%89%E8%9E%8D%E5%90%88%E9%A2%91%E7%8E%87%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
+  t11: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/11.%E5%8A%9F%E7%8E%87%E8%87%AA%E8%A1%8C%E8%BD%A6%E8%AE%AD%E7%BB%83%E5%AF%B9%E4%B8%8B%E8%82%A2%E5%8A%9B%E9%87%8F%E8%A1%A8%E7%8E%B0%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
+  t12: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/12.%E4%B8%80%E8%88%AC%E4%BD%93%E8%83%BD%E8%AE%AD%E7%BB%83%E5%AF%B9%E6%8F%A1%E5%8A%9B%E6%B0%B4%E5%B9%B3%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
+  t13: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/13.%E4%B8%8D%E5%90%8C%E8%BF%90%E5%8A%A8%E6%96%B9%E5%BC%8F%E5%AF%B9%E8%A1%80%E5%8E%8B%E5%8F%98%E5%8C%96%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
+  t14: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/14.%E5%8F%B0%E9%98%B6%E8%AE%AD%E7%BB%83%E5%AF%B9%E5%BF%83%E8%82%BA%E8%80%90%E5%8A%9B%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
+  t15: "https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/sysj/15.%E9%AA%A8%E5%AF%86%E5%BA%A6%E4%B8%8E%E6%97%A5%E5%B8%B8%E8%AE%AD%E7%BB%83%E6%B0%B4%E5%B9%B3%E7%9A%84%E5%85%B3%E7%B3%BB%E7%A0%94%E7%A9%B6%E5%AE%9E%E9%AA%8C%E8%AE%BE%E8%AE%A1%E6%8A%A5%E5%91%8A.docx",
+ };
+
 
 function getDesignReportMap(){
   return { ...DESIGN_REPORT_LINK_DEFAULTS, ...lsGet("exp.design.report.links.v1", {}) };
@@ -1349,13 +1363,13 @@ function renderTopicDetail(topic){
     <div class="tableWrap">
       <table style="min-width:0;">
         <tbody>
-          <tr><th style="width:160px;">实验项目名称</th><td>${escapeHtml(topic.name)}</td></tr>
-          <tr><th>建议实验时间</th><td>${escapeHtml(topic.duration || '—')}</td></tr>
-          <tr><th>实验类型</th><td>${escapeHtml(topic.expType || '—')}</td></tr>
-          <tr><th>训练内容 / 干预方式</th><td>${escapeHtml(topic.training)}</td></tr>
-          <tr><th>主要观察指标</th><td>${escapeHtml(topic.indicators)}</td></tr>
-          <tr><th>所需设备</th><td>${escapeHtml(topic.equipment)}</td></tr>
-          <tr><th>推荐程度</th><td style="letter-spacing:2px;">${escapeHtml(topic.difficulty || '—')}</td></tr>
+           <tr><th style="width:160px;">实验项目名称</th><td>${escapeHtml(topic.name)}</td></tr>
+           <tr><th>建议实验时间</th><td>${escapeHtml(topic.duration || '—')}</td></tr>
+           <tr><th>实验类型</th><td>${escapeHtml(topic.expType || '—')}</td></tr>
+           <tr><th>训练内容 / 干预方式</th><td>${escapeHtml(topic.training)}</td></tr>
+           <tr><th>主要观察指标</th><td>${escapeHtml(topic.indicators)}</td></tr>
+           <tr><th>所需设备</th><td>${escapeHtml(topic.equipment)}</td></tr>
+           <tr><th>推荐程度</th><td style="letter-spacing:2px;">${escapeHtml(topic.difficulty || '—')}</td></tr>
         </tbody>
       </table>
     </div>
@@ -1384,14 +1398,18 @@ ${escapeHtml(extra)}` : ''}</div>
   </div>`;
 }
 
+function getOfficeEmbedUrl(srcUrl){
+  const u = encodeURIComponent(String(srcUrl || '').trim());
+  return `https://view.officeapps.live.com/op/embed.aspx?src=${u}`;
+}
+
 function getPreviewUrl(url){
   const u = String(url || '').trim();
   if(!u) return "";
   if(!isSafePreviewUrl(u)) return "";
   const clean = u.split('#')[0].split('?')[0].toLowerCase();
-  const encoded = encodeURIComponent(u);
   if(/\.(doc|docx|ppt|pptx|xls|xlsx)$/i.test(clean)){
-    return `https://view.officeapps.live.com/op/embed.aspx?src=${encoded}`;
+    return getOfficeEmbedUrl(u);
   }
   if(/\.pdf$/i.test(clean)){
     return u;
@@ -1401,6 +1419,62 @@ function getPreviewUrl(url){
 
 const PDF_BLOB_PREVIEW_CACHE = new Map();
 
+function openDocumentPreviewPanel({ title, url, rememberKey='doc.preview.panel', width=1040, height=760, left=68, top=72 }){
+  const u = String(url || '').trim();
+  if(!u){
+    toast("warn","链接未设置","请先补充有效链接");
+    return;
+  }
+  const previewUrl = getPreviewUrl(u);
+  const clean = u.split('#')[0].split('?')[0].toLowerCase();
+  const ext = (clean.match(/\.([a-z0-9]+)$/i) || [,''])[1].toLowerCase();
+  const isPdf = ext === 'pdf';
+  const isOffice = ['doc','docx','ppt','pptx','xls','xlsx'].includes(ext);
+  const p = openPanel({
+    title: escapeHtml(title || '文件预览'),
+    rememberKey,
+    width,
+    height,
+    left,
+    top,
+    html: `
+      <div class="section" style="margin:0;display:flex;flex-direction:column;height:100%;">
+        <div class="btnRow" style="justify-content:flex-end;margin-bottom:10px;">
+          <div class="btn secondary" id="docPreviewDownload">下载</div>
+          <div class="btn ghost" id="docPreviewOpen">新标签页打开</div>
+          <div class="btn ghost" id="docPreviewClose">关闭</div>
+        </div>
+        <div id="docPreviewHost" style="flex:1;min-height:560px;"></div>
+      </div>
+    `
+  });
+
+  const host = p.querySelector('#docPreviewHost');
+  const noteText = isOffice
+    ? '当前已在框内调用 Office 在线预览。若首次加载较慢，请稍候片刻。'
+    : (isPdf ? '当前已在框内预览 PDF 文件。' : '当前已在框内预览文件。');
+
+  const frameHtml = src => `
+    <div style="height:100%;display:flex;flex-direction:column;">
+      <iframe src="${escapeHtml(src)}" style="width:100%;height:100%;min-height:560px;border-radius:12px;border:1px solid rgba(46,74,122,.55);background:#fff"></iframe>
+      <div class="footerNote" style="margin-top:8px;">${noteText}</div>
+    </div>
+  `;
+
+  if(previewUrl){
+    host.innerHTML = frameHtml(previewUrl);
+  }else{
+    host.innerHTML = `
+      <div class="section" style="margin:0;min-height:560px;display:flex;align-items:center;justify-content:center;">
+        <div class="mono" style="color:var(--muted);line-height:1.9;max-width:760px;">当前链接类型暂不支持框内预览，请使用“新标签页打开”查看原文件。</div>
+      </div>
+    `;
+  }
+
+  p.querySelector('#docPreviewDownload').onclick = ()=> triggerDownload(u, title || '文件预览', title || '文件预览');
+  p.querySelector('#docPreviewOpen').onclick = ()=> safeOpen(u);
+  p.querySelector('#docPreviewClose').onclick = ()=> p.remove();
+}
 async function fetchPdfBlobPreviewUrl(url){
   const src = String(url || '').trim();
   if(!src) throw new Error('缺少 PDF 链接');
@@ -1414,89 +1488,11 @@ async function fetchPdfBlobPreviewUrl(url){
 }
 
 function openPdfPreviewPanel(title, url){
-  const u = String(url || '').trim();
-  if(!u){
-    toast("warn","链接未设置","请先补充有效链接");
-    return;
-  }
-  const clean = u.split('#')[0].split('?')[0].toLowerCase();
-  const isPdf = /\.pdf$/i.test(clean);
-  const previewUrl = getPreviewUrl(u);
-  const p = openPanel({
-    title: escapeHtml(title || '文件预览'),
-    rememberKey: 'pdf.preview.panel',
-    width: 1040,
-    height: 760,
-    left: 68,
-    top: 72,
-    html: `
-      <div class="section" style="margin:0;display:flex;flex-direction:column;height:100%;">
-        <div class="btnRow" style="justify-content:flex-end;margin-bottom:10px;">
-          <div class="btn secondary" id="pdfPreviewDownload">下载</div>
-          <div class="btn ghost" id="pdfPreviewOpen">新标签页打开</div>
-          <div class="btn ghost" id="pdfPreviewClose">关闭</div>
-        </div>
-        <div id="pdfPreviewHost" style="flex:1;min-height:560px;"></div>
-      </div>
-    `
+  openDocumentPreviewPanel({
+    title: title || '实验样本参考',
+    url,
+    rememberKey: 'pdf.preview.panel'
   });
-
-  const host = p.querySelector('#pdfPreviewHost');
-  let activeOpenUrl = u;
-
-  const renderPdfFrame = (src, note)=>{
-    activeOpenUrl = src || u;
-    if(isFileProtocol()){
-      host.innerHTML = `
-        <div style="height:100%;display:flex;flex-direction:column;">
-          ${makeLocalPreviewBlockedHtml('当前已关闭面板内 iframe 预览，避免再次触发 file:// 安全限制。')}
-          <div class="footerNote" style="margin-top:8px;">${note || '请改用新标签页打开。'}</div>
-        </div>
-      `;
-      return;
-    }
-    host.innerHTML = `
-      <div style="height:100%;display:flex;flex-direction:column;">
-        <iframe src="${escapeHtml(src)}" style="width:100%;height:100%;min-height:560px;border-radius:12px;border:1px solid rgba(46,74,122,.55);background:#fff"></iframe>
-        <div class="footerNote" style="margin-top:8px;">${note || '预览已加载。'}</div>
-      </div>
-    `;
-  };
-
-  if(isPdf){
-    host.innerHTML = `
-      <div class="section" style="margin:0;height:100%;display:flex;align-items:center;justify-content:center;min-height:560px;">
-        <div class="mono" style="color:var(--muted);text-align:center;line-height:1.8;">
-          正在加载 PDF 预览…<br/>
-          <span style="font-size:12px;opacity:.86;">已改为先获取 PDF Blob，再按学习区的 iframe 方式预览，避免源链接触发自动下载。</span>
-        </div>
-      </div>
-    `;
-
-    fetchPdfBlobPreviewUrl(u).then((blobUrl)=>{
-      if(!document.body.contains(p)) return;
-      renderPdfFrame(blobUrl, '已转为浏览器可预览的 PDF Blob 地址，避免点击“浏览”时自动下载。');
-    }).catch((err)=>{
-      if(!document.body.contains(p)) return;
-      activeOpenUrl = u;
-      host.innerHTML = `
-        <div class="section" style="margin:0;min-height:560px;display:flex;align-items:center;justify-content:center;">
-          <div class="mono" style="color:var(--muted);line-height:1.9;max-width:760px;">
-            当前浏览器未能把该 PDF 转为可内嵌预览的 Blob 地址，因此仍无法在面板内显示。<br/>
-            可能原因：源文件未开启跨域访问（CORS）或网络拦截。<br/>
-            错误信息：${escapeHtml(String(err && err.message ? err.message : err))}
-          </div>
-        </div>
-      `;
-      toast('warn','预览受限','该 PDF 源链接未允许浏览器直接读取，暂时无法内嵌预览。');
-    });
-  }else{
-    renderPdfFrame(previewUrl, '当前文件按学习区相同的 iframe 方式预览。');
-  }
-
-  p.querySelector('#pdfPreviewDownload').onclick = ()=> triggerDownload(u, title || '实验样本参考', title || '实验样本参考');
-  p.querySelector('#pdfPreviewOpen').onclick = ()=> safeOpen(activeOpenUrl || u);
-  p.querySelector('#pdfPreviewClose').onclick = ()=> p.remove();
 }
 
 function openDesignReportViewer(topicId, reportLink){
@@ -1504,41 +1500,18 @@ function openDesignReportViewer(topicId, reportLink){
   const title = topic ? `实验设计报告 · ${topic.name}` : "实验设计报告";
   const placeholderText = makePlanPlaceholderText(topic);
   const hasLink = (reportLink || "").trim();
-  const previewUrl = getPreviewUrl(hasLink);
-  const body = (hasLink && previewUrl && !isFileProtocol()) ? `
-    <div class="section">
-      <h3>${escapeHtml(topic ? topic.name : "实验设计报告")}</h3>
-      <iframe src="${escapeHtml(previewUrl)}" style="width:100%;height:520px;border-radius:12px;border:1px solid rgba(46,74,122,.55);background:rgba(0,0,0,.2)"></iframe>
-      <div class="footerNote">点击“下载”可保存当前实验设计报告文件。</div>
-    </div>
-    <div class="btnRow">
-      <div class="btn" id="downloadDesignFile">下载文件</div>
-      <div class="btn secondary" id="openDesignFile">新标签页打开</div>
-      <div class="btn ghost" id="closeDesignViewer">关闭</div>
-    </div>
-  ` : hasLink ? `
-    <div class="section">
-      <h3>${escapeHtml(topic ? topic.name : "实验设计报告")}</h3>
-      <div class="mono" style="min-height:220px;line-height:1.9;white-space:pre-wrap;">当前链接属于本地文件或浏览器不允许内嵌预览的地址，已停止在页面内加载，避免触发 file:// 安全限制。
-请点击下方“下载文件”或“新标签页打开”查看原文件。</div>
-      <div class="footerNote">本地 file:// 场景下，浏览器通常会阻止 iframe 直接嵌入文件。</div>
-    </div>
-    <div class="btnRow">
-      <div class="btn" id="downloadDesignFile">下载文件</div>
-      <div class="btn secondary" id="openDesignFile">新标签页打开</div>
-      <div class="btn ghost" id="closeDesignViewer">关闭</div>
-    </div>
-  ` : `
-    <div class="section">
-      <h3>${escapeHtml(topic ? topic.name : "实验设计报告")}</h3>
-      <textarea class="mono" style="min-height:420px;resize:both;">${escapeHtml(placeholderText)}</textarea>
-      <div class="footerNote">当前可在此查看所选实验题目的设计文本内容。</div>
-    </div>
-    <div class="btnRow">
-      <div class="btn" id="downloadDesignTxt">下载占位说明</div>
-      <div class="btn ghost" id="closeDesignViewer">关闭</div>
-    </div>
-  `;
+  if(hasLink){
+    openDocumentPreviewPanel({
+      title,
+      url: hasLink,
+      rememberKey:"plan.design.viewer",
+      width:980,
+      height:720,
+      left:70,
+      top:74
+    });
+    return;
+  }
   const p = openPanel({
     title,
     rememberKey:"plan.design.viewer",
@@ -1546,7 +1519,17 @@ function openDesignReportViewer(topicId, reportLink){
     height:720,
     left:70,
     top:74,
-    html: body
+    html: `
+      <div class="section">
+        <h3>${escapeHtml(topic ? topic.name : "实验设计报告")}</h3>
+        <textarea class="mono" style="min-height:420px;resize:both;">${escapeHtml(placeholderText)}</textarea>
+        <div class="footerNote">当前可在此查看所选实验题目的设计文本内容。</div>
+      </div>
+      <div class="btnRow">
+        <div class="btn" id="downloadDesignTxt">下载占位说明</div>
+        <div class="btn ghost" id="closeDesignViewer">关闭</div>
+      </div>
+    `
   });
   const closeBtn = p.querySelector("#closeDesignViewer");
   if(closeBtn) closeBtn.onclick = ()=> p.remove();
@@ -1561,15 +1544,11 @@ function openDesignReportViewer(topicId, reportLink){
       URL.revokeObjectURL(a.href);
     };
   }
-  const dlFile = p.querySelector("#downloadDesignFile");
-  if(dlFile) dlFile.onclick = ()=> safeOpen(hasLink);
-  const openFile = p.querySelector("#openDesignFile");
-  if(openFile) openFile.onclick = ()=> safeOpen(hasLink);
 }
 
 function openPlanSubmitPanel(){
   const links = getLinks();
-  const submitLink = (links.designSubmit || links.planSubmit || "").trim();
+  const submitLink = getCurrentDesignSubmitUrl();
   const html = submitLink ? `
     <div class="section">
       <h3>提交实验设计报告</h3>
@@ -1660,6 +1639,7 @@ function openPlanDesigner(){
                 <div style="font-weight:800;">实验设计报告预览</div>
                 <div class="btnRow">
                   <div class="btn good" id="confirmDesignTopic">确定</div>
+                  <div class="btn" id="previewDesignFile">预览</div>
                   <div class="btn" id="downloadDesignFile">下载</div>
                   <div class="btn ghost" id="toggleDesignPreviewFull">全屏</div>
                 </div>
@@ -1672,7 +1652,7 @@ function openPlanDesigner(){
         <div id="planSubmitWrap" style="display:none;margin-top:10px;">
           <div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:0;min-height:610px;padding-top:8px;">
             <div id="planSubmitLaunchWrap" style="display:flex;justify-content:center;align-items:flex-start;width:100%;padding:0;">
-              <a id="openPlanSubmitAction" href="https://v.wjx.cn/vm/e0hVQ0D.aspx" target="_blank" rel="noopener" style="width:180px;height:180px;border-radius:50%;border:2px solid rgba(110,208,255,.85);background:radial-gradient(circle at 30% 30%, rgba(122,240,255,.96), rgba(34,102,255,.95) 58%, rgba(15,32,94,.98) 100%);box-shadow:0 0 0 10px rgba(67,118,255,.12), 0 0 28px rgba(110,208,255,.45), inset 0 0 18px rgba(255,255,255,.2);color:#ecf8ff;font-size:24px;font-weight:800;letter-spacing:1px;cursor:pointer;transition:transform .18s ease, box-shadow .18s ease;display:flex;align-items:center;justify-content:center;text-align:center;padding:18px;line-height:1.35;text-decoration:none;">提交实验设计报告</a>
+              <a id="openPlanSubmitAction" href="#" target="_blank" rel="noopener" style="width:180px;height:180px;border-radius:50%;border:2px solid rgba(110,208,255,.85);background:radial-gradient(circle at 30% 30%, rgba(122,240,255,.96), rgba(34,102,255,.95) 58%, rgba(15,32,94,.98) 100%);box-shadow:0 0 0 10px rgba(67,118,255,.12), 0 0 28px rgba(110,208,255,.45), inset 0 0 18px rgba(255,255,255,.2);color:#ecf8ff;font-size:24px;font-weight:800;letter-spacing:1px;cursor:pointer;transition:transform .18s ease, box-shadow .18s ease;display:flex;align-items:center;justify-content:center;text-align:center;padding:18px;line-height:1.35;text-decoration:none;">提交实验设计报告</a>
             </div>
           </div>
         </div>
@@ -1732,10 +1712,10 @@ function openPlanDesigner(){
       designPreviewContent.innerHTML = "请先在左侧勾选一个参考题目。";
       return;
     }
-    if(reportLink && previewUrl && !isFileProtocol()){
-      designPreviewContent.innerHTML = `<iframe src="${escapeHtml(previewUrl)}" style="width:100%;height:${Math.max(240, (designPreviewBox.clientHeight||420)-70)}px;border-radius:12px;border:1px solid rgba(46,74,122,.55);background:rgba(0,0,0,.2)"></iframe>`;
+    if(reportLink && previewUrl){
+      designPreviewContent.innerHTML = `<iframe src="${escapeHtml(previewUrl)}" style="width:100%;height:${Math.max(240, (designPreviewBox.clientHeight||420)-70)}px;border-radius:12px;border:1px solid rgba(46,74,122,.55);background:#fff"></iframe>`;
     }else if(reportLink){
-      designPreviewContent.innerHTML = `<div class="mono" style="line-height:1.9;">当前链接属于本地文件或浏览器不允许内嵌预览的地址，已停止在页面内加载，避免触发 file:// 安全限制。<br/>请使用下方“浏览 / 下载 / 新标签页打开”查看原文件。</div>`;
+      designPreviewContent.innerHTML = `<div class="mono" style="line-height:1.9;">当前链接暂不支持框内预览。<br/>请使用工具栏中的“预览”按钮查看报告。<br/>报告链接：<a href="${escapeHtml(reportLink)}" target="_blank" style="color:var(--accent);">${escapeHtml(reportLink)}</a></div>`;
     }else{
       designPreviewContent.textContent = makePlanPlaceholderText(topic);
     }
@@ -1834,7 +1814,7 @@ function openPlanDesigner(){
   openPlanSubmitBtn.onclick = ()=> setPlanTab('submit');
   const openPlanSubmitAction = p.querySelector("#openPlanSubmitAction");
   if(openPlanSubmitAction){
-    openPlanSubmitAction.href = 'https://v.wjx.cn/vm/e0hVQ0D.aspx';
+    bindDirectOpenLink(openPlanSubmitAction, getCurrentDesignSubmitUrl);
     openPlanSubmitAction.onmouseenter = ()=> openPlanSubmitAction.style.transform = 'scale(1.04)';
     openPlanSubmitAction.onmouseleave = ()=> openPlanSubmitAction.style.transform = 'scale(1)';
   }
@@ -1892,6 +1872,16 @@ function openPlanDesigner(){
       return;
     }
     triggerDownload(designPreviewBox.dataset.reportLink || '', topic.name, makePlanPlaceholderText(topic));
+  };
+
+  p.querySelector("#previewDesignFile").onclick = ()=>{
+    const selectedId = p.dataset.designTopicId || "";
+    const reportLink = designReportMap[selectedId] || "";
+    if(reportLink){
+      openDesignReportViewer(selectedId, reportLink);
+    }else{
+      toast("warn","无报告链接","该实验题目暂未上传设计报告文件。");
+    }
   };
 
 }
@@ -2435,12 +2425,99 @@ function openDataAIAnalysis(){
     }
     updateImproveStatus();
   }
+  function clonePlain(obj){
+    if(window.structuredClone){
+      try{ return structuredClone(obj); }catch(e){}
+    }
+    return JSON.parse(JSON.stringify(obj));
+  }
+  function scaleFontSize(base, factor, fallback){
+    const n = Number(base);
+    const safeBase = Number.isFinite(n) ? n : fallback;
+    return Math.max(Math.round(safeBase * factor), fallback);
+  }
+  function optimizeChartOptionsForExport(options, factor){
+    options = options || {};
+    options.layout = options.layout || {};
+    const basePadding = typeof options.layout.padding === 'number' ? options.layout.padding : 12;
+    options.layout.padding = Math.max(Math.round(basePadding * factor), 24);
+    options.plugins = options.plugins || {};
+    options.plugins.title = options.plugins.title || {};
+    options.plugins.title.color = options.plugins.title.color || '#bfefff';
+    options.plugins.title.font = options.plugins.title.font || {};
+    options.plugins.title.font.size = scaleFontSize(options.plugins.title.font.size, factor, 40);
+    options.plugins.legend = options.plugins.legend || {};
+    options.plugins.legend.labels = options.plugins.legend.labels || {};
+    options.plugins.legend.labels.color = options.plugins.legend.labels.color || '#bfefff';
+    options.plugins.legend.labels.boxWidth = Math.max(Math.round((options.plugins.legend.labels.boxWidth || 40) * factor), 44);
+    options.plugins.legend.labels.boxHeight = Math.max(Math.round((options.plugins.legend.labels.boxHeight || 16) * factor), 18);
+    options.plugins.legend.labels.padding = Math.max(Math.round((options.plugins.legend.labels.padding || 14) * factor), 18);
+    options.plugins.legend.labels.font = options.plugins.legend.labels.font || {};
+    options.plugins.legend.labels.font.size = scaleFontSize(options.plugins.legend.labels.font.size, factor, 30);
+    options.elements = options.elements || {};
+    options.elements.line = options.elements.line || {};
+    options.elements.line.borderWidth = Math.max(Math.round((options.elements.line.borderWidth || 2) * Math.max(1, factor * 0.85)), 3);
+    options.elements.point = options.elements.point || {};
+    options.elements.point.radius = Math.max(Math.round((options.elements.point.radius || 3) * Math.max(1, factor * 0.9)), 4);
+    options.elements.point.hoverRadius = Math.max(Math.round((options.elements.point.hoverRadius || options.elements.point.radius || 4) * Math.max(1, factor * 0.95)), 5);
+    if(options.scales){
+      Object.keys(options.scales).forEach(key=>{
+        const axis = options.scales[key] || {};
+        axis.ticks = axis.ticks || {};
+        axis.ticks.color = axis.ticks.color || '#bfefff';
+        axis.ticks.font = axis.ticks.font || {};
+        axis.ticks.font.size = scaleFontSize(axis.ticks.font.size, factor, 28);
+        axis.grid = axis.grid || {};
+        axis.grid.color = axis.grid.color || 'rgba(120,170,230,.28)';
+        axis.title = axis.title || {};
+        axis.title.color = axis.title.color || '#bfefff';
+        axis.title.font = axis.title.font || {};
+        axis.title.font.size = scaleFontSize(axis.title.font.size, factor, 30);
+      });
+    }
+    return options;
+  }
   function downloadCurrentChart(){
     if(!aiChart){ toast('warn','暂无图表','请先完成一次数据分析并生成图表'); return; }
-    const a = document.createElement('a');
-    a.href = p.querySelector('#aiChartCanvas').toDataURL('image/png');
-    a.download = `AI分析图表_${new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')}.png`;
-    a.click();
+    const canvas = p.querySelector('#aiChartCanvas');
+    const rect = canvas.getBoundingClientRect();
+    const exportWidth = Math.max(Math.round((rect.width || 960) * 4), 2400);
+    const exportHeight = Math.max(Math.round((rect.height || 540) * 4), 1350);
+    const exportCanvas = document.createElement('canvas');
+    exportCanvas.width = exportWidth;
+    exportCanvas.height = exportHeight;
+    const exportCtx = exportCanvas.getContext('2d');
+    const sourceConfig = (aiChart.config && aiChart.config._config) ? aiChart.config._config : aiChart.config;
+    const exportConfig = clonePlain(sourceConfig || {});
+    exportConfig.options = optimizeChartOptionsForExport(exportConfig.options || {}, Math.max(exportWidth / Math.max(rect.width || 960, 1), 1.5));
+    exportConfig.options.responsive = false;
+    exportConfig.options.maintainAspectRatio = false;
+    exportConfig.options.animation = false;
+    exportConfig.plugins = Array.isArray(exportConfig.plugins) ? exportConfig.plugins.slice() : [];
+    exportConfig.plugins.push({
+      id: 'exportBackgroundFill',
+      beforeDraw(chart){
+        const {ctx, width, height} = chart;
+        ctx.save();
+        ctx.fillStyle = '#09111f';
+        ctx.fillRect(0, 0, width, height);
+        ctx.restore();
+      }
+    });
+    let exportChart = null;
+    try{
+      exportChart = new Chart(exportCtx, exportConfig);
+      const a = document.createElement('a');
+      a.href = exportCanvas.toDataURL('image/png');
+      a.download = `AI分析图表_${new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')}.png`;
+      a.click();
+      toast('ok','下载成功','已导出高清图表，适合插入 Word 文档。');
+    }catch(err){
+      console.error(err);
+      toast('err','下载失败','图表导出失败，请稍后重试。');
+    }finally{
+      if(exportChart){ exportChart.destroy(); }
+    }
   }
   async function parseWordReport(file){
     const arrayBuffer = await file.arrayBuffer();
@@ -2833,7 +2910,7 @@ function openImport(){
 function renderTable(headers, rows){
   const h = headers || [];
   const r = rows || [];
-  const thead = `<thead><tr>${h.map(x=>`<th>${escapeHtml(x||"")}</th>`).join("")}</tr></thead>`;
+  const thead = `<thead><tr>${h.map(x=>`<th>${escapeHtml(x||"")}</th>`).join("")} </thead>`;
   const tbody = `<tbody>${r.map(row=>`<tr>${h.map((_,i)=>`<td>${escapeHtml(row?.[i] ?? "")}</td>`).join("")}</tr>`).join("")}</tbody>`;
   return `<table>${thead}${tbody}</table>`;
 }
@@ -3562,7 +3639,7 @@ function openReport(){
             </div>
             <div id="draftSuggestBox" class="mono" style="height:320px; overflow:auto; border:1px solid rgba(46,74,122,.55); border-radius:12px; padding:12px; background:rgba(0,0,0,.18); white-space:pre-wrap; font-size:130%; line-height:1.85;">请先上传 Word 初稿，再点击对应按钮生成建议。
 
-标准报告格式链接占位：待你提供正式链接后替换。</div>
+AI 参照报告样本：实验样本参考 - 实验1：探究长跑对人体心肺功能的影响。</div>
           </div>
         </div>
       </div>
@@ -3571,7 +3648,7 @@ function openReport(){
         <h3>子模块 2 · 提交报告</h3>
         <div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:0;min-height:610px;padding-top:8px;">
           <div id="reportSubmitLaunchWrap" style="display:flex;justify-content:center;align-items:flex-start;width:100%;padding:0;">
-            <a id="openReportSubmitEmbed" href="https://tp.wjx.top/vm/Yr3euZW.aspx" target="_blank" rel="noopener" style="width:180px;height:180px;border-radius:50%;border:2px solid rgba(110,208,255,.85);background:radial-gradient(circle at 30% 30%, rgba(122,240,255,.96), rgba(34,102,255,.95) 58%, rgba(15,32,94,.98) 100%);box-shadow:0 0 0 10px rgba(67,118,255,.12), 0 0 28px rgba(110,208,255,.45), inset 0 0 18px rgba(255,255,255,.2);color:#ecf8ff;font-size:30px;font-weight:800;letter-spacing:2px;cursor:pointer;transition:transform .18s ease, box-shadow .18s ease;display:flex;align-items:center;justify-content:center;text-decoration:none;">提交报告</a>
+            <a id="openReportSubmitEmbed" href="#" target="_blank" rel="noopener" style="width:180px;height:180px;border-radius:50%;border:2px solid rgba(110,208,255,.85);background:radial-gradient(circle at 30% 30%, rgba(122,240,255,.96), rgba(34,102,255,.95) 58%, rgba(15,32,94,.98) 100%);box-shadow:0 0 0 10px rgba(67,118,255,.12), 0 0 28px rgba(110,208,255,.45), inset 0 0 18px rgba(255,255,255,.2);color:#ecf8ff;font-size:30px;font-weight:800;letter-spacing:2px;cursor:pointer;transition:transform .18s ease, box-shadow .18s ease;display:flex;align-items:center;justify-content:center;text-decoration:none;">提交报告</a>
           </div>
         </div>
       </div>
@@ -3596,7 +3673,7 @@ function openReport(){
 
 
   const REPORT_STANDARD_PLACEHOLDER = {
-    url: '【标准报告格式文本链接待补充】',
+    url: 'https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A1%EF%BC%9A%E9%95%BF%E8%B7%91%E8%BF%90%E5%8A%A8%E5%AF%B9%E4%BA%BA%E4%BD%93%E6%9C%BA%E8%83%BD%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A.docx',
     headings: ['摘要','实验目的','实验原理','实验对象与方法','实验结果与分析','讨论','结论','参考文献']
   };
 
@@ -3790,7 +3867,11 @@ function openReport(){
     const suggestBox = p.querySelector('#draftSuggestBox');
     suggestBox.textContent = '正在生成修改建议，请稍候...';
     const excerpt = String(currentDraft.text || '').replace(/\s+/g,' ').slice(0, 7000);
-    const prompt = `请基于以下实验报告初稿内容，给出 3-4 条最关键的修改建议。要求：
+    const prompt = `请参考以下标准实验报告样本链接，并基于后面的实验报告初稿内容，给出 3-4 条最关键的修改建议。
+
+标准实验报告样本链接：${REPORT_STANDARD_PLACEHOLDER.url}
+
+要求：
 1. 建议精简，每条 1-2 句；
 2. 重点检查：格式是否完整、缺哪些必要内容、是否有明显错别字或表述问题、实验结论是否包含量化分析与图表展示；
 3. 如果缺少摘要、目的、方法、结果、讨论、结论、参考文献等要指出；
@@ -3818,9 +3899,129 @@ ${excerpt}`;
 
   const submitBtn = p.querySelector('#openReportSubmitEmbed');
   if(submitBtn){
-    submitBtn.href = 'https://tp.wjx.top/vm/Yr3euZW.aspx';
+    bindDirectOpenLink(submitBtn, getCurrentReportSubmitUrl, ()=> RUNTIME_REMOTE_STATE.reportSubmitLoadFailed ? '远程链接读取失败，请检查 COS CORS 配置或确认页面通过 http/https 打开。' : '请先补充有效链接');
     submitBtn.onmouseenter = ()=> submitBtn.style.transform = 'scale(1.04)';
     submitBtn.onmouseleave = ()=> submitBtn.style.transform = 'scale(1)';
+  }
+}
+
+async function fetchRemoteText(url){
+  const res = await fetch(url, { cache:'no-store' });
+  if(!res.ok) throw new Error(`HTTP ${res.status}`);
+  return String(await res.text()).replace(/^\ufeff/, '').trim();
+}
+
+function extractFirstHttpUrl(value){
+  const raw = String(value || '').replace(/^﻿/, '').trim();
+  if(!raw) return '';
+  const match = raw.match(/https?:\/\/[^\s"'<>]+/i);
+  return match ? match[0].trim() : '';
+}
+
+function looksLikeHttpUrl(value){
+  return /^https?:\/\//i.test(extractFirstHttpUrl(value));
+}
+
+function applyRemoteNotice(textValue){
+  const el = document.getElementById('courseNoticeTrack');
+  if(!el) return;
+  const next = String(textValue || '').trim();
+  if(next) el.textContent = next;
+}
+
+function applyRemoteGuideIcon(url){
+  const img = document.getElementById('guideToggleIconImg');
+  const next = String(url || '').trim();
+  if(img && next) img.src = next;
+}
+
+function getCurrentDesignSubmitUrl(){
+  return extractFirstHttpUrl(RUNTIME_REMOTE_STATE.designSubmitUrl || '');
+}
+
+function getCurrentReportSubmitUrl(){
+  return extractFirstHttpUrl(RUNTIME_REMOTE_STATE.reportSubmitUrl || '');
+}
+
+function bindDirectOpenLink(el, getter, getErrorMessage){
+  if(!el || typeof getter !== 'function') return;
+  const syncHref = ()=>{
+    const nextUrl = extractFirstHttpUrl(getter());
+    el.href = nextUrl || '#';
+    return nextUrl;
+  };
+  syncHref();
+  el.addEventListener('click', (evt)=>{
+    const nextUrl = syncHref();
+    if(!nextUrl){
+      evt.preventDefault();
+      const detail = typeof getErrorMessage === 'function' ? getErrorMessage() : '请先补充有效链接';
+      toast('warn','链接未设置', detail);
+      return;
+    }
+    evt.preventDefault();
+    safeOpen(nextUrl);
+  });
+}
+
+function applyRemoteSubmitLinks(){
+  const designUrl = getCurrentDesignSubmitUrl();
+  const reportUrl = getCurrentReportSubmitUrl();
+  const links = getLinks();
+  const nextLinks = {
+    ...links,
+    planSubmit: designUrl || '',
+    designSubmit: designUrl || '',
+    reportSubmit: reportUrl || ''
+  };
+  setLinks(nextLinks);
+  document.querySelectorAll('#openPlanSubmitAction').forEach(el => el.href = designUrl || '#');
+  document.querySelectorAll('#openReportSubmitEmbed').forEach(el => el.href = reportUrl || '#');
+}
+
+async function loadRemoteRuntimeConfig(){
+  applyRemoteGuideIcon(REMOTE_TEXT_CONFIG.guideIconUrl);
+  const tasks = [
+    fetchRemoteText(REMOTE_TEXT_CONFIG.noticeTextUrl)
+      .then(textValue => {
+        RUNTIME_REMOTE_STATE.noticeText = textValue;
+        RUNTIME_REMOTE_STATE.noticeLoadFailed = false;
+        applyRemoteNotice(textValue);
+      })
+      .catch(err => {
+        RUNTIME_REMOTE_STATE.noticeLoadFailed = true;
+        console.warn('课程通知读取失败：', err);
+        toast('warn','课程通知读取失败','已保留页面默认通知。若需读取腾讯云 TXT，请检查 COS CORS 配置，并通过 http/https 打开页面。', 5200);
+      }),
+    fetchRemoteText(REMOTE_TEXT_CONFIG.designSubmitUrlText)
+      .then(urlValue => {
+        const cleanUrl = extractFirstHttpUrl(urlValue);
+        if(looksLikeHttpUrl(cleanUrl)){
+          RUNTIME_REMOTE_STATE.designSubmitUrl = cleanUrl;
+          RUNTIME_REMOTE_STATE.designSubmitLoadFailed = false;
+        }
+      })
+      .catch(err => {
+        RUNTIME_REMOTE_STATE.designSubmitLoadFailed = true;
+        console.warn('实验设计报告提交链接读取失败：', err);
+      }),
+    fetchRemoteText(REMOTE_TEXT_CONFIG.reportSubmitUrlText)
+      .then(urlValue => {
+        const cleanUrl = extractFirstHttpUrl(urlValue);
+        if(looksLikeHttpUrl(cleanUrl)){
+          RUNTIME_REMOTE_STATE.reportSubmitUrl = cleanUrl;
+          RUNTIME_REMOTE_STATE.reportSubmitLoadFailed = false;
+        }
+      })
+      .catch(err => {
+        RUNTIME_REMOTE_STATE.reportSubmitLoadFailed = true;
+        console.warn('实验报告提交链接读取失败：', err);
+      })
+  ];
+  await Promise.allSettled(tasks);
+  applyRemoteSubmitLinks();
+  if(RUNTIME_REMOTE_STATE.designSubmitLoadFailed || RUNTIME_REMOTE_STATE.reportSubmitLoadFailed){
+    toast('warn','提交链接未完成远程读取','请检查 COS CORS 配置，并确认页面通过 http/https 打开；当前按钮会等待有效远程链接。', 5200);
   }
 }
 
@@ -3836,6 +4037,7 @@ function safeOpen(url){
   const a = document.createElement("a");
   a.href = u;
   a.target = "_blank";
+  a.rel = "noopener noreferrer";
   document.body.appendChild(a);
   a.click();
   a.remove();
@@ -3848,6 +4050,9 @@ function safeJson(s, fallback){
 /* ===========================
    Startup
 =========================== */
+applyRemoteGuideIcon(REMOTE_TEXT_CONFIG.guideIconUrl);
+applyRemoteSubmitLinks();
+loadRemoteRuntimeConfig();
 toast("info","系统已启动","V2.0 教学展示版：点击 A-D 进入模块（所有数据保存在本地）", 4200);
 </script>
 </body>
