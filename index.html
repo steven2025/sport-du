@@ -3619,11 +3619,29 @@ function openReport(){
 
       <div id="d_sub_draft" class="section">
         <h3>子模块 1 · 初稿修改 - AI 辅助</h3>
-        <div class="footerNote">请上传 <strong>Word 初稿（.doc/.docx）</strong>。AI 将重点检查格式完整性、内容缺漏、错别字、结论量化分析与图表展示是否齐全，并给出少量关键建议。</div>
+        <div class="footerNote">请上传 <strong>Word 初稿（.doc/.docx）</strong>。系统将从报告结构、错别字、实验目标达成度三个维度给出修改建议；首次使用本模块时，可先在此处完成 DeepSeek API 配置。</div>
         <div class="btnRow" style="margin-top:10px; align-items:center;">
           <input id="draftWordInput" type="file" accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
           <div class="btn good" id="uploadDraftWord">上传报告初稿</div>
+          <div class="btn secondary" id="toggleDraftApiConfig">API配置</div>
           <div class="btn" id="runDraftReview">AI 辅助修改</div>
+        </div>
+        <div id="draftApiConfigPanel" class="section" style="display:none; margin-top:12px; padding:12px; border:1px solid rgba(46,74,122,.55); background:rgba(12,18,35,.35);">
+          <div class="grid2">
+            <div>
+              <label>DeepSeek API 密钥</label>
+              <input id="draftAiApiKey" type="password" placeholder="请输入你自己的 DeepSeek API 密钥，例如 sk-..." />
+              <div class="footerNote">说明：本模块与 C 模块共用同一份 API 配置。密钥仅保存在当前浏览器 localStorage 中，不会自动上传到其他服务器。</div>
+            </div>
+            <div>
+              <label>当前状态</label>
+              <div class="mono" id="draftApiStatusBox" style="min-height:112px;padding:12px;border-radius:14px;border:1px solid rgba(46,74,122,.55);background:rgba(12,18,35,.55);"></div>
+              <div class="btnRow" style="margin-top:10px;">
+                <div class="btn good" id="saveDraftApiBtn">确认保存</div>
+                <div class="btn secondary" id="testDraftApiBtn">API 联通测试</div>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="grid2" style="grid-template-columns:1fr 1fr; gap:14px; margin-top:12px; align-items:start;">
           <div>
@@ -3674,8 +3692,9 @@ AI 参照报告样本：实验样本参考 - 实验1：探究长跑对人体心�
 
   const REPORT_STANDARD_PLACEHOLDER = {
     url: 'https://sport-du-1311686407.cos.ap-chengdu.myqcloud.com/%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A1%EF%BC%9A%E9%95%BF%E8%B7%91%E8%BF%90%E5%8A%A8%E5%AF%B9%E4%BA%BA%E4%BD%93%E6%9C%BA%E8%83%BD%E7%9A%84%E5%BD%B1%E5%93%8D%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A.docx',
-    headings: ['摘要','实验目的','实验原理','实验对象与方法','实验结果与分析','讨论','结论','参考文献']
+    headings: ['实验名称','实验简介','实验目的','实验原理','实验对象','实验分工','实验时间、周期与场地','实验器材','实验变量设计','实验步骤','实验记录说明']
   };
+  const DRAFT_REVIEW_CACHE_KEY = 'exp.report.review.ai.v1';
 
   function normalizeText(s){
     return String(s || '').replace(/\r/g,'').replace(/\u00a0/g,' ').trim();
@@ -3747,69 +3766,153 @@ AI 参照报告样本：实验样本参考 - 实验1：探究长跑对人体心�
       : `建议保留现有结论，并适当补充与“${goal.slice(0,18)}${goal.length>18?'…':''}”对应的数据或表述。`;
     return { status, advice, hits };
   }
-  function runStructureCheck(){
-    const suggestBox = p.querySelector('#draftSuggestBox');
-    if(!currentDraft || !String(currentDraft.text||'').trim()){
-      toast('warn','缺少初稿','请先上传可读取正文的 Word 初稿');
-      return;
-    }
-    const text = String(currentDraft.text || '');
-    const userHeadings = extractHeadings(text);
-    const standardHeadings = REPORT_STANDARD_PLACEHOLDER.headings.slice();
-    const missing = standardHeadings.filter(h=> !userHeadings.some(u=>u===h || u.includes(h) || h.includes(u)));
-    if(missing.length === 0){
-      suggestBox.textContent = '恭喜！您上传的实验报告结构完整';
-      return;
-    }
-    suggestBox.textContent = missing.map(h=> `报告中缺少一级标题：${h}`).join('\n');
+  function formatReviewSection(title, body){
+    return `${title}：
+${body}`;
   }
-  function runTyposCheck(){
-    const suggestBox = p.querySelector('#draftSuggestBox');
-    if(!currentDraft || !String(currentDraft.text||'').trim()){
-      toast('warn','缺少初稿','请先上传可读取正文的 Word 初稿');
-      return;
-    }
-    const lines = splitLines(currentDraft.text || '');
-    const issues = [];
-    const rules = [
-      ['试验目的','实验目的'],['实脸','实验'],['试验结果','实验结果'],['结论分折','结论分析'],['分折','分析'],['讨仑','讨论'],['试脸','实验'],['目地','目的'],['心肺工能','心肺功能']
-    ];
-    lines.forEach((line, idx)=>{
-      rules.forEach(([bad, good])=>{
-        if(line.includes(bad)) issues.push(`“${bad}”应为“${good}”，位置：第${idx+1}行附近。`);
-      });
-      if(/的的|了了|并并|和和/.test(line)){
-        const m = line.match(/的的|了了|并并|和和/)[0];
-        issues.push(`疑似重复字“${m}”，位置：第${idx+1}行附近。`);
-      }
-    });
-    suggestBox.textContent = issues.length ? Array.from(new Set(issues)).join('\n') : '恭喜！您上传的实验报告无错别字';
+  function getDraftReviewCache(){
+    return lsGet(DRAFT_REVIEW_CACHE_KEY, null);
   }
-  function runGoalCheck(){
+  function setDraftReviewCache(data){
+    lsSet(DRAFT_REVIEW_CACHE_KEY, data);
+  }
+  function clearDraftReviewCache(){
+    localStorage.removeItem(DRAFT_REVIEW_CACHE_KEY);
+  }
+  function renderDraftReviewSummary(review){
+    if(!review) return '暂无 AI 分析结果。';
+    if(review.summaryText) return review.summaryText;
+    return [review.structure?.text, review.typos?.text, review.goalAchievement?.text].filter(Boolean).join('\n\n');
+  }
+  function renderDraftReviewPart(kind){
+    const review = getDraftReviewCache();
     const suggestBox = p.querySelector('#draftSuggestBox');
-    if(!currentDraft || !String(currentDraft.text||'').trim()){
-      toast('warn','缺少初稿','请先上传可读取正文的 Word 初稿');
+    if(!review){
+      toast('info','暂无分析结果','请先点击“AI 辅助修改”生成完整分析结果');
+      suggestBox.textContent = '请先点击“AI 辅助修改”生成完整分析结果。';
       return;
     }
-    const text = String(currentDraft.text || '');
-    const goalText = extractSection(text, ['实验目的','目的']);
-    const conclusionText = extractSection(text, ['实验结论','结论']);
-    if(!goalText || !conclusionText){
-      suggestBox.textContent = '未能在上传报告中同时定位“实验目的”和“实验结论”部分，请检查标题是否明确。';
-      return;
+    const mapping = {
+      structure: review.structure?.text,
+      typos: review.typos?.text,
+      goal: review.goalAchievement?.text
+    };
+    suggestBox.textContent = mapping[kind] || '暂无对应分析结果。';
+  }
+  function buildDraftReviewPrompt(excerpt){
+    return `你是一名严谨的实验报告指导教师。请阅读用户上传的实验报告初稿，并严格按要求返回一个 JSON 对象，不要输出 JSON 以外的任何内容。
+
+参考报告的一级标题如下（仅用于结构完整性比对）：
+${REPORT_STANDARD_PLACEHOLDER.headings.map((h,i)=>`${i+1}. ${h}`).join('\n')}
+
+任务要求：
+1. 从“报告结构”“错别字”“实验目标达成度”三个维度评估。
+2. 报告结构：只检查用户报告是否缺少上述一级标题中的项目；如果缺少，请明确列出缺少的一级标题。不要指出用户额外写出的其它一级标题，也不要给出额外的结构建议。
+3. 错别字：找出报告中的明显错别字、误用词、重复字或非常明显的表述错误，给出修改建议；不要吹毛求疵。
+4. 实验目标达成度：重点分析“实验目的”与“实验结果分析”或“实验结论”的匹配程度。判断结果分析或结论在多大程度上回应了实验目的中提出的核心指标或问题。标准不要太严格，但也不能太随意。
+5. 如果文中没有清晰找到“实验结果分析”，可用“实验结论”代替；如果二者都缺失，要明确指出。
+6. 所有输出都用中文。
+
+请返回如下 JSON 结构：
+{
+  "structure": {
+    "isComplete": true,
+    "missingHeadings": [],
+    "text": ""
+  },
+  "typos": {
+    "items": [
+      {"wrong": "", "correct": "", "note": ""}
+    ],
+    "text": ""
+  },
+  "goalAchievement": {
+    "level": "达成较好/基本达成/回应不足",
+    "matchedGoals": [""],
+    "unmatchedGoals": [""],
+    "text": ""
+  },
+  "summaryText": ""
+}
+
+注意：
+- missingHeadings 必须只包含参考标题里缺失的项。
+- 如果没有发现错别字，items 返回空数组，并在 text 中明确写“未发现明显错别字”。
+- summaryText 要按“一、报告结构检查… 二、错别字检查… 三、实验目标达成度…”的格式整合。
+
+实验报告初稿内容如下：
+${excerpt}`;
+  }
+  function coerceDraftReviewResult(parsed){
+    const structure = parsed?.structure || {};
+    const typos = parsed?.typos || {};
+    const goal = parsed?.goalAchievement || {};
+    const normalized = {
+      structure: {
+        isComplete: !!structure.isComplete,
+        missingHeadings: Array.isArray(structure.missingHeadings) ? structure.missingHeadings : [],
+        text: String(structure.text || '').trim()
+      },
+      typos: {
+        items: Array.isArray(typos.items) ? typos.items : [],
+        text: String(typos.text || '').trim()
+      },
+      goalAchievement: {
+        level: String(goal.level || '').trim(),
+        matchedGoals: Array.isArray(goal.matchedGoals) ? goal.matchedGoals : [],
+        unmatchedGoals: Array.isArray(goal.unmatchedGoals) ? goal.unmatchedGoals : [],
+        text: String(goal.text || '').trim()
+      },
+      summaryText: String(parsed?.summaryText || '').trim()
+    };
+    if(!normalized.structure.text){
+      normalized.structure.text = normalized.structure.missingHeadings.length
+        ? `报告结构检查：缺少一级标题：${normalized.structure.missingHeadings.join('、')}。`
+        : '报告结构检查：一级标题完整。';
     }
-    const goals = splitGoals(goalText);
-    const results = goals.map((g, idx)=>{
-      const r = assessGoalAchievement(g, conclusionText);
-      return `${idx+1}. 实验目的：${g}\n达成情况：${r.status}`;
-    });
-    const weak = goals.map((g, idx)=> ({goal:g, ...assessGoalAchievement(g, conclusionText)})).filter(x=> x.status !== '已基本达成');
-    const advice = weak.length
-      ? weak.slice(0,2).map(x=> x.advice).join('\n')
-      : '最必要的修改建议：结论已大体回应实验目的，可仅补充少量数据或更明确的对应表述。';
-    suggestBox.textContent = `${results.join('\n\n')}\n\n最必要的修改建议：\n${advice}`;
+    if(!normalized.typos.text){
+      normalized.typos.text = normalized.typos.items.length
+        ? `错别字检查：${normalized.typos.items.map(item=>`“${item.wrong || ''}”建议改为“${item.correct || ''}”${item.note ? `（${item.note}）` : ''}`).join('；')}。`
+        : '错别字检查：未发现明显错别字。';
+    }
+    if(!normalized.goalAchievement.text){
+      const matched = normalized.goalAchievement.matchedGoals.length ? `已回应：${normalized.goalAchievement.matchedGoals.join('；')}` : '已回应：暂无明确对应项';
+      const unmatched = normalized.goalAchievement.unmatchedGoals.length ? `回应不足：${normalized.goalAchievement.unmatchedGoals.join('；')}` : '回应不足：未发现明显缺漏';
+      normalized.goalAchievement.text = `实验目标达成度：${normalized.goalAchievement.level || '基本达成'}。${matched}。${unmatched}。`;
+    }
+    if(!normalized.summaryText){
+      normalized.summaryText = [
+        `一、${normalized.structure.text}`,
+        `二、${normalized.typos.text}`,
+        `三、${normalized.goalAchievement.text}`
+      ].join('\n\n');
+    }
+    return normalized;
+  }
+  function updateDraftApiStatus(extra=''){
+    const cfg = getApiConfig();
+    const box = p.querySelector('#draftApiStatusBox');
+    const input = p.querySelector('#draftAiApiKey');
+    if(input) input.value = cfg.apiKey || '';
+    if(box){
+      box.textContent = [
+        '提供方：DeepSeek',
+        `基础地址：${cfg.baseUrl}`,
+        `模型：${cfg.model}`,
+        `已保存密钥：${maskKey(cfg.apiKey || '')}`,
+        `联通状态：${cfg.status || '未测试'}`,
+        extra || ''
+      ].filter(Boolean).join('\n');
+    }
+  }
+  function setDraftApiPanelVisible(visible){
+    const panel = p.querySelector('#draftApiConfigPanel');
+    if(!panel) return;
+    panel.style.display = visible ? 'block' : 'none';
+    if(visible) updateDraftApiStatus();
   }
   let currentDraft = draftDoc;
+  updateDraftApiStatus();
   function renderDraft(){
     const box = p.querySelector('#draftPreviewBox');
     if(!currentDraft){
@@ -3846,17 +3949,55 @@ AI 参照报告样本：实验样本参考 - 实验1：探究长跑对人体心�
     try{
       currentDraft = await parseWordReportGlobal(file);
       lsSet(LS_KEYS.reportDraftDoc, currentDraft);
+      clearDraftReviewCache();
       renderDraft();
-      p.querySelector('#draftSuggestBox').textContent = '初稿已上传。请点击“AI 辅助修改”生成建议。';
+      p.querySelector('#draftSuggestBox').textContent = '初稿已上传。请先确认 API 配置，再点击“AI 辅助修改”生成建议。';
       toast('success','上传成功',`已上传：${file.name}`);
     }catch(err){
       toast('error','上传失败', String(err.message || err));
     }
   };
 
-  p.querySelector('#draftCheckStructure').onclick = runStructureCheck;
-  p.querySelector('#draftCheckTypos').onclick = runTyposCheck;
-  p.querySelector('#draftCheckGoal').onclick = runGoalCheck;
+  p.querySelector('#toggleDraftApiConfig').onclick = ()=>{
+    const panel = p.querySelector('#draftApiConfigPanel');
+    const willShow = panel.style.display === 'none';
+    setDraftApiPanelVisible(willShow);
+  };
+  p.querySelector('#saveDraftApiBtn').onclick = ()=>{
+    const cfg = getApiConfig();
+    const apiKey = String(p.querySelector('#draftAiApiKey').value || '').trim();
+    setApiConfig({ ...cfg, apiKey, tested:false, status: apiKey ? '未测试' : '未填写' });
+    updateDraftApiStatus(apiKey ? '已保存，可点击“API 联通测试”验证。' : '当前未填写密钥。');
+    toast('success','保存成功', apiKey ? 'API 配置已保存并与 C 模块共用。' : '已清空 API 密钥。');
+  };
+  p.querySelector('#testDraftApiBtn').onclick = async ()=>{
+    const cfg = getApiConfig();
+    const apiKey = String(p.querySelector('#draftAiApiKey').value || cfg.apiKey || '').trim();
+    if(!apiKey){
+      setDraftApiPanelVisible(true);
+      toast('warn','缺少密钥','请先填写 DeepSeek API 密钥');
+      updateDraftApiStatus('请先填写 DeepSeek API 密钥。');
+      return;
+    }
+    setApiConfig({ ...cfg, apiKey, tested:false, status:'测试中...' });
+    updateDraftApiStatus('正在测试，请稍候...');
+    try{
+      await callDeepSeekChat(apiKey, [
+        { role:'system', content:'你是 API 联通测试助手，请只回复“联通成功”。' },
+        { role:'user', content:'请回复：联通成功' }
+      ], { baseUrl: cfg.baseUrl, model: cfg.model, temperature: 0 });
+      setApiConfig({ ...cfg, apiKey, tested:true, status:'联通成功' });
+      updateDraftApiStatus('测试结果：联通成功。');
+      toast('success','测试成功','DeepSeek API 联通正常');
+    }catch(err){
+      setApiConfig({ ...cfg, apiKey, tested:false, status:`测试失败：${String(err.message || err)}` });
+      updateDraftApiStatus(`测试失败：${String(err.message || err)}`);
+      toast('error','测试失败', String(err.message || err));
+    }
+  };
+  p.querySelector('#draftCheckStructure').onclick = ()=> renderDraftReviewPart('structure');
+  p.querySelector('#draftCheckTypos').onclick = ()=> renderDraftReviewPart('typos');
+  p.querySelector('#draftCheckGoal').onclick = ()=> renderDraftReviewPart('goal');
 
   p.querySelector('#runDraftReview').onclick = async ()=>{
     if(!currentDraft || !String(currentDraft.text||'').trim()){
@@ -3865,35 +4006,37 @@ AI 参照报告样本：实验样本参考 - 实验1：探究长跑对人体心�
     }
     const cfg = getApiConfig();
     const suggestBox = p.querySelector('#draftSuggestBox');
+    if(!cfg.apiKey){
+      setDraftApiPanelVisible(true);
+      suggestBox.textContent = '尚未配置 DeepSeek API，请先在本模块完成 API 配置并进行联通测试。';
+      toast('warn','缺少 API 配置','请先完成 DeepSeek API 配置');
+      return;
+    }
     suggestBox.textContent = '正在生成修改建议，请稍候...';
-    const excerpt = String(currentDraft.text || '').replace(/\s+/g,' ').slice(0, 7000);
-    const prompt = `请参考以下标准实验报告样本链接，并基于后面的实验报告初稿内容，给出 3-4 条最关键的修改建议。
-
-标准实验报告样本链接：${REPORT_STANDARD_PLACEHOLDER.url}
-
-要求：
-1. 建议精简，每条 1-2 句；
-2. 重点检查：格式是否完整、缺哪些必要内容、是否有明显错别字或表述问题、实验结论是否包含量化分析与图表展示；
-3. 如果缺少摘要、目的、方法、结果、讨论、结论、参考文献等要指出；
-4. 不要泛泛而谈，不要输出超过 4 条。
-
-实验报告初稿内容：
-${excerpt}`;
+    const excerpt = String(currentDraft.text || '').replace(/\s+/g,' ').slice(0, 9000);
+    const prompt = buildDraftReviewPrompt(excerpt);
     try{
-      if(!cfg.apiKey) throw new Error('尚未配置 DeepSeek API 密钥');
       const res = await callDeepSeekChat(cfg.apiKey, [
-        { role:'system', content:'你是严谨的实验报告指导教师。请输出 3-4 条简明、可执行的修改建议，使用编号列表。' },
+        { role:'system', content:'你是严谨的实验报告指导教师。请严格返回合法 JSON 对象，不要输出任何额外说明。' },
         { role:'user', content: prompt }
-      ], { baseUrl: cfg.baseUrl, model: cfg.model, temperature: 0.2 });
-      suggestBox.textContent = String(res || '').trim();
+      ], { baseUrl: cfg.baseUrl, model: cfg.model, temperature: 0.1 });
+      const parsed = coerceDraftReviewResult(extractJsonObject(res));
+      setDraftReviewCache({
+        ts: Date.now(),
+        name: currentDraft.name,
+        structure: parsed.structure,
+        typos: parsed.typos,
+        goalAchievement: parsed.goalAchievement,
+        summaryText: parsed.summaryText,
+        result: parsed
+      });
+      suggestBox.textContent = parsed.summaryText;
+      toast('success','分析完成','已生成三项 AI 修改建议');
     }catch(err){
-      const raw = excerpt;
-      const tips = [];
-      if(!/摘要/.test(raw)) tips.push('1. 请补充摘要，简要交代研究目的、对象、方法、主要结果与结论。');
-      if(!/方法|实验方法|研究方法/.test(raw)) tips.push('2. 方法部分不够明确时，请补充对象人数、分组方式、干预周期、测量指标与统计处理。');
-      if(!/图|表|均值|标准差|显著|p\s*[<≤=]/i.test(raw)) tips.push('3. 结果与结论部分建议加入量化分析结果和对应图表，避免只写定性描述。');
-      if(!/讨论|结论/.test(raw)) tips.push('4. 请检查是否补齐讨论与结论，说明结果是否支持实验目标与假设。');
-      suggestBox.textContent = (tips.slice(0,4).join('\n') || '暂未生成 AI 建议，请检查 API 联通状态后重试。') + `\n\n（提示：${String(err.message || err)}）`;
+      suggestBox.textContent = `AI 分析失败，请检查 API 配置或稍后重试。
+
+（提示：${String(err.message || err)}）`;
+      toast('error','分析失败', String(err.message || err));
     }
   };
 
